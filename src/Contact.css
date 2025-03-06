@@ -1,0 +1,33 @@
+/* Contact.css */
+.contact {
+  padding: 20px;
+  text-align: center;
+}
+
+.contact h2 {
+  margin-bottom: 15px;
+}
+
+.contact a {
+  display: inline-block;
+  margin: 10px;
+  text-decoration: none;
+  color: #007acc;
+  border: 1px solid #007acc;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.contact a:hover {
+  background-color: #007acc;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .contact a {
+    width: 80%;
+    margin: 10px auto;
+    padding: 10px 0;
+  }
+}

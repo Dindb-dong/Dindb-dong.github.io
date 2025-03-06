@@ -1,0 +1,30 @@
+/* Interests.css */
+.interests {
+  padding: 20px;
+  text-align: center;
+}
+
+.interests h2 {
+  margin-bottom: 10px;
+}
+
+.interests ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.interests li {
+  display: inline-block;
+  margin: 5px 10px;
+  background-color: #f0f0f0;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .interests li {
+    display: block;
+    margin: 5px auto;
+  }
+}
