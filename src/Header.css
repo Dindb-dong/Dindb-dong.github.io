@@ -2,36 +2,76 @@
 .header {
   text-align: center;
   padding: 20px;
+  margin-top: 20px;
+}
+
+.wrapper {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 1.0s, color 1.0s;
+}
+
+.wrapper:hover {
+  background-color: #262626;
+  color: #fff;
+}
+
+.wrapper:hover h1,
+.wrapper:hover h2,
+.wrapper:hover h3 {
+  color: #fff;
 }
 
 .profile-img {
-  width: 150px;
-  height: 150px;
+  width: 206px;
+  height: 266px;
   border-radius: 50%;
-  flex:1;
 }
 
+.profile-background {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px;
+  width: 250px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-self: center;
+}
+
+/* 프로필 전체 래퍼 */
 .profile {
-  flex:1;
-  flex-direction: row;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
+  justify-content: space-evenly; /* 가로 방향으로 요소들을 균등하게 배치 */
+  align-items: center;           /* 세로 방향으로 가운데 정렬 */
   padding-top: 20px;
   padding-bottom: 20px;
 }
 
+
+/* 텍스트 영역: 세로 배치 */
 .profile-text {
-  flex:1;
-  flex-direction: column;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 @media (max-width: 768px) {
+  .profile {
+    flex-direction: column;
+  }
+
   .profile-img {
-    width: 100px;
-    height: 100px;
+    width: 103px;
+    height: 133px;
+    margin-bottom: 10px;
+  }
+
+  .profile-background {
+    width: 40%;
+    margin: 10px auto;
   }
 }
