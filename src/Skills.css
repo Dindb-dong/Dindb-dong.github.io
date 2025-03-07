@@ -8,26 +8,24 @@
   margin-bottom: 10px;
 }
 
-.skill-cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+.skills ul {
+  list-style: none;
+  padding: 20px;
+  margin: 0;
 }
 
-.skill-cards .card {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  margin: 10px;
-  width: 150px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.wrapper li {
+  display: inline-block;
+  margin: 5px 10px;
+  background-color: #bcbcbc;
+  padding: 10px 15px;
+  border-radius: 5px;
 }
 
 @media (max-width: 768px) {
-  .skill-cards .card {
-    width: 100px;
-    padding: 10px;
-    margin: 5px;
+  .wrapper li {
+    display: block;
+    margin: 15px auto;
+    width: 60%;
   }
 }
