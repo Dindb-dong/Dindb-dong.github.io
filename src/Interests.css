@@ -1,7 +1,11 @@
 /* Interests.css */
 .interests {
-  padding: 20px;
   text-align: center;
+  padding: 20px;
+}
+
+.wrapper:hover li {
+  background-color: #6f6f6f;
 }
 
 .interests h2 {
@@ -10,7 +14,7 @@
 
 .interests ul {
   list-style: none;
-  padding: 0;
+  padding: 20px;
   margin: 0;
 }
 
@@ -25,6 +29,7 @@
 @media (max-width: 768px) {
   .interests li {
     display: block;
-    margin: 5px auto;
+    margin: 15px auto;
+    width: 60%;
   }
 }
