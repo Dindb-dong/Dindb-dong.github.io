@@ -8,12 +8,20 @@ const Skills = () => (
       <h2>Tech Skills</h2>
         <ul>
           <li>JavaScript</li>
-          <li>React</li>
+          <li>TypeScript</li>
           <li>Python</li>
-          <li>Node.js</li>
-          <li>MongoDB</li>
+          <li>R</li>
+          <li>C++</li>
+          <li>C#</li>
           <li>ML/DL</li>
-        {/* 추가 기술 항목들 */}
+      </ul>
+      <ul>
+        <li>React</li>
+        <li>React Native</li>
+        <li>Flutter</li>
+        <li>Node.js</li>
+        <li>Docker</li>
+        <li>MongoDB</li>
       </ul>
     </div>
   </section>

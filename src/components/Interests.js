@@ -5,10 +5,10 @@ import '../Interests.css';
 const Interests = () => (
   <section className="interests">
     <div className='wrapper'>
-      <h2>Interestes in & Studying</h2>
+      <h2>Interested in & Studying</h2>
       <ul>
         <li>AI</li>
-        <li>Computor Science</li>
+        <li>Computer Science</li>
         <li>Data Science</li>
         <li>Quantum information</li>
       </ul>
