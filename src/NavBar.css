@@ -53,6 +53,7 @@
 .hamburger {
   display: none;
   cursor: pointer;
+  padding-right: 20px;
 }
 
 .hamburger .line {
