@@ -13,8 +13,8 @@ const Header = () => (
         </div>
         <div className='profile-text'>
           <h2>Kim Dong Wook</h2>
-          <h3>Yonsei Univ.</h3>
-          <h3>Applied Statistics</h3>
+          <h3>Yonsei Univ. Applied Statistics</h3>
+          <h3>Full-Stack Developr</h3>
         </div>
       </div>
     </div>
