@@ -1,4 +1,6 @@
 /* Projects.css */
+
+/* 전체 섹션 */
 .projects {
   padding: 20px;
   text-align: center;
@@ -8,25 +10,58 @@
   margin-bottom: 10px;
 }
 
+/* 프로젝트 카드들을 감싸는 영역 */
 .project-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 20px; /* 카드 사이 간격 */
 }
 
+/* 프로젝트 카드 스타일 */
 .project-item {
-  background-color: #fff;
-  border: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
   margin: 10px;
-  width: 250px;
+  width: 27%; 
+  min-width: 300px; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  text-align: center;
 }
 
+.project-item.expanded {
+  padding: 20px;
+}
+
+/* 이미지 컨테이너: display만 grid로 지정, columns는 JS에서 동적으로 */
+.image-container {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* 이미지 스타일 */
+.image-container img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Hover 시 (선택 사항) */
+.wrapper:hover .project-item {
+  background-color: #6f6f6f;
+  color: #ddd;
+}
+
+/* 반응형 */
 @media (max-width: 768px) {
   .project-item {
-    width: 90%;
+    width: 80%;
     margin: 10px auto;
   }
 }
