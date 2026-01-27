@@ -82,7 +82,7 @@
     /* 기본적으로 숨겨두고, isOpen이 true일 때만 보이게 */
     display: none;
     position: absolute;
-    top: calc(12.5vh); /* 네비게이션 바 높이 만큼 아래에 위치 */
+    top: calc(6.25vh); /* 네비게이션 바 높이 만큼 아래에 위치 */
     left: 0;
     width: 100%;
     flex-direction: column; /* 세로 배치 */
@@ -92,7 +92,7 @@
     padding: 10px;
     border-bottom: 1px solid #e8e8e8;
   }
-  
+
   /* .nav-links.active 클래스가 추가되면 표시 */
   .nav-links.active {
     display: flex;

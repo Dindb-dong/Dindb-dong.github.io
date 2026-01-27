@@ -56,6 +56,7 @@ const NavBar = () => {
           <button onClick={() => handleNavClick('about')}>About</button>
           <button onClick={() => handleNavClick('interests')}>Interests</button>
           <button onClick={() => handleNavClick('skills')}>Skills</button>
+          <button onClick={() => handleNavClick('experience')}>Experience</button>
           <button onClick={handleProjectsClick}>Projects</button>
           <button onClick={() => handleNavClick('contact')}>Contact</button>
         </div>
