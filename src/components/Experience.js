@@ -25,6 +25,7 @@ const Experience = () => {
         "렘 수면 안전도 앱",
         "powapowa 쇼핑몰",
         "물류 관리 자동화 시스템",
+        "브랜드 홍보용 QR 루틴 챌린지 웹앱",
       ],
     },
     {
@@ -82,43 +83,53 @@ const Experience = () => {
       <div className="wrapper">
         <h2>경력</h2>
         <div className="experience-list">
-          {experiences.map((exp) => (
-            <div key={exp.id} className="experience-card">
-              <div className="experience-header">
-                <h3 className="group-name">{exp.groupName}</h3>
-                <span className="period">{exp.period}</span>
-              </div>
-              <div className="experience-position">
-                <span className="position-label">직책</span>
-                <span className="position-value">{exp.position}</span>
-              </div>
-              <div className="experience-content">
-                <div className="experience-content-details">
-                  <h4 className="content-title">주요 업무 및 성과</h4>
-                  <ul className="experience-details">
-                    {exp.description.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
+          {experiences.map((exp, expIndex) => {
+            // 현재 경력 이전의 모든 경력들의 프로젝트 개수 합산
+            const previousProjectsCount = experiences
+              .slice(0, expIndex)
+              .reduce((sum, prevExp) => sum + (prevExp.projects?.length || 0), 0);
+            
+            return (
+              <div key={exp.id} className="experience-card">
+                <div className="experience-header">
+                  <h3 className="group-name">{exp.groupName}</h3>
+                  <span className="period">{exp.period}</span>
                 </div>
-                <div className="experience-content-details">
-                  <h4 className="content-title">진행한 프로젝트</h4>
-                  <ul className="experience-details">
-                    {exp.projects.map((item, index) => (
-                      // 프로젝트 이름 누르면 그 프로젝트 상세 페이지로 이동
-                      <li
-                        key={index}
-                        onClick={() => navigate(`/projects/${index + 1}`)}
-                        style={{ color: "#6b9bd1", cursor: "pointer" }}
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                <div className="experience-position">
+                  <span className="position-label">직책</span>
+                  <span className="position-value">{exp.position}</span>
+                </div>
+                <div className="experience-content">
+                  <div className="experience-content-details">
+                    <h4 className="content-title">주요 업무 및 성과</h4>
+                    <ul className="experience-details">
+                      {exp.description.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="experience-content-details">
+                    <h4 className="content-title">진행한 프로젝트</h4>
+                    <ul className="experience-details">
+                      {exp.projects.map((item, index) => {
+                        // 이전 경력들의 프로젝트 개수 + 현재 경력 내 인덱스 + 1
+                        const projectId = previousProjectsCount + index + 1;
+                        return (
+                          <li
+                            key={index}
+                            onClick={() => navigate(`/projects/${projectId}`)}
+                            style={{ color: "#6b9bd1", cursor: "pointer" }}
+                          >
+                            {item}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

@@ -110,7 +110,14 @@
   background-color: #f5f5f5;
 }
 
-.image-wrapper img {
+.image-wrapper img,
+.image-wrapper video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.project-media {
   width: 100%;
   height: auto;
   display: block;

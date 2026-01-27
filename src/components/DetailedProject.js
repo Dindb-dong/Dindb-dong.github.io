@@ -1,33 +1,123 @@
 // components/DetailedProject.js
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import '../DetailedProject.css';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import "../DetailedProject.css";
 
-// 이미지 로더 컴포넌트 - 이미지 로딩 실패 시 숨김 처리
-const ImageLoader = ({ pngPath, jpgPath, alt }) => {
-  const [imageError, setImageError] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState(pngPath);
+// 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
+const MediaLoader = ({ projectId, mediaIndex, alt }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [mediaType, setMediaType] = useState(null);
+  const [mediaSrc, setMediaSrc] = useState(null);
+  const [loadError, setLoadError] = useState(false);
 
-  const handleError = () => {
-    if (currentSrc === pngPath) {
-      // PNG 실패 시 JPG 시도
-      setCurrentSrc(jpgPath);
-    } else {
-      // 둘 다 실패 시 숨김
-      setImageError(true);
+  const extensions = [
+    { ext: ".mp4", type: "video" },
+    { ext: ".mov", type: "video" },
+    { ext: ".png", type: "image" },
+    { ext: ".jpg", type: "image" },
+  ];
+
+  useEffect(() => {
+    const basePath = `${process.env.PUBLIC_URL}/thumbnails/proj_${projectId}_${mediaIndex}`;
+    const currentExt = extensions[currentIndex];
+
+    if (!currentExt) {
+      // 모든 확장자 시도 실패 시 숨김
+      setLoadError(true);
+      return;
     }
-  };
 
-  if (imageError) {
+    const testPath = basePath + currentExt.ext;
+
+    // 이미지/비디오 로드 테스트 - 성공할 때까지 mediaSrc를 설정하지 않음
+    if (currentExt.type === "image") {
+      const img = new Image();
+      img.onload = () => {
+        // 이미지 로드 성공
+        setMediaSrc(testPath);
+        setMediaType("image");
+      };
+      img.onerror = () => {
+        // 이미지 로드 실패, 다음 확장자 시도
+        setCurrentIndex((prev) => prev + 1);
+      };
+      img.src = testPath;
+    } else {
+      // 비디오인 경우
+      const video = document.createElement("video");
+      video.preload = "auto";
+      video.muted = true;
+
+      const handleCanPlay = () => {
+        // 비디오 로드 성공
+        setMediaSrc(testPath);
+        setMediaType("video");
+      };
+
+      const handleError = () => {
+        // 비디오 로드 실패, 다음 확장자 시도
+        setCurrentIndex((prev) => prev + 1);
+      };
+
+      video.addEventListener("canplay", handleCanPlay);
+      video.addEventListener("error", handleError);
+      video.src = testPath;
+      video.load();
+
+      // cleanup
+      return () => {
+        video.removeEventListener("canplay", handleCanPlay);
+        video.removeEventListener("error", handleError);
+      };
+    }
+  }, [projectId, mediaIndex, currentIndex]);
+
+  if (loadError) {
     return null;
+  }
+
+  if (!mediaSrc) {
+    return null;
+  }
+
+  if (mediaType === "video") {
+    return (
+      <div className="image-wrapper">
+        <video
+          src={mediaSrc}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="project-media"
+          onError={() => {
+            // 비디오 로드 실패 시 다음 확장자 시도
+            if (currentIndex < extensions.length - 1) {
+              setCurrentIndex((prev) => prev + 1);
+            } else {
+              setLoadError(true);
+            }
+          }}
+        >
+          브라우저가 비디오 태그를 지원하지 않습니다.
+        </video>
+      </div>
+    );
   }
 
   return (
     <div className="image-wrapper">
-      <img 
-        src={currentSrc} 
+      <img
+        src={mediaSrc}
         alt={alt}
-        onError={handleError}
+        onError={() => {
+          // 이미지 로드 실패 시 다음 확장자 시도
+          if (currentIndex < extensions.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+          } else {
+            setLoadError(true);
+          }
+        }}
       />
     </div>
   );
@@ -36,103 +126,196 @@ const ImageLoader = ({ pngPath, jpgPath, alt }) => {
 const DetailedProject = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 프로젝트 상세 데이터 - 나중에 별도 파일로 분리하거나 API에서 가져올 수 있음
-  const projectDetails = {
-    1: {
-      title: "Mobile App 'UPCY'",
-      role: "Full-Stack Developer",
-      description: [
-        "React Native로 제작한 중고 거래 플랫폼입니다.",
-        "",
-        "클릭하여 더 자세한 내용을 확인하세요."
-      ],
-      extraDescription: [
-        "이 모바일 앱은 의류 리폼 전문가(Reformers)와 사용자(Users)를 연결합니다.",
-        "Reformers는 서비스를 업로드할 수 있고, Users는 검색, 좋아요, 주문을 할 수 있습니다.",
-        "기획부터 배포까지 전체 개발 과정을 담당했습니다."
-      ],
-      images: [] // proj_1_1, proj_1_2, ... 형식으로 로드
-    },
-    2: {
-      title: "LearnUS_pdf_downloader",
-      role: "Developer",
-      description: [
-        "주어진 URL에서 PDF 파일을 다운로드하는 Python 기반 웹사이트입니다.",
-        "",
-        "클릭하여 더 자세한 내용을 확인하세요."
-      ],
-      extraDescription: [
-        "LearnUS 사이트는 때때로 PDF 파일에 대한 다운로드 버튼을 제공하지 않아 이 웹사이트를 제작했습니다.",
-        "먼저, Selenium이 chromeDriver를 사용하여 URL을 열고 페이지 하단까지 스크롤합니다.",
-        "두 번째로, 페이지에 분리된 PNG 파일을 찾아 다운로드합니다.",
-        "세 번째로, PNG 파일을 PDF 파일로 변환하여 다운로드합니다."
-      ],
-      images: []
-    },
-    3: {
-      title: "Emotion Classification & Style Transfer Model",
-      role: "ML Engineer",
-      description: [
-        "CNN을 활용한 감정 분류 및 Neural Style Transfer를 활용한 스타일 전이입니다.",
-        "",
-        "클릭하여 더 자세한 내용을 확인하세요."
-      ],
-      extraDescription: [
-        "감정 분류: EfficientFace CNN 모델을 파인튜닝하여 주어진 이미지의 감정을 분류했습니다.",
-        "스타일 전이: AdaIN Neural Style Transfer 모델을 파인튜닝하여 주어진 이미지의 스타일을 영화 '인사이드 아웃' 스타일 이미지로 전이했습니다."
-      ],
-      images: []
-    }
-  };
+  // 자동으로 proj_{id}_로 시작하는 모든 미디어 파일 찾기
+  // 모든 hooks는 early return 전에 선언해야 함
+  const [foundMediaIndices, setFoundMediaIndices] = useState([]);
+  const [isScanning, setIsScanning] = useState(true);
+  const [maxIndexToCheck, setMaxIndexToCheck] = useState(10); // 최대 10개까지 체크
 
-  const project = projectDetails[id];
+  // JSON 파일에서 프로젝트 데이터 로드
+  useEffect(() => {
+    const loadProjectData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `${process.env.PUBLIC_URL}/projectDetails.json`,
+        );
+        if (!response.ok) {
+          throw new Error("프로젝트 데이터를 불러올 수 없습니다.");
+        }
+        const projectDetails = await response.json();
+        const projectData = projectDetails[id];
 
-  if (!project) {
+        if (!projectData) {
+          setError("프로젝트를 찾을 수 없습니다.");
+        } else {
+          setProject(projectData);
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjectData();
+  }, [id]);
+
+  // 자동으로 proj_{id}_로 시작하는 모든 미디어 파일 찾기
+  useEffect(() => {
+    if (!project) return;
+
+    // 1부터 maxIndexToCheck까지 순차적으로 체크
+    const checkMediaFiles = async () => {
+      const found = [];
+      let consecutiveFailures = 0;
+      const maxConsecutiveFailures = 3; // 연속 3개 실패하면 중단
+
+      for (let i = 1; i <= maxIndexToCheck; i++) {
+        const basePath = `${process.env.PUBLIC_URL}/thumbnails/proj_${id}_${i}`;
+        const extensions = [".mp4", ".mov", ".png", ".jpg"];
+        let foundFile = false;
+
+        // 각 확장자 순차적으로 체크
+        for (const ext of extensions) {
+          const testPath = basePath + ext;
+          const fileExists = await new Promise((resolve) => {
+            if (ext === ".mp4") {
+              const video = document.createElement("video");
+              video.preload = "none";
+              video.muted = true;
+              const timeout = setTimeout(() => {
+                video.removeEventListener("canplay", onCanPlay);
+                video.removeEventListener("error", onError);
+                resolve(false);
+              }, 2000); // 2초 타임아웃
+
+              const onCanPlay = () => {
+                clearTimeout(timeout);
+                video.removeEventListener("canplay", onCanPlay);
+                video.removeEventListener("error", onError);
+                resolve(true);
+              };
+
+              const onError = () => {
+                clearTimeout(timeout);
+                video.removeEventListener("canplay", onCanPlay);
+                video.removeEventListener("error", onError);
+                resolve(false);
+              };
+
+              video.addEventListener("canplay", onCanPlay);
+              video.addEventListener("error", onError);
+              video.src = testPath;
+              video.load();
+            } else {
+              const img = new Image();
+              const timeout = setTimeout(() => {
+                img.onload = null;
+                img.onerror = null;
+                resolve(false);
+              }, 2000);
+
+              img.onload = () => {
+                clearTimeout(timeout);
+                resolve(true);
+              };
+              img.onerror = () => {
+                clearTimeout(timeout);
+                resolve(false);
+              };
+              img.src = testPath;
+            }
+          });
+
+          if (fileExists) {
+            found.push(i);
+            foundFile = true;
+            consecutiveFailures = 0;
+            break; // 하나 찾으면 다음 인덱스로
+          }
+        }
+
+        if (!foundFile) {
+          consecutiveFailures++;
+          if (consecutiveFailures >= maxConsecutiveFailures) {
+            break; // 연속 실패하면 중단
+          }
+        }
+      }
+
+      setFoundMediaIndices(found);
+      setIsScanning(false);
+    };
+
+    checkMediaFiles();
+  }, [id, project, maxIndexToCheck]);
+
+  // 로딩 중
+  if (loading) {
     return (
       <div className="detailed-project">
         <div className="project-wrapper">
-          <h1>프로젝트를 찾을 수 없습니다</h1>
-          <button onClick={() => navigate('/projects')}>프로젝트 목록으로 돌아가기</button>
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <p>로딩 중...</p>
+          </div>
         </div>
       </div>
     );
   }
 
-  // 이미지 로드 함수 - proj_{id}_1, proj_{id}_2, ... 형식으로 시도
-  // 실제로는 프로젝트별로 이미지 개수가 다를 수 있으므로,
-  // 여기서는 최대 5개까지 시도하도록 설정 (필요시 조정 가능)
-  const getImagePaths = (imageIndex) => {
-    return {
-      png: `${process.env.PUBLIC_URL}/thumbnails/proj_${id}_${imageIndex}.png`,
-      jpg: `${process.env.PUBLIC_URL}/thumbnails/proj_${id}_${imageIndex}.jpg`,
-      index: imageIndex
-    };
-  };
-
-  // 프로젝트별 이미지 개수 설정 (필요시 수정)
-  const imageCounts = {
-    1: 2, // UPCY 프로젝트는 2개 이미지
-    2: 1, // LearnUS 프로젝트는 1개 이미지
-    3: 2  // Emotion Classification 프로젝트는 2개 이미지
-  };
-
-  const maxImages = imageCounts[id] || 5;
-  const projectImages = Array.from({ length: maxImages }, (_, i) => getImagePaths(i + 1));
+  // 에러 또는 프로젝트 없음
+  if (error || !project) {
+    return (
+      <div className="detailed-project">
+        <div className="project-wrapper">
+          <h1>{error || "프로젝트를 찾을 수 없습니다"}</h1>
+          <button onClick={() => navigate("/projects")}>
+            프로젝트 목록으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="detailed-project">
       <div className="project-wrapper">
-        <button className="back-button" onClick={() => navigate('/projects')}>
+        <button className="back-button" onClick={() => navigate("/projects")}>
           ← 프로젝트 목록으로
         </button>
-        
+
         <div className="project-header">
           <h1>{project.title}</h1>
           <p className="project-role">{project.role}</p>
         </div>
 
         <div className="project-content">
+          <div className="project-description-section">
+            {project.links && project.links.length > 0 && (
+              <>
+                <h2>프로젝트 링크</h2>
+                <div className="project-links">
+                  {project.links.map((item, index) => (
+                    <a
+                      key={index}
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: "#6b9bd1", cursor: "pointer" }}
+                    >
+                      {item.name}
+                      {"|"}
+                    </a>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
           <div className="project-description-section">
             <h2>프로젝트 소개</h2>
             {project.description.map((item, index) => (
@@ -151,21 +334,26 @@ const DetailedProject = () => {
             </div>
           )}
 
-          {projectImages.length > 0 && (
+          {isScanning ? (
             <div className="project-images-section">
-              <h2>프로젝트 이미지</h2>
+              <h2>프로젝트 미디어</h2>
+              <p>미디어 파일을 찾는 중...</p>
+            </div>
+          ) : foundMediaIndices.length > 0 ? (
+            <div className="project-images-section">
+              <h2>프로젝트 미디어</h2>
               <div className="images-grid">
-                {projectImages.map((img, idx) => (
-                  <ImageLoader 
-                    key={idx} 
-                    pngPath={img.png}
-                    jpgPath={img.jpg}
-                    alt={`${project.title} ${img.index}`}
+                {foundMediaIndices.map((mediaIndex) => (
+                  <MediaLoader
+                    key={mediaIndex}
+                    projectId={id}
+                    mediaIndex={mediaIndex}
+                    alt={`${project.title} ${mediaIndex}`}
                   />
                 ))}
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
