@@ -1,11 +1,11 @@
 // components/Interests.js
-import React from 'react';
-import '../Interests.css';
+import React from "react";
+import "../Interests.css";
 
 const Interests = () => (
   <section className="interests">
-    <div className='wrapper'>
-      <h2>관심 분야 및 학습 중</h2>
+    <div className="wrapper">
+      <h2>I'm Interested in...</h2>
       <ul>
         <li>AI</li>
         <li>Computer Science</li>

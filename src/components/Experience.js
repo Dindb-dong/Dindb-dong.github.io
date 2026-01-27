@@ -51,7 +51,7 @@ const Experience = () => {
       description: [
         "다양한 스타트업 행사 및 부스 운영 경험",
         "두뇌 능력 측정을 위한 지표 체계화",
-        "뇌지컬 리포트 자동 생성 스크립트 개발 (Python, Flask)",
+        "뇌지컬 리포트 자동 생성 스크립트 개발 (Python)",
       ],
       projects: ["노이랩 뇌지컬 리포트 자동 생성 스크립트"],
     },
@@ -68,7 +68,11 @@ const Experience = () => {
       groupName: "UN Youth 산하 지속가능개발 학회 SDP",
       period: "2024.03 ~ 2025.02",
       position: "14기 테크팀 팀장",
-      description: ["React Native 기반 중고 의류 거래 플랫폼 개발"],
+      description: [
+        "React Native 기반 중고 의류 거래 플랫폼 개발",
+        "테크팀장으로서 마케팅팀, 디자인팀, 리서치팀 등 다양한 팀과 협업",
+        "기획자, 디자이너와의 긴밀한 소통 경험",
+      ],
       projects: ["UPCY: React Native 기반 중고 의류 거래 플랫폼"],
     },
   ];
@@ -104,7 +108,7 @@ const Experience = () => {
                       // 프로젝트 이름 누르면 그 프로젝트 상세 페이지로 이동
                       <li
                         key={index}
-                        onClick={() => navigate(`/projects/${index}`)}
+                        onClick={() => navigate(`/projects/${index + 1}`)}
                         style={{ color: "#6b9bd1", cursor: "pointer" }}
                       >
                         {item}
