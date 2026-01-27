@@ -5,7 +5,7 @@ import '../Contact.css';
 const Contact = () => (
   <section className="contact">
     <div className='wrapper'>
-      <h2>Contact Me</h2>
+      <h2>연락처</h2>
       <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">
         GitHub
       </a>

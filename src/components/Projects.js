@@ -1,96 +1,82 @@
 // components/Projects.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Projects.css';
 
-const ProjectItem = ({ title, description, extraDescription, picture }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const Projects = () => {
+  const navigate = useNavigate();
 
-  const toggleExpansion = () => {
-    setIsExpanded((prev) => !prev);
+  const [imageSrcs, setImageSrcs] = useState({});
+
+  const projects = [
+    {
+      id: 1,
+      title: "Mobile App 'UPCY'",
+      role: "Full-Stack Developer",
+      description: "React Native로 제작한 중고 거래 플랫폼"
+    },
+    {
+      id: 2,
+      title: "LearnUS_pdf_downloader",
+      role: "Developer",
+      description: "주어진 URL에서 PDF 파일을 다운로드하는 Python 기반 웹사이트"
+    },
+    {
+      id: 3,
+      title: "Emotion Classification & Style Transfer Model",
+      role: "ML Engineer",
+      description: "CNN을 활용한 감정 분류 및 Neural Style Transfer를 활용한 스타일 전이"
+    }
+  ];
+
+  const handleImageError = (projectId) => {
+    const currentSrc = imageSrcs[projectId] || `${process.env.PUBLIC_URL}/thumbnails/proj_${projectId}_1.png`;
+    if (currentSrc.endsWith('.png')) {
+      setImageSrcs(prev => ({
+        ...prev,
+        [projectId]: `${process.env.PUBLIC_URL}/thumbnails/proj_${projectId}_1.jpg`
+      }));
+    } else {
+      setImageSrcs(prev => ({
+        ...prev,
+        [projectId]: `${process.env.PUBLIC_URL}/logo512.png`
+      }));
+    }
   };
 
-  // 이미지가 없을 수도 있으니, 안전하게 length 체크
-  const columnsCount = picture && picture.length > 0 ? picture.length : 1;
-
   return (
-    <div
-      className={`project-item ${isExpanded ? 'expanded' : ''}`}
-      onClick={toggleExpansion}
-    >
-      <h3>{title}</h3>
-      {description.map((item, index) => (
-        <p key={index}>{item}</p>
-      ))}
-      <div
-        className="image-container"
-        style={{
-          // 이미지 개수(columnsCount)만큼 1fr 컬럼 생성
-          gridTemplateColumns: `repeat(${columnsCount}, 1fr)`,
-        }}
-      >
-        {picture &&
-          picture.map((item, idx) => (
-            <img key={idx} src={item} alt={title} />
-          ))
-        }
+    <section className="projects">
+      <div className="wrapper">
+        <h2>프로젝트 경험</h2>
+        <p className="projects-intro">더 자세한 내용을 보시려면 프로젝트를 클릭하세요.</p>
+        <div className="project-preview-list">
+          {projects.map((project) => (
+            <div 
+              key={project.id} 
+              className="project-preview-card"
+              onClick={() => navigate('/projects')}
+            >
+              <div className="preview-thumbnail">
+                <img 
+                  src={imageSrcs[project.id] || `${process.env.PUBLIC_URL}/thumbnails/proj_${project.id}_1.png`} 
+                  alt={project.title}
+                  onError={() => handleImageError(project.id)}
+                />
+              </div>
+              <div className="preview-info">
+                <h3>{project.title}</h3>
+                <p className="preview-role">{project.role}</p>
+                <p className="preview-description">{project.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button className="view-all-projects" onClick={() => navigate('/projects')}>
+          모든 프로젝트 보기 →
+        </button>
       </div>
-      {isExpanded &&
-        extraDescription.map((item, index) => (
-          <p key={index}>- {item}</p>
-        ))
-      }
-    </div>
+    </section>
   );
 };
-
-const Projects = () => (
-  <section className="projects">
-    <div className="wrapper">
-      <h2>Projects & Experience</h2>
-      <div className="project-list">
-        <ProjectItem
-          title="Mobile App 'UPCY'"
-          description={["A Second-Hand Trading Platform made with ReactNative.",
-            "",
-            "Click to expand for more details."
-          ]}
-          extraDescription={[
-            "This mobile app connect Reformers(who can re-form clothes) and Users.",
-            "Reformers can upload services and Users can search, like and order them.",
-            "I was in charge of the entire development process, from planning to deployment."
-          ]}
-          picture={["https://i.imgur.com/uUaHs8U.jpeg", "https://i.imgur.com/qQ6Ld6B.jpeg"]}
-        />
-        <ProjectItem
-          title="LearnUS_pdf_downloader"
-          description={["A Python script based web site that downloads the pdf files from the given URL.",
-            "",
-            "Click to expand for more details."
-          ]}
-          extraDescription={[
-            "LearnUS site does not provide a download button for pdf files sometimes, so I made this web site.",
-            "Firstly, Selenium makes chromeDriver to open the URL and scroll down to the bottom of the page.",
-            "Secondly, find the png files separated in the page and download them.",
-            "Thirdly, upscale the png files to pdf files and download them."
-          ]}
-          picture={["https://i.imgur.com/ANuY5d5.png"]}
-        />
-        <ProjectItem
-          title="Emotion Classification & Style Transfer Model"
-          description={["Emotion Classification using CNN and Style Transfer using Neural Style Transfer.",
-            "",
-            "Click to expand for more details."
-          ]}
-          extraDescription={[
-            "Emotion Classification: Fine-tuned `EfficientFace` CNN model to classify the emotion of the given image.",
-            "Style Transfer: Fine-tuned `AdaIN` Neural Style Transfer model to transfer the style of the given image to the movie `Inside-Out` style image."
-          ]}
-          picture={["https://i.imgur.com/fYrAwXl.png", "https://i.imgur.com/ritmUpG.png"]}
-        />
-        {/* Add more project items as needed */}
-      </div>
-    </div>
-  </section>
-);
 
 export default Projects;

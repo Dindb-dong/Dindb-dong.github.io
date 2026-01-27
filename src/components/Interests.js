@@ -5,7 +5,7 @@ import '../Interests.css';
 const Interests = () => (
   <section className="interests">
     <div className='wrapper'>
-      <h2>Interested in & Studying</h2>
+      <h2>관심 분야 및 학습 중</h2>
       <ul>
         <li>AI</li>
         <li>Computer Science</li>

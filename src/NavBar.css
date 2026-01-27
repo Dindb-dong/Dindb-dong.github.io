@@ -13,15 +13,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between; /* 로고와 메뉴를 양 끝으로 배치 */
-  background-color: #262626;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e8e8e8;
 }
 
 /* 로고 영역 */
 .nav-logo {
-  color: #fff;
+  color: #2c3e50;
   font-size: 1.5rem;
   font-weight: bold;
   padding-left: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nav-logo:hover {
+  color: #6b9bd1;
 }
 
 .nav-link {
@@ -39,14 +47,18 @@
 .nav-links button {
   background: none;
   border: none;
-  color: #fff;
+  color: #2c3e50;
   font-size: 1rem;
   cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 /* 링크 버튼 호버 시 */
 .nav-links button:hover {
-  text-decoration: underline;
+  background-color: #f5f5f5;
+  color: #6b9bd1;
 }
 
 /* 햄버거 아이콘 (기본적으로 숨김) */
@@ -59,8 +71,9 @@
 .hamburger .line {
   width: 25px;
   height: 3px;
-  background-color: #fff;
+  background-color: #2c3e50;
   margin: 4px 0;
+  transition: all 0.3s ease;
 }
 
 /* 반응형 - 화면이 작아졌을 때(예: 768px 이하) */
@@ -73,9 +86,11 @@
     left: 0;
     width: 100%;
     flex-direction: column; /* 세로 배치 */
-    background-color: #262626;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     gap: 10px;
     padding: 10px;
+    border-bottom: 1px solid #e8e8e8;
   }
   
   /* .nav-links.active 클래스가 추가되면 표시 */

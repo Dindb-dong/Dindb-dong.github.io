@@ -1,42 +1,41 @@
 /* Header.css */
 .header {
   text-align: center;
-  padding: 20px;
-  margin-top: 40px;
+  padding: 60px 20px;
+  margin-top: 80px;
+  background-color: #ffffff;
 }
 
 .wrapper {
-  margin: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 1.0s, color 1.0s;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e8e8e8;
 }
 
-.wrapper:hover {
-  background-color: #262626;
-  color: #fff;
-}
-
-.wrapper:hover h1,
-.wrapper:hover h2,
-.wrapper:hover h3 {
-  color: #fff;
+.wrapper h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
 }
 
 .profile-img {
   width: 206px;
   height: 266px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .profile-background {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background-color: #ffffff;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
   padding: 15px;
   margin: 10px;
   width: 250px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   align-self: center;
 }
 
@@ -44,34 +43,109 @@
 .profile {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly; /* 가로 방향으로 요소들을 균등하게 배치 */
-  align-items: center;           /* 세로 방향으로 가운데 정렬 */
+  justify-content: space-evenly;
+  align-items: center;
   padding-top: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e8e8e8;
 }
-
 
 /* 텍스트 영역: 세로 배치 */
 .profile-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.profile-text h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.profile-text h3 {
+  color: #6b9bd1;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* 자기소개 섹션 */
+.about-me-content {
+  text-align: left;
+  padding-top: 20px;
+}
+
+.about-me-intro {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  font-weight: 500;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.about-me-detail {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 15px;
 }
 
 @media (max-width: 768px) {
+  .header {
+    padding: 40px 15px;
+    margin-top: 60px;
+  }
+
+  .wrapper {
+    padding: 30px 20px;
+  }
+
+  .wrapper h1 {
+    font-size: 2rem;
+  }
+
   .profile {
     flex-direction: column;
   }
 
   .profile-img {
-    width: 103px;
-    height: 133px;
-    margin-bottom: 10px;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
   }
 
   .profile-background {
-    width: 40%;
+    width: 180px;
     margin: 10px auto;
+  }
+
+  .profile-text {
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-text h2 {
+    font-size: 1.5rem;
+  }
+
+  .profile-text h3 {
+    font-size: 1rem;
+  }
+
+  .about-me-content {
+    text-align: center;
+  }
+
+  .about-me-intro {
+    font-size: 1.1rem;
+  }
+
+  .about-me-detail {
+    font-size: 1rem;
   }
 }
