@@ -163,7 +163,7 @@
   },
   "9": {
     "title": "Yakemon: Self-Developed Pokemon Game Agent Project",
-    "role": "Developer",
+    "role": "Frontend Developer",
     "description": [
       "React, TypeScropt 기반으로 자체 개발한 포켓몬 게임 시뮬레이션 웹 게임입니다."
     ],
@@ -185,7 +185,7 @@
   },
   "10": {
     "title": "UPCY: 리폼러 & 업씨러 매칭 중고 의류 거래 플랫폼",
-    "role": "Developer",
+    "role": "Frontend Leader",
     "description": ["React Native 기반 중고 의류 거래 플랫폼입니다."],
     "extraDescription": [
       "제가 학회에 합류하기 이전부터 개발되고 있던 프로젝트였습니다.",
@@ -197,6 +197,31 @@
       {
         "name": "GitHub",
         "url": "https://github.com/sdp-tech/UPCY_Mobile"
+      }
+    ]
+  },
+  "11": {
+    "title": "ACALINK: 웹 기반 통합형 학원 관리 플랫폼",
+    "role": "Full-Stack Developer",
+    "description": [
+      "React, Node.js, Supabase 기반으로 개발한 통합형 학원 관리 플랫폼입니다."
+    ],
+    "extraDescription": [
+      "많은 중~소규모 학원들이 홈페이지가 없고, 네이버 카페나 블로그 등으로 홍보를 하지만",
+      "크게 효과를 보고 있지 못하다는 문제를 파악해 멀티 테넌트 구조의 SaaS 플랫폼 개발을 시작하게 되었습니다.",
+      "3년간 컨설팅 학원애서 근무한 경험을 살려, 철저히 원장님과 선생님의 편의에 맞게 플랫폼을 설계했습니다.",
+      "이를 바탕으로 학생 관리, 선생님 관리, 실시간 동기화 근무일정표 작성, 수업 관리, 결제 관리, 메인 페이지 수정 등",
+      "사용자가 개발자를 통하지 않더라도 직접 사이트를 쉽게 관리할 수 있도록 플로우를 설계했습니다.",
+      "현재 대치동 컨설팅 학원과 협업중이며, 차후 서비스를 넓혀갈 예정입니다."
+    ],
+    "links": [
+      {
+        "name": "Private GitHub",
+        "url": ""
+      },
+      {
+        "name": "Website",
+        "url": "https://acalink.netlify.app/"
       }
     ]
   }
