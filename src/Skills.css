@@ -47,6 +47,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.skill-item[role="button"] {
+  cursor: pointer;
+}
+
 .skill-item:hover {
   background-color: #ffffff;
   border-color: #6b9bd1;

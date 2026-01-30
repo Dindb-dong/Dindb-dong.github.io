@@ -48,6 +48,12 @@
   font-weight: 500;
 }
 
+.project-header .project-tags {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
 .project-content {
   line-height: 1.8;
 }

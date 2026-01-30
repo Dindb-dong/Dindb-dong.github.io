@@ -28,6 +28,24 @@
   margin-bottom: 30px;
 }
 
+.clear-filter-btn {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  color: #6b9bd1;
+  background: transparent;
+  border: 1px solid #6b9bd1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-filter-btn:hover {
+  background-color: #6b9bd1;
+  color: #fff;
+}
+
 /* 프로젝트 미리보기 카드들을 감싸는 영역 */
 .project-preview-list {
   display: grid;

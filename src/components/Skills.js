@@ -2,7 +2,7 @@
 import React from "react";
 import "../Skills.css";
 
-const Skills = () => {
+const Skills = ({ onSkillClick = null }) => {
   // 기술 스택과 로고 URL 매핑 (Simple Icons CDN 사용)
   const languages = [
     {
@@ -80,7 +80,19 @@ const Skills = () => {
         <h2>Usable Languages</h2>
         <ul className="skills-list">
           {languages.map((lang, index) => (
-            <li key={index} className="skill-item">
+            <li
+              key={index}
+              className="skill-item"
+              role={onSkillClick ? "button" : undefined}
+              tabIndex={onSkillClick ? 0 : undefined}
+              onClick={() => onSkillClick?.(lang.name)}
+              onKeyDown={(e) => {
+                if (onSkillClick && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault();
+                  onSkillClick(lang.name);
+                }
+              }}
+            >
               <img src={lang.logo} alt={lang.name} className="skill-logo" />
               <span>{lang.name}</span>
             </li>
@@ -89,7 +101,19 @@ const Skills = () => {
         <h2>Tech Stacks</h2>
         <ul className="skills-list">
           {techStacks.map((tech, index) => (
-            <li key={index} className="skill-item">
+            <li
+              key={index}
+              className="skill-item"
+              role={onSkillClick ? "button" : undefined}
+              tabIndex={onSkillClick ? 0 : undefined}
+              onClick={() => onSkillClick?.(tech.name)}
+              onKeyDown={(e) => {
+                if (onSkillClick && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault();
+                  onSkillClick(tech.name);
+                }
+              }}
+            >
               <img src={tech.logo} alt={tech.name} className="skill-logo" />
               <span>{tech.name}</span>
             </li>

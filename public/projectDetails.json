@@ -2,6 +2,7 @@
   "1": {
     "title": "렘 수면 안전도 검사 앱",
     "role": "App Developer",
+    "tags": ["React Native", "JavaScript"],
     "description": [
       "RN 기반, BLE 연동 및 데이터 분석 앱입니다.",
       "렘 수면 측정 및 미주신경 자극 기기를 위해 제작했습니다. (개발 중단)"
@@ -20,6 +21,7 @@
   "2": {
     "title": "POWAPOWA 쇼핑몰",
     "role": "Developer",
+    "tags": ["JavaScript"],
     "description": [
       "카페24 호스팅 기반, 쇼핑몰 웹사이트입니다.",
       "외주 업체의 잠수로 인해 3일만에 개발 후 런칭했습니다."
@@ -41,6 +43,7 @@
   "3": {
     "title": "물류 관리 자동화 시스템",
     "role": "Full-Stack Developer",
+    "tags": ["React", "Node.js", "Supabase", "JavaScript"],
     "description": [
       "React, Node.js, Supabase 기반 물류 관리 자동화 시스템입니다."
     ],
@@ -63,6 +66,7 @@
   "4": {
     "title": "브랜드 홍보용 QR 루틴 챌린지 웹앱",
     "role": "Developer",
+    "tags": ["React", "JavaScript"],
     "description": ["React 기반 브랜드 홍보용 QR 루틴 챌린지 웹앱입니다."],
     "extraDescription": [
       "브랜드 상품 구매 시 제공되는 QR 카드를 스캔하면 접근 가능합니다. (링크 접속으로도 가능합니다)",
@@ -83,6 +87,7 @@
   "5": {
     "title": "Emotion Classification & Style Transfer Model",
     "role": "CV, ML Engineer",
+    "tags": ["Python"],
     "description": [
       "CNN을 활용한 감정 분류 및 Neural Style Transfer를 활용한 스타일 전이 아키텍쳐입니다."
     ],
@@ -101,6 +106,7 @@
   "6": {
     "title": "CLIP + BLIP2 Query based Text to Image Retrieval Project",
     "role": "CV, ML Engineer",
+    "tags": ["Python"],
     "description": [
       "CLIP + BLIP2을 이용해 유저가 원하는 장면을 찾아주는 프로젝트입니다."
     ],
@@ -120,6 +126,7 @@
   "7": {
     "title": "Dueling DDQN based Pokemon Game Agent Project",
     "role": "RL Engineer",
+    "tags": ["Python"],
     "description": [
       "Dueling DDQN을 활용해 포켓몬 게임 배틀 에이전트를 개발한 프로젝트입니다."
     ],
@@ -144,6 +151,7 @@
   "8": {
     "title": "NOI LAB 뇌지컬 리포트 자동 생성 스크립트",
     "role": "Developer",
+    "tags": ["Python", "JavaScript"],
     "description": [
       "사용자의 다양한 두뇌 능력을 측정한 결과를 체계적인 리포트로 자동 생성하는 스크립트입니다."
     ],
@@ -164,6 +172,7 @@
   "9": {
     "title": "Yakemon: Self-Developed Pokemon Game Agent Project",
     "role": "Frontend Developer",
+    "tags": ["React", "TypeScript", "JavaScript"],
     "description": [
       "React, TypeScropt 기반으로 자체 개발한 포켓몬 게임 시뮬레이션 웹 게임입니다."
     ],
@@ -186,6 +195,7 @@
   "10": {
     "title": "UPCY: 리폼러 & 업씨러 매칭 중고 의류 거래 플랫폼",
     "role": "Frontend Leader",
+    "tags": ["React Native", "JavaScript"],
     "description": ["React Native 기반 중고 의류 거래 플랫폼입니다."],
     "extraDescription": [
       "제가 학회에 합류하기 이전부터 개발되고 있던 프로젝트였습니다.",
@@ -203,6 +213,7 @@
   "11": {
     "title": "ACALINK: 웹 기반 통합형 학원 관리 플랫폼",
     "role": "Full-Stack Developer",
+    "tags": ["React", "Node.js", "Supabase", "JavaScript"],
     "description": [
       "React, Node.js, Supabase 기반으로 개발한 통합형 학원 관리 플랫폼입니다."
     ],

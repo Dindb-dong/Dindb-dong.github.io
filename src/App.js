@@ -1,5 +1,5 @@
 // App.js
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Header from './components/Header';
@@ -13,6 +13,14 @@ import DetailedProject from './components/DetailedProject';
 import './App.css';
 
 function Home() {
+  const [skillFilter, setSkillFilter] = useState(null);
+  const projectsSectionRef = useRef(null);
+
+  const handleSkillClick = (skillName) => {
+    setSkillFilter(skillName);
+    projectsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <>
       {/* 각 섹션에 id 부여 */}
@@ -25,15 +33,18 @@ function Home() {
       </section>
 
       <section id="skills">
-        <Skills />
+        <Skills onSkillClick={handleSkillClick} />
       </section>
 
       <section id="experience">
         <Experience />
       </section>
 
-      <section id="projects">
-        <Projects />
+      <section id="projects" ref={projectsSectionRef}>
+        <Projects
+          filter={skillFilter}
+          onClearFilter={() => setSkillFilter(null)}
+        />
       </section>
 
       <section id="contact">

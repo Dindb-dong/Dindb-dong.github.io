@@ -292,6 +292,11 @@ const DetailedProject = () => {
         <div className="project-header">
           <h1>{project.title}</h1>
           <p className="project-role">{project.role}</p>
+          {project.tags && project.tags.length > 0 && (
+            <p className="project-tags">
+              사용 언어/프레임워크: {project.tags.join(", ")}
+            </p>
+          )}
         </div>
 
         <div className="project-content">
