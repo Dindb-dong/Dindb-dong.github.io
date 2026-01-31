@@ -1,8 +1,30 @@
 // components/DetailedProject.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import {
+  ArrowLeft,
+  ExternalLink,
+  Brain,
+  Cpu,
+  LineChart,
+  Globe,
+  Smartphone,
+  Gamepad2,
+  Tag,
+} from "lucide-react";
+import { LANGUAGES, TECH_STACKS } from "./Skills";
 import "../DetailedProject.css";
+
+// 카테고리명 → Lucide 아이콘 (Interests와 동일한 의미 매핑)
+const CATEGORY_ICONS = {
+  AI: Brain,
+  "Computer Science": Cpu,
+  "Data Science": LineChart,
+  Web: Globe,
+  Mobile: Smartphone,
+  Game: Gamepad2,
+};
+const DEFAULT_CATEGORY_ICON = Tag;
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
 const MediaLoader = ({ projectId, mediaIndex, alt }) => {
@@ -295,10 +317,55 @@ const DetailedProject = () => {
         <div className="project-header">
           <h1>{project.title}</h1>
           <p className="project-role">{project.role}</p>
-          {project.tags && project.tags.length > 0 && (
-            <p className="project-tags">
-              사용 언어/프레임워크: {project.tags.join(", ")}
-            </p>
+          {project.languages && project.languages.length > 0 && (
+            <div className="project-meta-section">
+              <span className="project-meta-label">사용 언어</span>
+              <ul className="project-tag-list">
+                {project.languages.map((name) => (
+                  <li key={name} className="project-tag-pill">
+                    <img
+                      src={LANGUAGES.find((l) => l.name === name)?.logo}
+                      alt={name}
+                      className="project-pill-logo"
+                    />
+                    <span>{name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {project.techStacks && project.techStacks.length > 0 && (
+            <div className="project-meta-section">
+              <span className="project-meta-label">기술 스택</span>
+              <ul className="project-tag-list">
+                {project.techStacks.map((name) => (
+                  <li key={name} className="project-tech-pill">
+                    <img
+                      src={TECH_STACKS.find((t) => t.name === name)?.logo}
+                      alt={name}
+                      className="project-pill-logo"
+                    />
+                    <span>{name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {project.categories && project.categories.length > 0 && (
+            <div className="project-meta-section">
+              <span className="project-meta-label">카테고리</span>
+              <ul className="project-category-list">
+                {project.categories.map((cat) => {
+                  const IconComponent = CATEGORY_ICONS[cat] ?? DEFAULT_CATEGORY_ICON;
+                  return (
+                    <li key={cat} className="project-category-pill">
+                      <IconComponent size={20} strokeWidth={2} className="project-category-icon" aria-hidden />
+                      <span>{cat}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           )}
         </div>
 

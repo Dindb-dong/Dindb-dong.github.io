@@ -14,23 +14,32 @@ import DetailedProject from './components/DetailedProject';
 import './App.css';
 
 function Home() {
-  const [skillFilter, setSkillFilter] = useState(null);
+  // activeFilter: null | { type: 'tag', value } | { type: 'category', value }
+  const [activeFilter, setActiveFilter] = useState(null);
   const projectsSectionRef = useRef(null);
 
-  const handleSkillClick = (skillName) => {
-    setSkillFilter(skillName);
+  const scrollToProjects = () => {
     projectsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleSkillClick = (skillName) => {
+    setActiveFilter({ type: 'tag', value: skillName });
+    scrollToProjects();
+  };
+
+  const handleInterestClick = (categoryName) => {
+    setActiveFilter({ type: 'category', value: categoryName });
+    scrollToProjects();
   };
 
   return (
     <>
-      {/* 각 섹션에 id 부여 */}
       <section id="about">
         <Header />
       </section>
 
       <section id="interests">
-        <Interests />
+        <Interests onInterestClick={handleInterestClick} />
       </section>
 
       <section id="skills">
@@ -43,8 +52,8 @@ function Home() {
 
       <section id="projects" ref={projectsSectionRef}>
         <Projects
-          filter={skillFilter}
-          onClearFilter={() => setSkillFilter(null)}
+          activeFilter={activeFilter}
+          onClearFilter={() => setActiveFilter(null)}
         />
       </section>
 

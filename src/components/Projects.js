@@ -119,12 +119,12 @@ const MediaLoader = ({ projectId, alt }) => {
   );
 };
 
-const Projects = ({ filter = null, onClearFilter = null }) => {
+// activeFilter: null | { type: 'tag', value: string } | { type: 'category', value: string }
+const Projects = ({ activeFilter = null, onClearFilter = null }) => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // projectDetails.json에서 프로젝트 데이터 로드
   useEffect(() => {
     const loadProjects = async () => {
       try {
@@ -136,24 +136,32 @@ const Projects = ({ filter = null, onClearFilter = null }) => {
         }
         const projectDetails = await response.json();
 
-        // 객체를 배열로 변환하고 id, tags 포함
         let projectsArray = Object.entries(projectDetails).map(
           ([id, project]) => ({
             id: parseInt(id),
             title: project.title,
             role: project.role,
-            tags: Array.isArray(project.tags) ? project.tags : [],
+            languages: Array.isArray(project.languages) ? project.languages : [],
+            techStacks: Array.isArray(project.techStacks) ? project.techStacks : [],
+            categories: Array.isArray(project.categories) ? project.categories : [],
             description: Array.isArray(project.description)
               ? project.description[0] || project.description.join(" ")
               : project.description || "",
           }),
         );
 
-        // filter가 있으면 해당 해시태그(태그)를 가진 프로젝트만 표시
-        if (filter && filter.trim() !== "") {
-          projectsArray = projectsArray.filter(
-            (p) => p.tags && p.tags.includes(filter),
-          );
+        if (activeFilter && activeFilter.value && activeFilter.value.trim() !== "") {
+          if (activeFilter.type === "tag") {
+            projectsArray = projectsArray.filter(
+              (p) =>
+                (p.languages && p.languages.includes(activeFilter.value)) ||
+                (p.techStacks && p.techStacks.includes(activeFilter.value)),
+            );
+          } else if (activeFilter.type === "category") {
+            projectsArray = projectsArray.filter(
+              (p) => p.categories && p.categories.includes(activeFilter.value),
+            );
+          }
         }
 
         setProjects(projectsArray);
@@ -166,7 +174,7 @@ const Projects = ({ filter = null, onClearFilter = null }) => {
     };
 
     loadProjects();
-  }, [filter]);
+  }, [activeFilter]);
 
   if (loading) {
     return (
@@ -190,14 +198,20 @@ const Projects = ({ filter = null, onClearFilter = null }) => {
       <div className="wrapper">
         <h2 className="section-title">
           <FolderKanban size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
-          {filter ? `${filter} 사용 프로젝트` : "프로젝트 경험"}
+          {activeFilter
+            ? activeFilter.type === "tag"
+              ? `${activeFilter.value} 사용 프로젝트`
+              : `${activeFilter.value} 관련 프로젝트`
+            : "프로젝트 경험"}
         </h2>
         <p className="projects-intro">
-          {filter
-            ? `${filter}를 사용한 프로젝트 목록입니다.`
+          {activeFilter
+            ? activeFilter.type === "tag"
+              ? `${activeFilter.value}를 사용한 프로젝트 목록입니다.`
+              : `${activeFilter.value} 관련 프로젝트 목록입니다.`
             : "더 자세한 내용을 보시려면 프로젝트를 클릭하세요."}
         </p>
-        {filter && onClearFilter && (
+        {activeFilter && onClearFilter && (
           <button
             type="button"
             className="clear-filter-btn"

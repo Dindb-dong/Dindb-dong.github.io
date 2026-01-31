@@ -72,10 +72,39 @@
   color: #ffffff;
 }
 
+.interest-item[role="button"] {
+  cursor: pointer;
+}
+
 .interests li {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+}
+
+/* Radix Tooltip */
+.interest-tooltip-content {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: #2c3e50;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 240px;
+  text-align: center;
+  animation: tooltipFadeIn 0.15s ease-out;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {

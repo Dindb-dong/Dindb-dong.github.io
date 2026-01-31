@@ -51,10 +51,83 @@
   font-weight: 500;
 }
 
-.project-header .project-tags {
-  margin-top: 12px;
-  font-size: 0.95rem;
+.project-meta-section {
+  margin-top: 16px;
+}
+
+.project-meta-section span {
+  display: block;
+  margin-bottom: 8px;
+  size: 100%;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #555;
+}
+
+.project-meta-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.project-tag-list,
+.project-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.project-tag-pill,
+.project-tech-pill,
+.project-category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 2px solid #e8e8e8;
+  background: #fff;
+  color: #2c3e50;
+  transition: all 0.2s ease;
+}
+
+.project-tag-pill {
+  border-color: #6b9bd1;
+  color: #6b9bd1;
+  background: #f8fbff;
+}
+
+.project-tech-pill {
+  border-color: #5a9b7a;
+  color: #2d7a4a;
+  background: #f0f9f4;
+}
+
+.project-pill-logo {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.project-category-pill {
+  border-color: #e8e8e8;
+  color: #555;
+  background: #f8f9fa;
+}
+
+.project-category-icon {
+  flex-shrink: 0;
+  color: #6b9bd1;
 }
 
 .project-content {

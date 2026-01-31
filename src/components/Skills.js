@@ -4,77 +4,83 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Layers, Wrench } from "lucide-react";
 import "../Skills.css";
 
+export const LANGUAGES = [
+  {
+    name: "JavaScript",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/javascript.svg",
+  },
+  {
+    name: "TypeScript",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/typescript.svg",
+  },
+  {
+    name: "Python",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/python.svg",
+  },
+  {
+    name: "R",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/r.svg",
+  },
+  {
+    name: "C++",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/cplusplus.svg",
+  },
+  {
+    name: "C#",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/csharp.svg",
+  },
+  {
+    name: "Java",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/openjdk.svg",
+  },
+  {
+    name: "Dart",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/dart.svg",
+  },
+];
+
+export const TECH_STACKS = [
+  {
+    name: "React",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg",
+  },
+  {
+    name: "React Native",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg",
+  },
+  {
+    name: "Flutter",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/flutter.svg",
+  },
+  {
+    name: "Node.js",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/nodedotjs.svg",
+  },
+  {
+    name: "Docker",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg",
+  },
+  {
+    name: "Kubernetes",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/kubernetes.svg",
+  },
+  {
+    name: "AWS",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/amazonaws.svg",
+  },
+  {
+    name: "MongoDB",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/mongodb.svg",
+  },
+  {
+    name: "Supabase",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/supabase.svg",
+  },
+];
+
 const Skills = ({ onSkillClick = null }) => {
   // 기술 스택과 로고 URL 매핑 (Simple Icons CDN 사용)
-  const languages = [
-    {
-      name: "JavaScript",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/javascript.svg",
-    },
-    {
-      name: "TypeScript",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/typescript.svg",
-    },
-    {
-      name: "Python",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/python.svg",
-    },
-    {
-      name: "R",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/r.svg",
-    },
-    {
-      name: "C++",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/cplusplus.svg",
-    },
-    {
-      name: "C#",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/csharp.svg",
-    },
-    {
-      name: "Java",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/java.svg",
-    },
-  ];
-
-  const techStacks = [
-    {
-      name: "React",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg",
-    },
-    {
-      name: "React Native",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg",
-    },
-    {
-      name: "Flutter",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/flutter.svg",
-    },
-    {
-      name: "Node.js",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/nodedotjs.svg",
-    },
-    {
-      name: "Docker",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg",
-    },
-    {
-      name: "Kubernetes",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/kubernetes.svg",
-    },
-    {
-      name: "AWS",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/amazonaws.svg",
-    },
-    {
-      name: "MongoDB",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/mongodb.svg",
-    },
-    {
-      name: "Supabase",
-      logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/supabase.svg",
-    },
-  ];
+  
 
   const SkillItem = ({ item, type }) => (
     <Tooltip.Root delayDuration={300}>
@@ -111,7 +117,7 @@ const Skills = ({ onSkillClick = null }) => {
           Usable Languages
         </h2>
         <ul className="skills-list">
-          {languages.map((lang, index) => (
+          {LANGUAGES.map((lang, index) => (
             <SkillItem key={index} item={lang} type="lang" />
           ))}
         </ul>
@@ -120,7 +126,7 @@ const Skills = ({ onSkillClick = null }) => {
           Tech Stacks
         </h2>
         <ul className="skills-list">
-          {techStacks.map((tech, index) => (
+          {TECH_STACKS.map((tech, index) => (
             <SkillItem key={index} item={tech} type="tech" />
           ))}
         </ul>
