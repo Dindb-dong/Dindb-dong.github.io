@@ -1,6 +1,7 @@
 // components/NavBar.js
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, Sparkles } from 'lucide-react';
 import '../NavBar.css';
 
 const NavBar = () => {
@@ -49,7 +50,8 @@ const NavBar = () => {
   return (
     <nav className="navbar">
       <div className="nav-logo" onClick={() => navigate('/')}>
-        My Portfolio
+        <Sparkles size={22} strokeWidth={2} className="nav-logo-icon" aria-hidden />
+        <span>My Portfolio</span>
       </div>
       <div className='nav-link'>
         <div className={`nav-links ${isOpen ? 'active' : ''}`}>
@@ -63,12 +65,9 @@ const NavBar = () => {
       </div>
       
       {/* 햄버거 아이콘 (모바일) */}
-      <div className="hamburger" onClick={toggleMenu}>
-        {/* 단순 예시로, 3개의 선을 이용해 햄버거 아이콘 구현 */}
-        <div className="line" />
-        <div className="line" />
-        <div className="line" />
-      </div>
+      <button type="button" className="hamburger" onClick={toggleMenu} aria-label={isOpen ? '메뉴 닫기' : '메뉴 열기'}>
+        {isOpen ? <X size={24} strokeWidth={2} /> : <Menu size={24} strokeWidth={2} />}
+      </button>
     </nav>
   );
 };

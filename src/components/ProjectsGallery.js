@@ -1,6 +1,7 @@
 // components/ProjectsGallery.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FolderKanban, Loader2 } from "lucide-react";
 import "../ProjectsGallery.css";
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
@@ -182,8 +183,14 @@ const ProjectsGallery = () => {
     return (
       <div className="projects-gallery">
         <div className="gallery-wrapper">
-          <h1>프로젝트 경험</h1>
-          <p>로딩 중...</p>
+          <h1 className="gallery-title">
+            <FolderKanban size={32} strokeWidth={2} className="gallery-title-icon" aria-hidden />
+            프로젝트 경험
+          </h1>
+          <p className="gallery-loading">
+            <Loader2 size={22} className="spin" aria-hidden />
+            로딩 중...
+          </p>
         </div>
       </div>
     );
@@ -192,7 +199,10 @@ const ProjectsGallery = () => {
   return (
     <div className="projects-gallery">
       <div className="gallery-wrapper">
-        <h1>프로젝트 경험</h1>
+        <h1 className="gallery-title">
+          <FolderKanban size={32} strokeWidth={2} className="gallery-title-icon" aria-hidden />
+          프로젝트 경험
+        </h1>
         <div className="gallery-grid">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />

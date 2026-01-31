@@ -1,6 +1,7 @@
 // App.js
 import React, { useState, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import * as Tooltip from '@radix-ui/react-tooltip';
 import NavBar from './components/NavBar';
 import Header from './components/Header';
 import Interests from './components/Interests';
@@ -56,18 +57,18 @@ function Home() {
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        {/* 네비게이션 바 */}
-        <NavBar />
-
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<ProjectsGallery />} />
-          <Route path="/projects/:id" element={<DetailedProject />} />
-        </Routes>
-      </div>
-    </Router>
+    <Tooltip.Provider delayDuration={300}>
+      <Router>
+        <div className="App">
+          <NavBar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/projects" element={<ProjectsGallery />} />
+            <Route path="/projects/:id" element={<DetailedProject />} />
+          </Routes>
+        </div>
+      </Router>
+    </Tooltip.Provider>
   );
 }
 

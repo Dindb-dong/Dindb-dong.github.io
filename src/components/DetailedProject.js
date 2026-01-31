@@ -1,6 +1,7 @@
 // components/DetailedProject.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import "../DetailedProject.css";
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
@@ -274,8 +275,9 @@ const DetailedProject = () => {
       <div className="detailed-project">
         <div className="project-wrapper">
           <h1>{error || "프로젝트를 찾을 수 없습니다"}</h1>
-          <button onClick={() => navigate("/projects")}>
-            프로젝트 목록으로 돌아가기
+          <button className="back-button" onClick={() => navigate("/projects")}>
+            <ArrowLeft size={20} strokeWidth={2} aria-hidden />
+            <span>프로젝트 목록으로 돌아가기</span>
           </button>
         </div>
       </div>
@@ -286,7 +288,8 @@ const DetailedProject = () => {
     <div className="detailed-project">
       <div className="project-wrapper">
         <button className="back-button" onClick={() => navigate("/projects")}>
-          ← 프로젝트 목록으로
+          <ArrowLeft size={20} strokeWidth={2} aria-hidden />
+          <span>프로젝트 목록으로</span>
         </button>
 
         <div className="project-header">
@@ -311,10 +314,10 @@ const DetailedProject = () => {
                       href={item.url}
                       target="_blank"
                       rel="noreferrer"
-                      style={{ color: "#6b9bd1", cursor: "pointer" }}
+                      className="project-link-item"
                     >
-                      {item.name}
-                      {"|"}
+                      <ExternalLink size={16} strokeWidth={2} aria-hidden />
+                      <span>{item.name}</span>
                     </a>
                   ))}
                 </div>

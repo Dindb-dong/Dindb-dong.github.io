@@ -1,5 +1,7 @@
 // components/Skills.js
 import React from "react";
+import * as Tooltip from "@radix-ui/react-tooltip";
+import { Layers, Wrench } from "lucide-react";
 import "../Skills.css";
 
 const Skills = ({ onSkillClick = null }) => {
@@ -74,49 +76,52 @@ const Skills = ({ onSkillClick = null }) => {
     },
   ];
 
+  const SkillItem = ({ item, type }) => (
+    <Tooltip.Root delayDuration={300}>
+      <Tooltip.Trigger asChild>
+        <li
+          className="skill-item"
+          role={onSkillClick ? "button" : undefined}
+          tabIndex={onSkillClick ? 0 : undefined}
+          onClick={() => onSkillClick?.(item.name)}
+          onKeyDown={(e) => {
+            if (onSkillClick && (e.key === "Enter" || e.key === " ")) {
+              e.preventDefault();
+              onSkillClick(item.name);
+            }
+          }}
+        >
+          <img src={item.logo} alt={item.name} className="skill-logo" />
+          <span>{item.name}</span>
+        </li>
+      </Tooltip.Trigger>
+      <Tooltip.Portal>
+        <Tooltip.Content className="skill-tooltip-content" sideOffset={6}>
+          {onSkillClick ? `${item.name} 사용 프로젝트 보기` : item.name}
+        </Tooltip.Content>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  );
+
   return (
     <section className="skills">
       <div className="wrapper">
-        <h2>Usable Languages</h2>
+        <h2 className="section-title">
+          <Layers size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
+          Usable Languages
+        </h2>
         <ul className="skills-list">
           {languages.map((lang, index) => (
-            <li
-              key={index}
-              className="skill-item"
-              role={onSkillClick ? "button" : undefined}
-              tabIndex={onSkillClick ? 0 : undefined}
-              onClick={() => onSkillClick?.(lang.name)}
-              onKeyDown={(e) => {
-                if (onSkillClick && (e.key === "Enter" || e.key === " ")) {
-                  e.preventDefault();
-                  onSkillClick(lang.name);
-                }
-              }}
-            >
-              <img src={lang.logo} alt={lang.name} className="skill-logo" />
-              <span>{lang.name}</span>
-            </li>
+            <SkillItem key={index} item={lang} type="lang" />
           ))}
         </ul>
-        <h2>Tech Stacks</h2>
+        <h2 className="section-title">
+          <Wrench size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
+          Tech Stacks
+        </h2>
         <ul className="skills-list">
           {techStacks.map((tech, index) => (
-            <li
-              key={index}
-              className="skill-item"
-              role={onSkillClick ? "button" : undefined}
-              tabIndex={onSkillClick ? 0 : undefined}
-              onClick={() => onSkillClick?.(tech.name)}
-              onKeyDown={(e) => {
-                if (onSkillClick && (e.key === "Enter" || e.key === " ")) {
-                  e.preventDefault();
-                  onSkillClick(tech.name);
-                }
-              }}
-            >
-              <img src={tech.logo} alt={tech.name} className="skill-logo" />
-              <span>{tech.name}</span>
-            </li>
+            <SkillItem key={index} item={tech} type="tech" />
           ))}
         </ul>
       </div>

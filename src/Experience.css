@@ -20,6 +20,44 @@
   font-size: 2rem;
 }
 
+.experience .section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.experience .section-title-icon {
+  color: #6b9bd1;
+  flex-shrink: 0;
+}
+
+.period-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+  opacity: 0.9;
+}
+
+.experience-project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b9bd1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.experience-project-link:hover {
+  color: #5a8bb8;
+  text-decoration: underline;
+}
+
+.experience-project-link svg {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  flex-shrink: 0;
+}
+
 .experience-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -132,6 +170,21 @@
   position: absolute;
   left: 0;
   top: 2px;
+}
+
+.experience-project-link::before {
+  content: none;
+}
+
+.experience-project-link {
+  padding-left: 25px;
+  position: relative;
+}
+
+.experience-project-link svg {
+  position: absolute;
+  left: 0;
+  top: 4px;
 }
 
 .experience-details li:last-child {

@@ -20,33 +20,62 @@
   font-size: 2rem;
 }
 
-.interests ul {
+.interests .section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.interests .section-title-icon {
+  color: #6b9bd1;
+  flex-shrink: 0;
+}
+
+.interests-list {
   list-style: none;
   padding: 20px;
   margin: 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px;
+  gap: 16px;
 }
 
-.interests li {
-  display: inline-block;
+.interest-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   background-color: #ffffff;
   color: #2c3e50;
-  padding: 12px 24px;
-  border-radius: 25px;
+  padding: 14px 22px;
+  border-radius: 12px;
   border: 2px solid #e8e8e8;
   transition: all 0.3s ease;
   font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.interests li:hover {
+.interest-item .interest-icon {
+  color: #6b9bd1;
+  flex-shrink: 0;
+}
+
+.interest-item:hover {
   background-color: #6b9bd1;
   color: #ffffff;
   border-color: #6b9bd1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(107, 155, 209, 0.3);
+  box-shadow: 0 4px 12px rgba(107, 155, 209, 0.3);
+}
+
+.interest-item:hover .interest-icon {
+  color: #ffffff;
+}
+
+.interests li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 @media (max-width: 768px) {
@@ -62,10 +91,10 @@
     font-size: 1.5rem;
   }
 
-  .interests li {
-    display: block;
-    margin: 0;
+  .interest-item {
     width: 100%;
-    max-width: 300px;
+    max-width: 280px;
+    margin: 0 auto;
+    justify-content: flex-start;
   }
 }

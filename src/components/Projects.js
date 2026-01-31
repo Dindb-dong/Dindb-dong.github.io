@@ -1,6 +1,7 @@
 // components/Projects.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FolderKanban, FilterX, ArrowRight, Loader2 } from "lucide-react";
 import "../Projects.css";
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
@@ -69,7 +70,12 @@ const MediaLoader = ({ projectId, alt }) => {
   }, [projectId, currentIndex]);
 
   if (!mediaSrc) {
-    return <div className="preview-thumbnail-loading">로딩 중...</div>;
+    return (
+      <div className="preview-thumbnail-loading">
+        <Loader2 size={28} className="spin" aria-hidden />
+        <span>로딩 중...</span>
+      </div>
+    );
   }
 
   if (mediaType === "video") {
@@ -166,8 +172,14 @@ const Projects = ({ filter = null, onClearFilter = null }) => {
     return (
       <section className="projects">
         <div className="wrapper">
-          <h2>프로젝트 경험</h2>
-          <p className="projects-intro">로딩 중...</p>
+          <h2 className="section-title">
+            <FolderKanban size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
+            프로젝트 경험
+          </h2>
+          <p className="projects-intro projects-loading">
+            <Loader2 size={22} className="spin" aria-hidden />
+            로딩 중...
+          </p>
         </div>
       </section>
     );
@@ -176,10 +188,9 @@ const Projects = ({ filter = null, onClearFilter = null }) => {
   return (
     <section className="projects">
       <div className="wrapper">
-        <h2>
-          {filter
-            ? `${filter} 사용 프로젝트`
-            : "프로젝트 경험"}
+        <h2 className="section-title">
+          <FolderKanban size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
+          {filter ? `${filter} 사용 프로젝트` : "프로젝트 경험"}
         </h2>
         <p className="projects-intro">
           {filter
@@ -192,7 +203,8 @@ const Projects = ({ filter = null, onClearFilter = null }) => {
             className="clear-filter-btn"
             onClick={onClearFilter}
           >
-            필터 해제 (전체 보기)
+            <FilterX size={18} strokeWidth={2} aria-hidden />
+            <span>필터 해제 (전체 보기)</span>
           </button>
         )}
         <div className="project-preview-list">
@@ -217,7 +229,8 @@ const Projects = ({ filter = null, onClearFilter = null }) => {
           className="view-all-projects"
           onClick={() => navigate("/projects")}
         >
-          모든 프로젝트 보기 →
+          <span>모든 프로젝트 보기</span>
+          <ArrowRight size={20} strokeWidth={2} aria-hidden />
         </button>
       </div>
     </section>

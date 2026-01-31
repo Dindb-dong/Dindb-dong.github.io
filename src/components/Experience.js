@@ -1,6 +1,7 @@
 // components/Experience.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Briefcase, Calendar, ExternalLink } from "lucide-react";
 import "../Experience.css";
 
 const Experience = () => {
@@ -81,7 +82,10 @@ const Experience = () => {
   return (
     <section className="experience" id="experience">
       <div className="wrapper">
-        <h2>경력</h2>
+        <h2 className="section-title">
+          <Briefcase size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
+          경력
+        </h2>
         <div className="experience-list">
           {experiences.map((exp, expIndex) => {
             // 현재 경력 이전의 모든 경력들의 프로젝트 개수 합산
@@ -90,10 +94,13 @@ const Experience = () => {
               .reduce((sum, prevExp) => sum + (prevExp.projects?.length || 0), 0);
             
             return (
-              <div key={exp.id} className="experience-card">
+              <div key={`${exp.id}-${expIndex}`} className="experience-card">
                 <div className="experience-header">
                   <h3 className="group-name">{exp.groupName}</h3>
-                  <span className="period">{exp.period}</span>
+                  <span className="period">
+                    <Calendar size={16} strokeWidth={2} className="period-icon" aria-hidden />
+                    {exp.period}
+                  </span>
                 </div>
                 <div className="experience-position">
                   <span className="position-label">직책</span>
@@ -112,15 +119,15 @@ const Experience = () => {
                     <h4 className="content-title">진행한 프로젝트</h4>
                     <ul className="experience-details">
                       {exp.projects.map((item, index) => {
-                        // 이전 경력들의 프로젝트 개수 + 현재 경력 내 인덱스 + 1
                         const projectId = previousProjectsCount + index + 1;
                         return (
                           <li
                             key={index}
+                            className="experience-project-link"
                             onClick={() => navigate(`/projects/${projectId}`)}
-                            style={{ color: "#6b9bd1", cursor: "pointer" }}
                           >
-                            {item}
+                            <ExternalLink size={14} strokeWidth={2} aria-hidden />
+                            <span>{item}</span>
                           </li>
                         );
                       })}

@@ -21,6 +21,17 @@
   margin-bottom: 30px;
 }
 
+.section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title-icon {
+  color: #6b9bd1;
+  flex-shrink: 0;
+}
+
 .profile-img {
   width: 206px;
   height: 266px;

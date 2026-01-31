@@ -1,11 +1,15 @@
 // components/Header.js
 import React from "react";
+import { User } from "lucide-react";
 import "../Header.css";
 
 const Header = () => (
   <header className="header">
     <div className="wrapper">
-      <h1>About Me</h1>
+      <h1 className="section-title">
+        <User size={28} strokeWidth={2} className="section-title-icon" aria-hidden />
+        About Me
+      </h1>
       <div className="profile">
         <div className="profile-background">
           <img

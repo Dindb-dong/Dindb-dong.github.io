@@ -20,6 +20,9 @@
 
 /* 로고 영역 */
 .nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: #2c3e50;
   font-size: 1.5rem;
   font-weight: bold;
@@ -30,6 +33,16 @@
 
 .nav-logo:hover {
   color: #6b9bd1;
+}
+
+.nav-logo:hover .nav-logo-icon {
+  color: #6b9bd1;
+}
+
+.nav-logo-icon {
+  flex-shrink: 0;
+  color: #2c3e50;
+  transition: color 0.3s ease;
 }
 
 .nav-link {
@@ -65,7 +78,18 @@
 .hamburger {
   display: none;
   cursor: pointer;
-  padding-right: 20px;
+  padding: 8px;
+  margin-right: 12px;
+  background: none;
+  border: none;
+  color: #2c3e50;
+  border-radius: 8px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.hamburger:hover {
+  color: #6b9bd1;
+  background: #f5f5f5;
 }
 
 .hamburger .line {

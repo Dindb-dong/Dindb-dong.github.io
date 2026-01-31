@@ -22,6 +22,32 @@
   font-size: 2rem;
 }
 
+.projects .section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.projects .section-title-icon {
+  color: #6b9bd1;
+  flex-shrink: 0;
+}
+
+.projects-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .projects-intro {
   color: #666;
   font-size: 1.1rem;
@@ -29,7 +55,9 @@
 }
 
 .clear-filter-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 20px;
   padding: 8px 16px;
   font-size: 0.9rem;
@@ -96,10 +124,17 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   color: #999;
   background-color: #f5f5f5;
+  font-size: 0.875rem;
+}
+
+.preview-thumbnail-loading .spin {
+  color: #6b9bd1;
 }
 
 .preview-info {
@@ -127,6 +162,9 @@
 }
 
 .view-all-projects {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background-color: #6b9bd1;
   color: #ffffff;
   border: none;

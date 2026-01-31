@@ -19,6 +19,35 @@
   text-align: center;
 }
 
+.gallery-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.gallery-title-icon {
+  color: #6b9bd1;
+  flex-shrink: 0;
+}
+
+.gallery-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+.gallery-loading .spin {
+  color: #6b9bd1;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
