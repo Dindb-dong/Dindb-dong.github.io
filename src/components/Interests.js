@@ -8,7 +8,7 @@ const interests = [
   { label: "AI", icon: Brain },
   { label: "Computer Science", icon: Cpu },
   { label: "Data Science", icon: LineChart },
-  { label: "Quantum information", icon: Atom },
+  { label: "Quantum Computing", icon: Atom },
   { label: "Web", icon: Globe },
   { label: "Mobile", icon: Smartphone },
   { label: "Game", icon: Gamepad },

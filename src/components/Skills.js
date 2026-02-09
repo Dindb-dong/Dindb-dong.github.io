@@ -76,6 +76,18 @@ export const TECH_STACKS = [
     name: "Supabase",
     logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/supabase.svg",
   },
+  {
+    name: "PyTorch",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/pytorch.svg",
+  },
+  {
+    name: "TensorFlow",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/tensorflow.svg",
+  },
+  {
+    name: "Qiskit",
+    logo: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/qiskit.svg",
+  },
 ];
 
 const Skills = ({ onSkillClick = null }) => {
@@ -112,6 +124,7 @@ const Skills = ({ onSkillClick = null }) => {
   return (
     <section className="skills">
       <div className="wrapper">
+        <h3 className="skills-subtitle">Click to see projects using the skills!</h3>
         <h2 className="section-title">
           <Layers size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
           Usable Languages

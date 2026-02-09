@@ -11,6 +11,7 @@ import {
   Smartphone,
   Gamepad2,
   Tag,
+  Atom,
 } from "lucide-react";
 import { LANGUAGES, TECH_STACKS } from "./Skills";
 import "../DetailedProject.css";
@@ -20,10 +21,11 @@ const CATEGORY_ICONS = {
   AI: Brain,
   "Computer Science": Cpu,
   "Data Science": LineChart,
+  "Quantum Computing": Atom,
   Web: Globe,
   Mobile: Smartphone,
   Game: Gamepad2,
-};
+}; 
 const DEFAULT_CATEGORY_ICON = Tag;
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지

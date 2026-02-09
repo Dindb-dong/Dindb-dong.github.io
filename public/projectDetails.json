@@ -96,7 +96,7 @@
     "title": "Emotion Classification & Style Transfer Model",
     "role": "CV, ML Engineer",
     "languages": ["Python"],
-    "techStacks": [],
+    "techStacks": ["PyTorch", "TensorFlow"],
     "categories": ["AI", "Data Science"],
     "description": [
       "CNN을 활용한 감정 분류 및 Neural Style Transfer를 활용한 스타일 전이 아키텍쳐입니다."
@@ -117,7 +117,7 @@
     "title": "CLIP + BLIP2 Query based Text to Image Retrieval Project",
     "role": "CV, ML Engineer",
     "languages": ["Python"],
-    "techStacks": [],
+    "techStacks": ["PyTorch", "TensorFlow"],
     "categories": ["AI", "Data Science"],
     "description": [
       "CLIP + BLIP2을 이용해 유저가 원하는 장면을 찾아주는 프로젝트입니다."
@@ -139,8 +139,8 @@
     "title": "Dueling DDQN based Pokemon Game Agent Project",
     "role": "RL Engineer",
     "languages": ["Python"],
-    "techStacks": [],
-    "categories": ["Game", "AI", "Data Science"],
+    "techStacks": ["PyTorch", "TensorFlow"],
+    "categories": ["AI", "Data Science", "Game"],
     "description": [
       "Dueling DDQN을 활용해 포켓몬 게임 배틀 에이전트를 개발한 프로젝트입니다."
     ],
@@ -263,19 +263,41 @@
     "role": "Frontend Developer",
     "languages": ["TypeScript", "JavaScript"],
     "techStacks": ["React"],
-    "categories": ["Game", "Web", "AI"],
+    "categories": ["Web", "Computer Science"],
     "description": [
       "데이터 시각화 수업의 프로젝트로, React 기반 웹앱입니다."
     ],
     "extraDescription": [
-      "대학교 졸업 시 요구되는 총 졸업 이수 학점을 계산하는 웹앱입니다.",
-      "졸업 요구 학점을 조정하여 졸업 가능 여부를 계산할 수 있습니다.",
-      "졸업 요구 학점을 조정하여 졸업 가능 여부를 계산할 수 있습니다."
+      "에브리타임 강의평 데이터, 연세대학교 수강신청 마일리지 데이터를 모두 크롤링하였습니다.",
+      "각 강의를 Graph 형식으로 표현하여, 선수과목 관계를 시각화했습니다.",
+      "해당 강의의 강의평, 별점, 마일리지 컷 등을 한 화면에서 모두 확인 가능하여 수강생들의 찬사를 받았습니다."
     ],
     "links": [
       {
         "name": "GitHub",
         "url": "https://github.com/Dindb-dong/saveMyLazy"
+      }
+    ]
+  },
+  "13": {
+    "title": "QCNN: Quantum Convolutional Neural Network",
+    "role": "CV, ML Engineer",
+    "languages": ["Python"],
+    "techStacks": ["Qiskit", "PyTorch", "Pennylane"],
+    "categories": ["AI", "Data Science", "Quantum Computing"],
+    "description": [
+      "QCNN 모델을 활용해 이미지를 분류하는 프로젝트입니다."
+    ],
+    "extraDescription": [
+      "AI generated / human generated 이미지를 분류하는 프로젝트입니다.",
+      "Qiskit, Pennylane 두 가지 프레임워크를 활용하여 모델을 구현했습니다.",
+      "연세대학교의 128큐비트 양자컴퓨터를 활용하여 4~12개의 큐비트로 구성된 양자 네트워크를 구축하고, ",
+      "이를 통해 이미지를 분류하는 모델을 구현했습니다."
+    ],
+    "links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/Dindb-dong/QCNN"
       }
     ]
   }
