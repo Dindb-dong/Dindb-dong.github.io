@@ -33,7 +33,7 @@ const Experience = () => {
       id: 2,
       groupName: "연세대학교 인공지능학회 YAI",
       period: "2025.03 ~",
-      position: "CV, RL 연구부원 및 대외팀 임원진",
+      position: "연구부원 및 대외팀 임원진",
       description: [
         "CV: EfficientFace + AdaIN → 감정 분류 및 weight 생성 후 스타일 필터 적용",
         "CV: CLIP + BLIP2 Query based Text to Image Retrieval → 찾고 싶은 장면 묘사 시 그 장면 범위 찾기",
@@ -97,14 +97,16 @@ const Experience = () => {
               <div key={`${exp.id}-${expIndex}`} className="experience-card">
                 <div className="experience-header">
                   <h3 className="group-name">{exp.groupName}</h3>
+                </div>
+                <div className="experience-position">
+                  <div className="experience-position-details">
+                    <span className="position-label">직책</span>
+                    <span className="position-value">{exp.position}</span>
+                  </div>
                   <span className="period">
                     <Calendar size={16} strokeWidth={2} className="period-icon" aria-hidden />
                     {exp.period}
                   </span>
-                </div>
-                <div className="experience-position">
-                  <span className="position-label">직책</span>
-                  <span className="position-value">{exp.position}</span>
                 </div>
                 <div className="experience-content">
                   <div className="experience-content-details">
@@ -115,9 +117,9 @@ const Experience = () => {
                       ))}
                     </ul>
                   </div>
-                  <div className="experience-content-details">
-                    <h4 className="content-title">진행한 프로젝트</h4>
-                    <ul className="experience-details">
+                  <div className="experience-content-details experience-projects-block">
+                    <h4 className="content-title projects-title">진행한 프로젝트</h4>
+                    <ul className="experience-details experience-projects">
                       {exp.projects.map((item, index) => {
                         const projectId = previousProjectsCount + index + 1;
                         return (

@@ -82,6 +82,45 @@
   margin-bottom: 30px;
 }
 
+.projects-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.page-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #d0d7de;
+  background-color: #ffffff;
+  color: #34495e;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background-color: #f2f4f8;
+  border-color: #6b9bd1;
+  color: #2c3e50;
+}
+
+.page-nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 0.95rem;
+  color: #555;
+  font-weight: 500;
+}
+
 /* 프로젝트 미리보기 카드 스타일 */
 .project-preview-card {
   background-color: #ffffff;
@@ -200,6 +239,10 @@
   .project-preview-list {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  .projects-pagination {
+    gap: 12px;
   }
 
   .view-all-projects {

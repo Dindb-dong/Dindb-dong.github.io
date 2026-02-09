@@ -1,7 +1,7 @@
 // components/ProjectsGallery.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FolderKanban, Loader2 } from "lucide-react";
+import { FolderKanban, Filter, FilterX, Loader2 } from "lucide-react";
 import "../ProjectsGallery.css";
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
@@ -142,6 +142,9 @@ const ProjectCard = ({ project }) => {
 const ProjectsGallery = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [allProjects, setAllProjects] = useState([]);
+  const [filterType, setFilterType] = useState("all");
+  const [filterValue, setFilterValue] = useState("");
 
   // projectDetails.json에서 프로젝트 데이터 로드
   useEffect(() => {
@@ -158,15 +161,25 @@ const ProjectsGallery = () => {
         // 객체를 배열로 변환하고 id 추가, description 처리
         const projectsArray = Object.entries(projectDetails).map(
           ([id, project]) => ({
-            id: parseInt(id),
+            id: parseInt(id, 10),
             title: project.title,
             role: project.role,
+            languages: Array.isArray(project.languages)
+              ? project.languages
+              : [],
+            techStacks: Array.isArray(project.techStacks)
+              ? project.techStacks
+              : [],
+            categories: Array.isArray(project.categories)
+              ? project.categories
+              : [],
             description: Array.isArray(project.description)
               ? project.description[0] || project.description.join(" ")
               : project.description || "",
           }),
         );
 
+        setAllProjects(projectsArray);
         setProjects(projectsArray);
       } catch (error) {
         console.error("프로젝트 로드 실패:", error);
@@ -178,6 +191,68 @@ const ProjectsGallery = () => {
 
     loadProjects();
   }, []);
+
+  const uniqueValues = (key) => {
+    const values = new Set();
+    allProjects.forEach((p) => {
+      if (key === "role" && p.role) {
+        values.add(p.role);
+      } else if (key === "languages" && Array.isArray(p.languages)) {
+        p.languages.forEach((v) => values.add(v));
+      } else if (key === "techStacks" && Array.isArray(p.techStacks)) {
+        p.techStacks.forEach((v) => values.add(v));
+      } else if (key === "categories" && Array.isArray(p.categories)) {
+        p.categories.forEach((v) => values.add(v));
+      }
+    });
+    return Array.from(values).sort();
+  };
+
+  const handleFilterTypeChange = (e) => {
+    const newType = e.target.value;
+    setFilterType(newType);
+    setFilterValue("");
+
+    if (newType === "all") {
+      setProjects(allProjects);
+      return;
+    }
+  };
+
+  const handleFilterValueChange = (e) => {
+    const value = e.target.value;
+    setFilterValue(value);
+
+    if (!value) {
+      setProjects(allProjects);
+      return;
+    }
+
+    let filtered = allProjects;
+    if (filterType === "role") {
+      filtered = allProjects.filter((p) => p.role === value);
+    } else if (filterType === "languages") {
+      filtered = allProjects.filter(
+        (p) => Array.isArray(p.languages) && p.languages.includes(value),
+      );
+    } else if (filterType === "techStacks") {
+      filtered = allProjects.filter(
+        (p) => Array.isArray(p.techStacks) && p.techStacks.includes(value),
+      );
+    } else if (filterType === "categories") {
+      filtered = allProjects.filter(
+        (p) => Array.isArray(p.categories) && p.categories.includes(value),
+      );
+    }
+
+    setProjects(filtered);
+  };
+
+  const handleClearFilter = () => {
+    setFilterType("all");
+    setFilterValue("");
+    setProjects(allProjects);
+  };
 
   if (loading) {
     return (
@@ -203,6 +278,75 @@ const ProjectsGallery = () => {
           <FolderKanban size={32} strokeWidth={2} className="gallery-title-icon" aria-hidden />
           프로젝트 경험
         </h1>
+        <div className="gallery-filters">
+          <div className="gallery-filter-row">
+            <div className="filter-type-select">
+              <label htmlFor="filter-type">
+                <Filter size={16} strokeWidth={2} aria-hidden />
+                <span>필터 유형</span>
+              </label>
+              <select
+                id="filter-type"
+                value={filterType}
+                onChange={handleFilterTypeChange}
+              >
+                <option value="all">전체</option>
+                <option value="languages">사용 언어</option>
+                <option value="techStacks">기술 스택</option>
+                <option value="categories">카테고리</option>
+                <option value="role">포지션</option>
+              </select>
+            </div>
+            {filterType !== "all" && (
+              <div className="filter-value-select">
+                <label htmlFor="filter-value">
+                  <span>값 선택</span>
+                </label>
+                <select
+                  id="filter-value"
+                  value={filterValue}
+                  onChange={handleFilterValueChange}
+                >
+                  <option value="">전체</option>
+                  {filterType === "languages" &&
+                    uniqueValues("languages").map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  {filterType === "techStacks" &&
+                    uniqueValues("techStacks").map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  {filterType === "categories" &&
+                    uniqueValues("categories").map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  {filterType === "role" &&
+                    uniqueValues("role").map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            )}
+            {(filterType !== "all" || filterValue) && (
+              <button
+                type="button"
+                className="gallery-clear-filter-btn"
+                onClick={handleClearFilter}
+              >
+                <FilterX size={16} strokeWidth={2} aria-hidden />
+                <span>필터 초기화</span>
+              </button>
+            )}
+          </div>
+        </div>
         <div className="gallery-grid">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />

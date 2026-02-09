@@ -48,6 +48,7 @@
   width: 250px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   align-self: center;
+  flex:0.35;
 }
 
 /* 프로필 전체 래퍼 */
@@ -56,15 +57,16 @@
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  padding-top: 20px;
-  padding-bottom: 30px;
-  margin-bottom: 30px;
+  padding-right: 60px;
   border-bottom: 2px solid #e8e8e8;
 }
 
 /* 텍스트 영역: 세로 배치 */
+/* 기본은 왼쪽 정렬 */
 .profile-text {
   display: flex;
+  flex-grow: 2;
+  flex-shrink: 0;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
@@ -91,6 +93,10 @@
   padding-top: 20px;
 }
 
+.about-me-content-bottom {
+  margin-top: 10px;
+}
+
 .about-me-intro {
   font-size: 1.3rem;
   color: #2c3e50;
@@ -104,6 +110,64 @@
   color: #555;
   line-height: 1.8;
   margin-bottom: 15px;
+}
+
+.about-me-intro-inline {
+  margin-top: 18px;
+  font-size: 1.05rem;
+  color: #34495e;
+  line-height: 1.8;
+}
+
+/* 데스크톱에서 헤더 영역을 화면에 꽉 차게 (NavBar 높이 고려) */
+@media (min-width: 769px) {
+  .header {
+    min-height: calc(100vh - 80px);
+    margin-top: 80px;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .header-wrapper {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0px 10px 80px 80px;
+    border-radius: 0;
+    border: none;
+    background-color: transparent;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .header-main-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .profile {
+    flex: 1;
+    border-bottom: none;
+    padding-bottom: 10px;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .profile-background {
+    margin-left: 0;
+  }
+
+  .profile-text {
+    flex: 1;
+    align-items: flex-end;
+  }
+
+  .about-me-content-bottom {
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -122,6 +186,9 @@
 
   .profile {
     flex-direction: column;
+    text-align: center;
+    padding: 0;
+    margin: 0;
   }
 
   .profile-img {

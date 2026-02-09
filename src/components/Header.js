@@ -5,32 +5,36 @@ import "../Header.css";
 
 const Header = () => (
   <header className="header">
-    <div className="wrapper">
+    <div className="wrapper header-wrapper">
       <h1 className="section-title">
         <User size={28} strokeWidth={2} className="section-title-icon" aria-hidden />
         About Me
       </h1>
-      <div className="profile">
-        <div className="profile-background">
-          <img
-            src="https://i.imgur.com/2aGESqu.png"
-            alt="Profile"
-            className="profile-img"
-          />
-        </div>
-        <div className="profile-text">
-          <h2>Kim Dong Wook</h2>
-          <h2>김동욱</h2>
-          <h3>연세대학교 응용통계학과 &amp; 컴퓨터과학과</h3>
-          <h3>Full-Stack AI Engineer</h3>
+      <div className="header-main-row">
+        <div className="profile">
+          <div className="profile-background">
+            <img
+              src="https://i.imgur.com/2aGESqu.png"
+              alt="Profile"
+              className="profile-img"
+            />
+          </div>
+          <div className="profile-text">
+            <h2>Kim Dong Wook</h2>
+            <h2>김동욱</h2>
+            <h3>연세대학교 응용통계학과 &amp; 컴퓨터과학과</h3>
+            <h3>Full-Stack AI Engineer</h3>
+            <p className="about-me-intro-inline">
+              안녕하십니까, 저는 풀스택 AI 엔지니어 김동욱입니다.
+              <br />
+              데이터 사이언스와 소프트웨어 개발, AI 연구에 열정을 가지고
+              <br />
+              연세대학교 응용통계학과와 컴퓨터과학과에서 학업을 진행하고 있습니다.
+            </p>
+          </div>
         </div>
       </div>
-      <div className="about-me-content">
-        <p className="about-me-intro">
-          안녕하십니까, 저는 풀스택 AI 엔지니어 김동욱입니다. <br />
-          데이터 사이언스와 소프트웨어 개발, AI 연구에 열정을 가지고 <br />
-          연세대학교 응용통계학과와 컴퓨터과학과에서 학업을 진행하고 있습니다.
-        </p>
+      <div className="about-me-content about-me-content-bottom">
         <p className="about-me-detail">
           저는 <b>‘힘든 아이들을 돕자’</b>는 목표가 명확한 사람입니다. <br />
           고등학교 시절, 1달 가량 등교를 못했었고 교실에 제 침대가 있을 정도로

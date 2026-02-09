@@ -1,7 +1,7 @@
 // components/Projects.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FolderKanban, FilterX, ArrowRight, Loader2 } from "lucide-react";
+import { FolderKanban, FilterX, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import "../Projects.css";
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
@@ -124,6 +124,26 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
+
+  // 화면 크기에 따라 페이지당 아이템 수 조정 (데스크톱: 9개, 모바일: 4개)
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      if (window.innerWidth <= 768) {
+        setItemsPerPage(4);
+      } else {
+        setItemsPerPage(9);
+      }
+    };
+
+    updateItemsPerPage();
+    window.addEventListener("resize", updateItemsPerPage);
+
+    return () => {
+      window.removeEventListener("resize", updateItemsPerPage);
+    };
+  }, []);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -165,6 +185,7 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
         }
 
         setProjects(projectsArray);
+        setCurrentPage(1);
       } catch (error) {
         console.error("프로젝트 로드 실패:", error);
         setProjects([]);
@@ -192,6 +213,21 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
       </section>
     );
   }
+
+  const totalPages = Math.max(1, Math.ceil(projects.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProjects = projects.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(1, prev - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+  };
 
   return (
     <section className="projects">
@@ -222,7 +258,7 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
           </button>
         )}
         <div className="project-preview-list">
-          {projects.map((project) => (
+          {paginatedProjects.map((project) => (
             <div
               key={project.id}
               className="project-preview-card"
@@ -239,6 +275,31 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
             </div>
           ))}
         </div>
+        {projects.length > 0 && (
+          <div className="projects-pagination">
+            <button
+              type="button"
+              className="page-nav-btn"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              <ArrowLeft size={18} strokeWidth={2} aria-hidden />
+              <span>이전</span>
+            </button>
+            <span className="page-indicator">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              type="button"
+              className="page-nav-btn"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              <span>다음</span>
+              <ArrowRight size={18} strokeWidth={2} aria-hidden />
+            </button>
+          </div>
+        )}
         <button
           className="view-all-projects"
           onClick={() => navigate("/projects")}
