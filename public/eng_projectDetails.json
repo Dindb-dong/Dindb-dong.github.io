@@ -1,0 +1,247 @@
+{
+  "1": {
+    "title": "REM Sleep Safety Test App",
+    "role": "App Developer",
+    "languages": ["Dart"],
+    "techStacks": ["Flutter"],
+    "categories": ["Data Science", "Mobile"],
+    "description": [
+      "RN-based app with BLE integration and data analysis.",
+      "Developed for REM sleep measurement and vagus nerve stimulation devices. (Discontinued)"
+    ],
+    "extraDescription": [
+      "BLE Integration: Collects data by connecting with REM sleep measurement devices.",
+      "Data Analysis: Analyzes collected data to determine sleep safety."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/rem-sleep-safety"}
+    ]
+  },
+  "2": {
+    "title": "POWAPOWA Shopping Mall",
+    "role": "Developer",
+    "languages": ["JavaScript"],
+    "techStacks": [],
+    "categories": ["Web"],
+    "description": [
+      "Cafe24 hosting-based shopping mall website.",
+      "Developed and launched in just 3 days due to the outsourcing company going inactive."
+    ],
+    "extraDescription": [
+      "Social login, external payment integration were conducted with direct authorization from the CEO.",
+      "Implemented blog and reels review tabs to increase purchase conversion rate.",
+      "Created device usage reels auto-play popup script to increase dwell time.",
+      "Conducted content creation and optimization for Naver SEO.",
+      "Handled all other shopping mall-related development and maintenance."
+    ],
+    "links": [
+      {"name": "Website", "url": "https://www.powapowamall.com/"}
+    ]
+  },
+  "3": {
+    "title": "Logistics Management Automation System",
+    "role": "Full-Stack Developer",
+    "languages": ["TypeScript"],
+    "techStacks": ["React", "Node.js", "Supabase"],
+    "categories": ["Web", "Computer Science"],
+    "description": [
+      "React, Node.js, Supabase-based logistics management automation system."
+    ],
+    "extraDescription": [
+      "Addressed the inefficient workflow where shopping mall managers had to manually upload Excel files to update shipping information received from logistics agencies.",
+      "Developed using Cafe24 API to allow agencies to directly create/modify shipping information."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/auto_shipping"},
+      {"name": "Website (Discontinued)", "url": "https://alushc-autoship.netlify.app"}
+    ]
+  },
+  "4": {
+    "title": "Brand Promotional QR Routine Challenge Web App",
+    "role": "Developer",
+    "languages": ["TypeScript"],
+    "techStacks": ["React"],
+    "categories": ["Web"],
+    "description": [
+      "React-based brand promotional QR routine challenge web app."
+    ],
+    "extraDescription": [
+      "Accessible by scanning QR cards provided with brand product purchases. (Also accessible via direct link)",
+      "Prevented fraud by fetching internet time based on user's access IP.",
+      "Users can enter reward lottery after 2+ consecutive weeks of attendance."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/QR_routine_Challenge"},
+      {"name": "Website", "url": "https://routine-challenge-with-powami.netlify.app/"}
+    ]
+  },
+  "5": {
+    "title": "Emotion Classification & Style Transfer Model",
+    "role": "CV, ML Engineer",
+    "languages": ["Python"],
+    "techStacks": ["PyTorch", "TensorFlow"],
+    "categories": ["AI", "Data Science"],
+    "description": [
+      "Architecture for emotion classification using CNN and style transfer using Neural Style Transfer."
+    ],
+    "extraDescription": [
+      "Emotion Classification: Fine-tuned EfficientFace CNN model to classify emotions in given images.",
+      "Style Transfer: Fine-tuned AdaIN Neural Style Transfer model to transfer given image styles to 'Inside Out' movie style.",
+      "Wrote most of the code including model implementation, testing, and visualization."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/YAI-EmotionStyleTransfer"}
+    ]
+  },
+  "6": {
+    "title": "CLIP + BLIP2 Query based Text to Image Retrieval Project",
+    "role": "CV, ML Engineer",
+    "languages": ["Python"],
+    "techStacks": ["PyTorch", "TensorFlow"],
+    "categories": ["AI", "Data Science"],
+    "description": [
+      "Project that finds scenes users want using CLIP + BLIP2."
+    ],
+    "extraDescription": [
+      "When user's brief description is input, queries are split via LLM.",
+      "Videos are split into p windows and q frames for embedding.",
+      "Similarity is extracted by inputting split queries and uniformly sampled frames into CLIP model to select Top K segments.",
+      "Selected segments are refined via BLIP2 model to find the segment most similar to the query."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/YAI_17_Winter_Project"}
+    ]
+  },
+  "7": {
+    "title": "Dueling DDQN based Pokemon Game Agent Project",
+    "role": "RL Engineer",
+    "languages": ["Python"],
+    "techStacks": ["PyTorch", "TensorFlow"],
+    "categories": ["AI", "Data Science", "Game"],
+    "description": [
+      "Project developing a Pokemon game battle agent using Dueling DDQN."
+    ],
+    "extraDescription": [
+      "I had already built a simulation environment on the web in a previous project.",
+      "Therefore, I reimplemented the same functionality in a completely different language to port to Python.",
+      "Developed a Pokemon game battle agent by applying Dueling DDQN algorithm trained on 5M+ battles with 1000+ dimensions per turn.",
+      "Achieved ~33% win rate against base hardcoded AI, but 60%+ win rate against general users."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/Yakemon_RL"},
+      {"name": "Instagram", "url": "https://www.instagram.com/p/DKrd90ty1AG/"}
+    ]
+  },
+  "8": {
+    "title": "NOI LAB Brain Report Auto-Generation Script",
+    "role": "Developer",
+    "languages": ["Python"],
+    "techStacks": [],
+    "categories": ["Data Science"],
+    "description": [
+      "Script that automatically generates systematic reports from various brain capability measurement results."
+    ],
+    "extraDescription": [
+      "Designed brain measurement activities together with the CEO and other team members.",
+      "Converts results from each activity into scores, then generates report as PDF.",
+      "Uploads file to Google Drive to generate download QR code, then creates final PDF with QR code for user to print and download."
+    ],
+    "links": [
+      {"name": "Private GitHub", "url": ""}
+    ]
+  },
+  "9": {
+    "title": "Yakemon: Self-Developed Pokemon Game Agent Project",
+    "role": "Frontend Developer",
+    "languages": ["TypeScript", "JavaScript"],
+    "techStacks": ["React"],
+    "categories": ["Game", "Web", "AI"],
+    "description": [
+      "Self-developed Pokemon game simulation web game built with React and TypeScript."
+    ],
+    "extraDescription": [
+      "Reduced bandwidth by auto-crawling Pokemon sprite images, converting to webp, and caching.",
+      "Implemented 100+ Pokemon characteristics, move effects, and battle logic from scratch without any open source.",
+      "Introduced win streak feature with increasingly stronger opponents; no user has achieved 44+ consecutive wins yet."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/Yakemon"},
+      {"name": "Website", "url": "https://yakemon.netlify.app/"}
+    ]
+  },
+  "10": {
+    "title": "UPCY: Reformer & Upcycler Matching Secondhand Clothing Trading Platform",
+    "role": "Frontend Leader",
+    "languages": ["TypeScript"],
+    "techStacks": ["React Native", "AWS"],
+    "categories": ["Mobile"],
+    "description": [
+      "React Native-based secondhand clothing trading platform."
+    ],
+    "extraDescription": [
+      "Project was under development before I joined the society.",
+      "Became tech team leader without handover when the previous leader suddenly left.",
+      "Despite this, implemented all app features through steady communication with design, marketing, and research teams.",
+      "Proceeded only to TestFlight testing before launch due to business registration and payment issues."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/sdp-tech/UPCY_Mobile"}
+    ]
+  },
+  "11": {
+    "title": "ACALINK: Web-based Integrated Academy Management Platform",
+    "role": "Full-Stack Developer",
+    "languages": ["TypeScript"],
+    "techStacks": ["React", "Node.js", "Supabase"],
+    "categories": ["Computer Science", "Web"],
+    "description": [
+      "Integrated academy management platform developed with React, Node.js, and Supabase."
+    ],
+    "extraDescription": [
+      "Identified that many small-to-medium academies lack websites and use Naver Cafe or blogs for promotion with limited effectiveness, leading to multi-tenant SaaS platform development.",
+      "Designed platform for principal and teacher convenience based on 3 years of consulting academy experience.",
+      "Designed flow for student management, teacher management, real-time sync work schedule, class management, payment management, main page editing so users can manage the site without developers.",
+      "Currently collaborating with Daechi-dong consulting academy; planning to expand service."
+    ],
+    "links": [
+      {"name": "Private GitHub", "url": ""},
+      {"name": "Website", "url": "https://acalink.netlify.app/"}
+    ]
+  },
+  "12": {
+    "title": "Data Visualization: Yonsei University Mileage Simulator",
+    "role": "Frontend Developer",
+    "languages": ["TypeScript", "JavaScript"],
+    "techStacks": ["React"],
+    "categories": ["Web", "Computer Science"],
+    "description": [
+      "Data visualization course project, React-based web app."
+    ],
+    "extraDescription": [
+      "Crawled Everytime course review data and Yonsei University course registration mileage data.",
+      "Visualized prerequisite relationships by representing courses in graph format.",
+      "Allows viewing course reviews, ratings, mileage cut in one screen; well received by students."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/saveMyLazy"}
+    ]
+  },
+  "13": {
+    "title": "QCNN: Quantum Convolutional Neural Network",
+    "role": "CV, ML Engineer",
+    "languages": ["Python"],
+    "techStacks": ["Qiskit", "PyTorch", "Pennylane"],
+    "categories": ["AI", "Data Science", "Quantum Computing"],
+    "description": [
+      "Project classifying images using QCNN model."
+    ],
+    "extraDescription": [
+      "Project classifying AI-generated vs human-generated images.",
+      "Implemented model using both Qiskit and Pennylane frameworks.",
+      "Built quantum network with 4-12 qubits using Yonsei University's 128-qubit quantum computer, implementing image classification model."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/QCNN"}
+    ]
+  }
+}

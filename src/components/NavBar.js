@@ -1,14 +1,29 @@
 // components/NavBar.js
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, Globe } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 import '../NavBar.css';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  // 햄버거 메뉴 열림/닫힘 상태
+  const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const langMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target)) {
+        setLangMenuOpen(false);
+      }
+    };
+    if (langMenuOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [langMenuOpen]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -61,6 +76,47 @@ const NavBar = () => {
           <button onClick={() => handleNavClick('experience')}>Experience</button>
           <button onClick={handleProjectsClick}>Projects</button>
           <button onClick={() => handleNavClick('contact')}>Contact</button>
+          <div className="nav-lang-wrapper" ref={langMenuRef}>
+            <button
+              type="button"
+              className="nav-lang-trigger"
+              onClick={() => setLangMenuOpen(!langMenuOpen)}
+              aria-haspopup="listbox"
+              aria-expanded={langMenuOpen}
+              aria-label="Language Settings"
+            >
+              <Globe size={18} strokeWidth={2} aria-hidden />
+              <span>{language === 'ko' ? '한국어' : 'English'}</span>
+            </button>
+            {langMenuOpen && (
+              <div className="nav-lang-dropdown" role="listbox">
+                <button
+                  role="option"
+                  aria-selected={language === 'ko'}
+                  className={language === 'ko' ? 'active' : ''}
+                  onClick={() => {
+                    setLanguage('ko');
+                    setLangMenuOpen(false);
+                    setIsOpen(false);
+                  }}
+                >
+                  한국어
+                </button>
+                <button
+                  role="option"
+                  aria-selected={language === 'en'}
+                  className={language === 'en' ? 'active' : ''}
+                  onClick={() => {
+                    setLanguage('en');
+                    setLangMenuOpen(false);
+                    setIsOpen(false);
+                  }}
+                >
+                  English
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       

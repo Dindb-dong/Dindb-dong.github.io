@@ -91,8 +91,11 @@ export const TECH_STACKS = [
 ];
 
 const Skills = ({ onSkillClick = null }) => {
-  // 기술 스택과 로고 URL 매핑 (Simple Icons CDN 사용)
-  
+  // TECH_STACKS가 LANGUAGES보다 많을 때, 모바일에서 같은 행 수를 갖도록 열 개수 계산
+  const techColumns =
+    TECH_STACKS.length > LANGUAGES.length
+      ? Math.ceil(TECH_STACKS.length / LANGUAGES.length)
+      : 1;
 
   const SkillItem = ({ item, type }) => (
     <Tooltip.Root delayDuration={300}>
@@ -124,25 +127,46 @@ const Skills = ({ onSkillClick = null }) => {
   return (
     <section className="skills">
       <div className="wrapper">
-        <h3 className="skills-subtitle">Click to see projects using the skills!</h3>
-        <h2 className="section-title">
-          <Layers size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
-          Usable Languages
-        </h2>
-        <ul className="skills-list">
-          {LANGUAGES.map((lang, index) => (
-            <SkillItem key={index} item={lang} type="lang" />
-          ))}
-        </ul>
-        <h2 className="section-title">
-          <Wrench size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
-          Tech Stacks
-        </h2>
-        <ul className="skills-list">
-          {TECH_STACKS.map((tech, index) => (
-            <SkillItem key={index} item={tech} type="tech" />
-          ))}
-        </ul>
+        <h3 className="skills-subtitle">
+          Click to see projects using the skills!
+        </h3>
+        <div className="skills-section-container">
+          <div className="skills-section">
+            <h2 className="section-title">
+              <Layers
+                size={26}
+                strokeWidth={2}
+                className="section-title-icon"
+                aria-hidden
+              />
+              Languages
+            </h2>
+            <ul className="skills-list">
+              {LANGUAGES.map((lang, index) => (
+                <SkillItem key={index} item={lang} type="lang" />
+              ))}
+            </ul>
+          </div>
+          <div className="skills-section">
+            <h2 className="section-title">
+              <Wrench
+                size={26}
+                strokeWidth={2}
+                className="section-title-icon"
+                aria-hidden
+              />
+              Tech Stacks
+            </h2>
+            <ul
+              className="skills-list skills-list--tech"
+              style={{ "--tech-cols": techColumns }}
+            >
+              {TECH_STACKS.map((tech, index) => (
+                <SkillItem key={index} item={tech} type="tech" />
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
   );

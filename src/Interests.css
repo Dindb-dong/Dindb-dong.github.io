@@ -14,6 +14,14 @@
   border: 1px solid #e8e8e8;
 }
 
+.interests-subtitle {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
 .interests h2 {
   margin-bottom: 30px;
   color: #2c3e50;

@@ -1,7 +1,14 @@
 // components/Projects.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FolderKanban, FilterX, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
+import {
+  FolderKanban,
+  FilterX,
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
 import "../Projects.css";
 
 // 미디어 로더 컴포넌트 - 이미지 또는 비디오 자동 감지
@@ -145,12 +152,16 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
     };
   }, []);
 
+  const { language } = useLanguage();
+
   useEffect(() => {
     const loadProjects = async () => {
       try {
-        const response = await fetch(
-          `${process.env.PUBLIC_URL}/projectDetails.json`,
-        );
+        const baseName = language === "en" ? "eng_projectDetails" : "projectDetails";
+        let response = await fetch(`${process.env.PUBLIC_URL}/${baseName}.json`);
+        if (!response.ok && language === "en") {
+          response = await fetch(`${process.env.PUBLIC_URL}/projectDetails.json`);
+        }
         if (!response.ok) {
           throw new Error("프로젝트 데이터를 불러올 수 없습니다.");
         }
@@ -161,16 +172,26 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
             id: parseInt(id),
             title: project.title,
             role: project.role,
-            languages: Array.isArray(project.languages) ? project.languages : [],
-            techStacks: Array.isArray(project.techStacks) ? project.techStacks : [],
-            categories: Array.isArray(project.categories) ? project.categories : [],
+            languages: Array.isArray(project.languages)
+              ? project.languages
+              : [],
+            techStacks: Array.isArray(project.techStacks)
+              ? project.techStacks
+              : [],
+            categories: Array.isArray(project.categories)
+              ? project.categories
+              : [],
             description: Array.isArray(project.description)
               ? project.description[0] || project.description.join(" ")
               : project.description || "",
           }),
         );
 
-        if (activeFilter && activeFilter.value && activeFilter.value.trim() !== "") {
+        if (
+          activeFilter &&
+          activeFilter.value &&
+          activeFilter.value.trim() !== ""
+        ) {
           if (activeFilter.type === "tag") {
             projectsArray = projectsArray.filter(
               (p) =>
@@ -195,19 +216,24 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
     };
 
     loadProjects();
-  }, [activeFilter]);
+  }, [activeFilter, language]);
 
   if (loading) {
     return (
       <section className="projects">
         <div className="wrapper">
           <h2 className="section-title">
-            <FolderKanban size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
-            프로젝트 경험
+            <FolderKanban
+              size={26}
+              strokeWidth={2}
+              className="section-title-icon"
+              aria-hidden
+            />
+            Projects Experience
           </h2>
           <p className="projects-intro projects-loading">
             <Loader2 size={22} className="spin" aria-hidden />
-            로딩 중...
+            Loading...
           </p>
         </div>
       </section>
@@ -233,19 +259,24 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
     <section className="projects">
       <div className="wrapper">
         <h2 className="section-title">
-          <FolderKanban size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
+          <FolderKanban
+            size={26}
+            strokeWidth={2}
+            className="section-title-icon"
+            aria-hidden
+          />
           {activeFilter
             ? activeFilter.type === "tag"
-              ? `${activeFilter.value} 사용 프로젝트`
-              : `${activeFilter.value} 관련 프로젝트`
-            : "프로젝트 경험"}
+              ? `${activeFilter.value} Projects using`
+              : `${activeFilter.value} Related Projects`
+            : "Projects Experience"}
         </h2>
         <p className="projects-intro">
           {activeFilter
             ? activeFilter.type === "tag"
-              ? `${activeFilter.value}를 사용한 프로젝트 목록입니다.`
-              : `${activeFilter.value} 관련 프로젝트 목록입니다.`
-            : "더 자세한 내용을 보시려면 프로젝트를 클릭하세요."}
+              ? `Projects using ${activeFilter.value}`
+              : `Projects related to ${activeFilter.value}`
+            : "Click to see more details about the projects."}
         </p>
         {activeFilter && onClearFilter && (
           <button
@@ -254,7 +285,7 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
             onClick={onClearFilter}
           >
             <FilterX size={18} strokeWidth={2} aria-hidden />
-            <span>필터 해제 (전체 보기)</span>
+            <span>Clear Filter (Show All)</span>
           </button>
         )}
         <div className="project-preview-list">
@@ -284,7 +315,7 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
               disabled={currentPage === 1}
             >
               <ArrowLeft size={18} strokeWidth={2} aria-hidden />
-              <span>이전</span>
+              <span>Previous</span>
             </button>
             <span className="page-indicator">
               {currentPage} / {totalPages}
@@ -295,7 +326,7 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
             >
-              <span>다음</span>
+              <span>Next</span>
               <ArrowRight size={18} strokeWidth={2} aria-hidden />
             </button>
           </div>
@@ -304,7 +335,7 @@ const Projects = ({ activeFilter = null, onClearFilter = null }) => {
           className="view-all-projects"
           onClick={() => navigate("/projects")}
         >
-          <span>모든 프로젝트 보기</span>
+          <span>View All Projects</span>
           <ArrowRight size={20} strokeWidth={2} aria-hidden />
         </button>
       </div>

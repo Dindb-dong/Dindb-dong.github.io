@@ -1,6 +1,7 @@
 // components/DetailedProject.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import {
   ArrowLeft,
   ExternalLink,
@@ -161,14 +162,18 @@ const DetailedProject = () => {
   const [isScanning, setIsScanning] = useState(true);
   const [maxIndexToCheck, setMaxIndexToCheck] = useState(10); // 최대 10개까지 체크
 
+  const { language } = useLanguage();
+
   // JSON 파일에서 프로젝트 데이터 로드
   useEffect(() => {
     const loadProjectData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `${process.env.PUBLIC_URL}/projectDetails.json`,
-        );
+        const baseName = language === "en" ? "eng_projectDetails" : "projectDetails";
+        let response = await fetch(`${process.env.PUBLIC_URL}/${baseName}.json`);
+        if (!response.ok && language === "en") {
+          response = await fetch(`${process.env.PUBLIC_URL}/projectDetails.json`);
+        }
         if (!response.ok) {
           throw new Error("프로젝트 데이터를 불러올 수 없습니다.");
         }
@@ -188,7 +193,7 @@ const DetailedProject = () => {
     };
 
     loadProjectData();
-  }, [id]);
+  }, [id, language]);
 
   // 자동으로 proj_{id}_로 시작하는 모든 미디어 파일 찾기
   useEffect(() => {

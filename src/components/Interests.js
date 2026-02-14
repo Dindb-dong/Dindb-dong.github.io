@@ -1,7 +1,15 @@
 // components/Interests.js
 import React from "react";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { Brain, Cpu, LineChart, Atom, Globe, Smartphone, Gamepad } from "lucide-react";
+import {
+  Brain,
+  Cpu,
+  LineChart,
+  Atom,
+  Globe,
+  Smartphone,
+  Gamepad,
+} from "lucide-react";
 import "../Interests.css";
 
 const interests = [
@@ -17,8 +25,16 @@ const interests = [
 const Interests = ({ onInterestClick = null }) => (
   <section className="interests">
     <div className="wrapper">
+      <h3 className="interests-subtitle">
+        Click to see projects related to the interests!
+      </h3>
       <h2 className="section-title">
-        <Brain size={26} strokeWidth={2} className="section-title-icon" aria-hidden />
+        <Brain
+          size={26}
+          strokeWidth={2}
+          className="section-title-icon"
+          aria-hidden
+        />
         I'm Interested in...
       </h2>
       <ul className="interests-list">
@@ -37,12 +53,20 @@ const Interests = ({ onInterestClick = null }) => (
                   }
                 }}
               >
-                <Icon size={24} strokeWidth={2} className="interest-icon" aria-hidden />
+                <Icon
+                  size={24}
+                  strokeWidth={2}
+                  className="interest-icon"
+                  aria-hidden
+                />
                 <span>{label}</span>
               </li>
             </Tooltip.Trigger>
             <Tooltip.Portal>
-              <Tooltip.Content className="interest-tooltip-content" sideOffset={6}>
+              <Tooltip.Content
+                className="interest-tooltip-content"
+                sideOffset={6}
+              >
                 {onInterestClick ? `${label} 관련 프로젝트 보기` : label}
               </Tooltip.Content>
             </Tooltip.Portal>

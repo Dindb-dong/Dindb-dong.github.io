@@ -1,6 +1,7 @@
 // components/ProjectsGallery.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import { FolderKanban, Filter, FilterX, Loader2 } from "lucide-react";
 import "../ProjectsGallery.css";
 
@@ -140,6 +141,7 @@ const ProjectCard = ({ project }) => {
 };
 
 const ProjectsGallery = () => {
+  const { language } = useLanguage();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allProjects, setAllProjects] = useState([]);
@@ -150,9 +152,11 @@ const ProjectsGallery = () => {
   useEffect(() => {
     const loadProjects = async () => {
       try {
-        const response = await fetch(
-          `${process.env.PUBLIC_URL}/projectDetails.json`,
-        );
+        const baseName = language === "en" ? "eng_projectDetails" : "projectDetails";
+        let response = await fetch(`${process.env.PUBLIC_URL}/${baseName}.json`);
+        if (!response.ok && language === "en") {
+          response = await fetch(`${process.env.PUBLIC_URL}/projectDetails.json`);
+        }
         if (!response.ok) {
           throw new Error("프로젝트 데이터를 불러올 수 없습니다.");
         }
@@ -190,7 +194,7 @@ const ProjectsGallery = () => {
     };
 
     loadProjects();
-  }, []);
+  }, [language]);
 
   const uniqueValues = (key) => {
     const values = new Set();
@@ -259,12 +263,17 @@ const ProjectsGallery = () => {
       <div className="projects-gallery">
         <div className="gallery-wrapper">
           <h1 className="gallery-title">
-            <FolderKanban size={32} strokeWidth={2} className="gallery-title-icon" aria-hidden />
-            프로젝트 경험
+            <FolderKanban
+              size={32}
+              strokeWidth={2}
+              className="gallery-title-icon"
+              aria-hidden
+            />
+            Projects Experience
           </h1>
           <p className="gallery-loading">
             <Loader2 size={22} className="spin" aria-hidden />
-            로딩 중...
+            Loading...
           </p>
         </div>
       </div>
@@ -275,39 +284,44 @@ const ProjectsGallery = () => {
     <div className="projects-gallery">
       <div className="gallery-wrapper">
         <h1 className="gallery-title">
-          <FolderKanban size={32} strokeWidth={2} className="gallery-title-icon" aria-hidden />
-          프로젝트 경험
+          <FolderKanban
+            size={32}
+            strokeWidth={2}
+            className="gallery-title-icon"
+            aria-hidden
+          />
+          Projects Experience
         </h1>
         <div className="gallery-filters">
           <div className="gallery-filter-row">
             <div className="filter-type-select">
               <label htmlFor="filter-type">
                 <Filter size={16} strokeWidth={2} aria-hidden />
-                <span>필터 유형</span>
+                <span>Filter Type</span>
               </label>
               <select
                 id="filter-type"
                 value={filterType}
                 onChange={handleFilterTypeChange}
               >
-                <option value="all">전체</option>
-                <option value="languages">사용 언어</option>
-                <option value="techStacks">기술 스택</option>
-                <option value="categories">카테고리</option>
-                <option value="role">포지션</option>
+                <option value="all">All</option>
+                <option value="languages">Languages</option>
+                <option value="techStacks">Tech Stacks</option>
+                <option value="categories">Categories</option>
+                <option value="role">Role</option>
               </select>
             </div>
             {filterType !== "all" && (
               <div className="filter-value-select">
                 <label htmlFor="filter-value">
-                  <span>값 선택</span>
+                  <span>Select Value</span>
                 </label>
                 <select
                   id="filter-value"
                   value={filterValue}
                   onChange={handleFilterValueChange}
                 >
-                  <option value="">전체</option>
+                  <option value="">All</option>
                   {filterType === "languages" &&
                     uniqueValues("languages").map((v) => (
                       <option key={v} value={v}>
@@ -342,7 +356,7 @@ const ProjectsGallery = () => {
                 onClick={handleClearFilter}
               >
                 <FilterX size={16} strokeWidth={2} aria-hidden />
-                <span>필터 초기화</span>
+                <span>Clear Filter</span>
               </button>
             )}
           </div>

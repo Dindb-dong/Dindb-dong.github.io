@@ -1,0 +1,70 @@
+[
+  {
+    "id": 1,
+    "groupName": "Alus Healthcare Co., Ltd.",
+    "period": "2025.06 - 2025.09",
+    "position": "Researcher",
+    "description": [
+      "Various data analysis to support new business development",
+      "REM sleep safety test app, brand game development (discontinued)",
+      "Cafe24-based shopping mall development, operation and management",
+      "Multiple OEM meetings for health functional food launch (including overseas)",
+      "Other business-related tasks, C-level executive duties",
+      "Logistics management automation system development"
+    ],
+    "projects": [
+      "REM Sleep Safety Test App",
+      "powapowa Shopping Mall",
+      "Logistics Management Automation System",
+      "Brand Promotional QR Routine Challenge Web App"
+    ]
+  },
+  {
+    "id": 2,
+    "groupName": "Yonsei University AI Club YAI",
+    "period": "2025.03 ~",
+    "position": "Research Member & External Relations Executive",
+    "description": [
+      "CV: EfficientFace + AdaIN → Emotion classification and weight generation for style filter application",
+      "CV: CLIP + BLIP2 Query based Text to Image Retrieval → Find scene range when describing desired scene",
+      "RL: Dueling DDQN based Pokemon Game Agent → Pokemon game battle agent trained on self-developed simulator"
+    ],
+    "projects": [
+      "EfficientFace + AdaIN Neural Style Transfer Project",
+      "CLIP + BLIP2 Query based Text to Image Retrieval Project",
+      "Yakemon: Dueling DDQN based Pokemon Game Agent Project (Self-Developed)"
+    ]
+  },
+  {
+    "id": 3,
+    "groupName": "Noi Lab Co., Ltd.",
+    "period": "2024.07 ~ 2025.11",
+    "position": "Development Team Intern",
+    "description": [
+      "Experience in various startup events and booth operations",
+      "Systematization of indicators for measuring brain capabilities",
+      "Brain report auto-generation script development (Python)"
+    ],
+    "projects": ["Noi Lab Brain Report Auto-Generation Script"]
+  },
+  {
+    "id": 4,
+    "groupName": "Yonsei University Central Computer Club YCC",
+    "period": "2024.03 ~ 2025.06",
+    "position": "Club Member",
+    "description": ["React Native study team leader", "Unity study team leader"],
+    "projects": ["Yakemon: Self-Developed Simulation Web Game"]
+  },
+  {
+    "id": 5,
+    "groupName": "UN Youth Sustainable Development Society SDP",
+    "period": "2024.03 ~ 2025.02",
+    "position": "14th Tech Team Leader",
+    "description": [
+      "React Native-based secondhand clothing trading platform development",
+      "Collaboration with marketing, design, research teams as tech team leader",
+      "Close communication experience with planners and designers"
+    ],
+    "projects": ["UPCY: React Native-based Secondhand Clothing Trading Platform"]
+  }
+]

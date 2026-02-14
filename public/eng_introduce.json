@@ -1,0 +1,20 @@
+{
+  "sectionTitle": "About Me",
+  "profile": {
+    "imageUrl": "https://i.imgur.com/2aGESqu.png",
+    "nameEn": "Kim Dong Wook",
+    "nameKo": "김동욱",
+    "subtitle": "Yonsei University, Applied Statistics & Computer Science",
+    "role": "Full-Stack AI Engineer",
+    "intro": [
+      "Hello, I am Kim Dong Wook, a Full-Stack AI Engineer.",
+      "With a passion for data science, software development, and AI research,",
+      "I am pursuing my studies in Applied Statistics and Computer Science at Yonsei University."
+    ]
+  },
+  "details": [
+    "I am someone with a clear goal: <b>'Help children in need.'</b> <br /> In high school, I was unable to attend school for about a month, and my health was so poor that there was even a bed for me in the classroom. <br /> As I wanted to help children with physical difficulties like myself through technology, I chose to major in Applied Statistics despite being from a humanities background. <br /> <b>Having started development late, I have studied harder, challenged myself in various activities, and given my best to each of them.</b> <br />",
+    "To become a good developer, I have experienced <b>various positions</b> including apps, web, frontend, backend, and DB. <br /> To broaden my perspective on the world and repay the efforts of those who believed in me, I <b>gained truly diverse experience</b> while working at companies. <br /> After collaborating with <b>PMs and designers</b> to create user-centered services, I realized the importance of \"structural design.\" <br /> Through the experience of <b>building an AI learning environment from scratch</b> as a project team leader, and <br /> <b>developing and training AI models from scratch</b> tailored to that environment, I realized the importance of \"fundamentals\" underlying \"application.\"",
+    "<b> To find the fastest answer</b>, I am someone who <b>reviews from scratch</b>. <br />I will continue to strive so that my efforts may reach those reading this. <br /> Thank you."
+  ]
+}
