@@ -3,9 +3,10 @@
   const DEFAULT_LOCAL_BROWSER_WS = "ws://127.0.0.1:8787/browser";
   const REMOTE_BROWSER_STORAGE_KEY = "dindbos-remote-browser-ws";
   const LANGUAGE_STORAGE_KEY = "dindbos-language";
+  const ICON_POSITIONS_STORAGE_KEY = "dindbos-icon-positions-v2";
   const SUPPORTED_LOCALES = ["ko", "en"];
-  const MIN_WINDOW_WIDTH = 320;
-  const MIN_WINDOW_HEIGHT = 240;
+  const MIN_WINDOW_WIDTH = 360;
+  const MIN_WINDOW_HEIGHT = 260;
   const WINDOW_BOUNDS = { left: 8, top: 70, right: 8, bottom: 12 };
   const LEGACY_FILES = {
     ko: {
@@ -270,15 +271,18 @@
       prewarmRemoteBrowser();
       systemStatus.textContent = t("status.mounted", { count: state.projects.length });
       renderDesktop();
-      openWindow("welcome", {
-        title: t("title.welcome"),
-        getTitle: () => t("title.welcome"),
-        width: 720,
-        height: 430,
-        x: 310,
-        y: 118,
-        content: renderWelcome,
-      });
+      if (!isMobileViewport()) {
+        openWindow("welcome", {
+          title: t("title.welcome"),
+          getTitle: () => t("title.welcome"),
+          targetId: "launcher",
+          width: 720,
+          height: 430,
+          x: 310,
+          y: 118,
+          content: renderWelcome,
+        });
+      }
     } catch (error) {
       systemStatus.textContent = t("status.mountFailed");
       renderError(error);
@@ -359,7 +363,10 @@
       setLocale(state.locale === "ko" ? "en" : "ko");
     });
 
-    window.addEventListener("resize", constrainOpenWindows);
+    window.addEventListener("resize", () => {
+      constrainOpenWindows();
+      renderDesktop();
+    });
   }
 
   function renderDesktop() {
@@ -382,20 +389,26 @@
       app: "project",
     }));
 
-    [...coreIcons, ...projectIcons].forEach((item, index) => {
-      desktop.appendChild(createDesktopIcon(item, index));
+    const icons = [...coreIcons, ...projectIcons];
+    const positions = buildIconPositions(icons);
+
+    icons.forEach((item, index) => {
+      desktop.appendChild(createDesktopIcon(item, index, positions[item.id]));
     });
   }
 
-  function createDesktopIcon(item, index) {
+  function createDesktopIcon(item, index, position) {
     const button = document.createElement("button");
     button.className = "desktop-icon";
     button.type = "button";
     button.dataset.iconId = item.id;
+    button.dataset.appId = item.id;
 
-    const position = state.iconPositions[item.id] || defaultIconPosition(index);
-    button.style.left = `${position.x}px`;
-    button.style.top = `${position.y}px`;
+    const resolvedPosition = position || defaultIconPosition(index);
+    if (!isMobileViewport()) {
+      button.style.left = `${resolvedPosition.x}px`;
+      button.style.top = `${resolvedPosition.y}px`;
+    }
 
     const art = document.createElement("span");
     art.className = `icon-art ${item.type}`;
@@ -409,28 +422,107 @@
 
     button.append(art, label);
     button.addEventListener("click", () => {
+      if (isMobileViewport()) {
+        openDesktopItem(item);
+        return;
+      }
       document.querySelectorAll(".desktop-icon.is-selected").forEach((icon) => {
         icon.classList.remove("is-selected");
       });
       button.classList.add("is-selected");
     });
     button.addEventListener("dblclick", () => {
-      if (item.app === "project") {
-        openProject(item.projectId);
-      } else {
-        openApp(item.app);
-      }
+      openDesktopItem(item);
     });
     makeIconDraggable(button);
     return button;
   }
 
-  function defaultIconPosition(index) {
-    const col = Math.floor(index / 6);
-    const row = index % 6;
+  function openDesktopItem(item) {
+    if (item.app === "project") {
+      openProject(item.projectId);
+      return;
+    }
+    openApp(item.app);
+  }
+
+  function buildIconPositions(items) {
+    if (isMobileViewport()) return {};
+
+    const occupied = [];
+    const positions = {};
+    let changed = false;
+
+    items.forEach((item, index) => {
+      let position = state.iconPositions[item.id];
+      if (!isValidIconPosition(position)) {
+        position = defaultIconPosition(index);
+        changed = true;
+      }
+      if (!isIconPositionUsable(position, occupied)) {
+        position = findOpenIconPosition(occupied);
+        changed = true;
+      }
+      positions[item.id] = position;
+      occupied.push(iconRect(position));
+    });
+
+    if (changed) {
+      state.iconPositions = { ...state.iconPositions, ...positions };
+      saveIconPositions();
+    }
+
+    return positions;
+  }
+
+  function isIconPositionUsable(position, occupied) {
+    if (!isValidIconPosition(position)) return false;
+    const rect = iconRect(position);
+    const bounds = desktop.getBoundingClientRect();
+    if (rect.x < 0 || rect.y < 0) return false;
+    if (bounds.width && rect.x + rect.width > bounds.width) return false;
+    if (bounds.height && rect.y + rect.height > bounds.height) return false;
+    return !occupied.some((used) => rectsOverlap(rect, used));
+  }
+
+  function isValidIconPosition(position) {
+    return Number.isFinite(position?.x) && Number.isFinite(position?.y);
+  }
+
+  function findOpenIconPosition(occupied) {
+    for (let slot = 0; slot < 500; slot += 1) {
+      const position = defaultIconPosition(slot);
+      if (isIconPositionUsable(position, occupied)) return position;
+    }
+    return defaultIconPosition(occupied.length);
+  }
+
+  function iconRect(position) {
     return {
-      x: 8 + col * 118,
-      y: 8 + row * 126,
+      x: position.x,
+      y: position.y,
+      width: 112,
+      height: 132,
+    };
+  }
+
+  function rectsOverlap(a, b) {
+    return a.x < b.x + b.width
+      && a.x + a.width > b.x
+      && a.y < b.y + b.height
+      && a.y + a.height > b.y;
+  }
+
+  function defaultIconPosition(index) {
+    const rowStep = 138;
+    const colStep = 126;
+    const desktopHeight = desktop.clientHeight || Math.max(1, window.innerHeight - 98);
+    const rows = Math.max(1, Math.floor((desktopHeight - 8) / rowStep));
+    const col = Math.floor(index / rows);
+    const row = index % rows;
+    return {
+      x: 8 + col * colStep,
+      y: 8 + row * rowStep,
     };
   }
 
@@ -442,7 +534,7 @@
     let dragging = false;
 
     icon.addEventListener("pointerdown", (event) => {
-      if (window.matchMedia("(max-width: 760px)").matches) return;
+      if (isMobileViewport()) return;
       dragging = true;
       startX = event.clientX;
       startY = event.clientY;
@@ -476,6 +568,7 @@
       about: () => openWindow("about", {
         title: t("icon.about"),
         getTitle: () => t("icon.about"),
+        targetId: "about",
         width: 760,
         height: 560,
         x: 250,
@@ -485,6 +578,7 @@
       projects: () => openWindow("projects", {
         title: t("title.projects"),
         getTitle: () => t("title.projects"),
+        targetId: "projects",
         width: 920,
         height: 620,
         x: 180,
@@ -494,6 +588,7 @@
       experience: () => openWindow("experience", {
         title: t("title.experience"),
         getTitle: () => t("title.experience"),
+        targetId: "experience",
         width: 820,
         height: 560,
         x: 224,
@@ -504,6 +599,7 @@
       presentations: () => openWindow("presentations", {
         title: t("title.presentations"),
         getTitle: () => t("title.presentations"),
+        targetId: "presentations",
         width: 760,
         height: 520,
         x: 250,
@@ -513,6 +609,7 @@
       terminal: () => openWindow(`terminal-${Date.now()}`, {
         title: t("title.terminal"),
         getTitle: () => t("title.terminal"),
+        targetId: "terminal",
         width: 680,
         height: 430,
         x: 330,
@@ -523,6 +620,7 @@
       contact: () => openWindow("contact", {
         title: t("title.contact"),
         getTitle: () => t("title.contact"),
+        targetId: "contact",
         width: 520,
         height: 340,
         x: 390,
@@ -532,6 +630,7 @@
       settings: () => openWindow("settings", {
         title: t("title.settings"),
         getTitle: () => t("title.settings"),
+        targetId: "settings",
         width: 560,
         height: 390,
         x: 382,
@@ -548,6 +647,7 @@
     openWindow(`project-${project.id}`, {
       title: `${project.title}.app`,
       getTitle: () => `${state.projects.find((item) => item.id === Number(projectId))?.title || project.title}.app`,
+      targetId: `project-${project.id}`,
       width: 880,
       height: 570,
       x: 210 + project.id * 8,
@@ -560,6 +660,7 @@
     const id = `browser-${Date.now()}`;
     openWindow(id, {
       title: label,
+      targetId: "browser",
       width: 980,
       height: 650,
       x: 150,
@@ -582,6 +683,7 @@
         const current = state.presentations.find((item) => item.file === entry.file) || entry;
         return `${current.title}.pdf`;
       },
+      targetId: "presentations",
       width: 920,
       height: 660,
       x: 180,
@@ -638,6 +740,8 @@
       getTitle: options.getTitle,
       content: options.content,
       refreshOnLocale: options.refreshOnLocale !== false,
+      targetId: options.targetId,
+      restoreRect: null,
       animating: false,
     });
 
@@ -663,7 +767,7 @@
 
   function createResizeHandles() {
     const fragment = document.createDocumentFragment();
-    ["n", "e", "s", "w", "ne", "nw", "se", "sw"].forEach((direction) => {
+    ["left", "right", "bottom-left", "bottom-right"].forEach((direction) => {
       const handle = document.createElement("span");
       handle.className = `resize-handle resize-${direction}`;
       handle.dataset.resize = direction;
@@ -706,80 +810,73 @@
 
   function makeWindowResizable(frame) {
     frame.querySelectorAll("[data-resize]").forEach((handle) => {
-      let startX = 0;
-      let startY = 0;
-      let startRect = null;
-      let resizing = false;
       const direction = handle.dataset.resize;
+      let cleanup = null;
+      let startRect = null;
 
       handle.addEventListener("pointerdown", (event) => {
-        if (frame.classList.contains("is-maximized")) return;
-        resizing = true;
-        startX = event.clientX;
-        startY = event.clientY;
+        if (frame.classList.contains("is-maximized") || frame.classList.contains("is-genie-active")) return;
+        cleanup?.();
         startRect = {
-          left: frame.offsetLeft,
-          top: frame.offsetTop,
-          width: frame.offsetWidth,
-          height: frame.offsetHeight,
+          edge: direction,
+          startX: event.clientX,
+          startY: event.clientY,
+          ...rectFromElement(frame),
         };
         frame.classList.add("is-resizing");
         focusWindow(frame.dataset.windowId);
-        handle.setPointerCapture(event.pointerId);
+
+        const handleMove = (moveEvent) => {
+          moveEvent.preventDefault();
+          applyWindowRect(frame, resizeRect(startRect, moveEvent.clientX, moveEvent.clientY));
+        };
+        const handleEnd = () => {
+          startRect = null;
+          frame.classList.remove("is-resizing");
+          cleanup?.();
+          cleanup = null;
+        };
+
+        window.addEventListener("pointermove", handleMove);
+        window.addEventListener("pointerup", handleEnd);
+        window.addEventListener("pointercancel", handleEnd);
+        cleanup = () => {
+          window.removeEventListener("pointermove", handleMove);
+          window.removeEventListener("pointerup", handleEnd);
+          window.removeEventListener("pointercancel", handleEnd);
+        };
+
         event.preventDefault();
         event.stopPropagation();
-      });
-
-      handle.addEventListener("pointermove", (event) => {
-        if (!resizing || !startRect) return;
-        const dx = event.clientX - startX;
-        const dy = event.clientY - startY;
-        applyWindowRect(frame, resizeRect(startRect, direction, dx, dy));
-      });
-
-      handle.addEventListener("pointerup", (event) => {
-        if (!resizing) return;
-        resizing = false;
-        startRect = null;
-        frame.classList.remove("is-resizing");
-        handle.releasePointerCapture(event.pointerId);
-      });
-
-      handle.addEventListener("pointercancel", () => {
-        resizing = false;
-        startRect = null;
-        frame.classList.remove("is-resizing");
       });
     });
   }
 
-  function resizeRect(startRect, direction, dx, dy) {
+  function resizeRect(startRect, clientX, clientY) {
     let left = startRect.left;
     let top = startRect.top;
     let width = startRect.width;
     let height = startRect.height;
+    const dx = clientX - startRect.startX;
+    const dy = clientY - startRect.startY;
 
-    if (direction.includes("e")) width = startRect.width + dx;
-    if (direction.includes("s")) height = startRect.height + dy;
-    if (direction.includes("w")) {
-      width = startRect.width - dx;
-      left = startRect.left + dx;
-    }
-    if (direction.includes("n")) {
-      height = startRect.height - dy;
-      top = startRect.top + dy;
+    if (startRect.edge.includes("right")) {
+      const maxWidth = Math.max(MIN_WINDOW_WIDTH, window.innerWidth - startRect.left - WINDOW_BOUNDS.right);
+      width = clamp(startRect.width + dx, MIN_WINDOW_WIDTH, maxWidth);
     }
 
-    if (width < MIN_WINDOW_WIDTH) {
-      if (direction.includes("w")) left = startRect.left + startRect.width - MIN_WINDOW_WIDTH;
-      width = MIN_WINDOW_WIDTH;
-    }
-    if (height < MIN_WINDOW_HEIGHT) {
-      if (direction.includes("n")) top = startRect.top + startRect.height - MIN_WINDOW_HEIGHT;
-      height = MIN_WINDOW_HEIGHT;
+    if (startRect.edge.includes("left")) {
+      const maxWidth = Math.max(MIN_WINDOW_WIDTH, startRect.left + startRect.width - WINDOW_BOUNDS.left);
+      width = clamp(startRect.width - dx, MIN_WINDOW_WIDTH, maxWidth);
+      left = startRect.left + startRect.width - width;
     }
 
-    return constrainRect({ left, top, width, height });
+    if (startRect.edge.includes("bottom")) {
+      const maxHeight = Math.max(MIN_WINDOW_HEIGHT, window.innerHeight - startRect.top - WINDOW_BOUNDS.bottom);
+      height = clamp(startRect.height + dy, MIN_WINDOW_HEIGHT, maxHeight);
+    }
+
+    return { left, top, width, height };
   }
 
   function applyWindowRect(frame, rect) {
@@ -787,6 +884,16 @@
     frame.style.top = `${rect.top}px`;
     frame.style.width = `${rect.width}px`;
     frame.style.height = `${rect.height}px`;
+  }
+
+  function rectFromElement(element) {
+    const rect = element.getBoundingClientRect();
+    return {
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height,
+    };
   }
 
   function constrainRect(rect) {
@@ -829,9 +936,11 @@
     const win = state.windows.get(id);
     if (!win || win.animating || win.frame.hidden) return;
     win.animating = true;
+    win.restoreRect = rectFromElement(win.frame);
     renderTasks();
+    const sourceRect = win.restoreRect;
     const targetRect = getTaskTargetRect(win);
-    await playGenieAnimation(win.frame, targetRect, "minimize");
+    await playGenieTransition(win.frame, sourceRect, targetRect, "to-target");
     win.frame.hidden = true;
     win.animating = false;
     renderTasks();
@@ -848,8 +957,9 @@
     const win = state.windows.get(id);
     if (!win || win.animating) return;
     win.animating = true;
-    const targetRect = win.closeControl.getBoundingClientRect();
-    await playGenieAnimation(win.frame, targetRect, "close");
+    const sourceRect = rectFromElement(win.frame);
+    const targetRect = findWindowTargetRect(win.targetId) || getTaskTargetRect(win);
+    await playGenieTransition(win.frame, sourceRect, targetRect, "to-target");
     win.frame.remove();
     state.windows.delete(id);
     if (state.activeWindow === id) {
@@ -866,71 +976,86 @@
     }
 
     win.animating = true;
-    const sourceRect = getTaskTargetRect(win);
+    const sourceRect = constrainRect(win.restoreRect || rectFromElement(win.frame));
+    const targetRect = getTaskTargetRect(win);
     win.frame.hidden = false;
     win.frame.style.visibility = "hidden";
     focusWindow(id);
-    await playGenieAnimation(win.frame, sourceRect, "restore");
+    await playGenieTransition(win.frame, sourceRect, targetRect, "from-target");
     win.frame.style.visibility = "";
     win.animating = false;
     renderTasks();
   }
 
-  async function playGenieAnimation(frame, targetRect, mode) {
+  async function playGenieTransition(frame, sourceRect, targetRect, direction) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const frameRect = frame.getBoundingClientRect();
-    if (!frameRect.width || !frameRect.height || !targetRect.width || !targetRect.height) return;
+    if (!sourceRect.width || !sourceRect.height || !targetRect.width || !targetRect.height) return;
 
-    const ghost = frame.cloneNode(true);
-    ghost.classList.add("genie-ghost", `genie-${mode}`);
-    ghost.removeAttribute("id");
-    ghost.removeAttribute("data-window-id");
-    ghost.setAttribute("aria-hidden", "true");
-    Object.assign(ghost.style, {
-      left: `${frameRect.left}px`,
-      top: `${frameRect.top}px`,
-      width: `${frameRect.width}px`,
-      height: `${frameRect.height}px`,
+    const styleSnapshot = {
+      left: frame.style.left,
+      top: frame.style.top,
+      width: frame.style.width,
+      height: frame.style.height,
+      minWidth: frame.style.minWidth,
+      transform: frame.style.transform,
+      visibility: direction === "from-target" ? "" : frame.style.visibility,
+      zIndex: frame.style.zIndex,
+    };
+    const wasMaximized = frame.classList.contains("is-maximized");
+    const sourceX = sourceRect.left + sourceRect.width / 2;
+    const sourceY = sourceRect.top + sourceRect.height / 2;
+    const targetX = targetRect.left + targetRect.width / 2;
+    const targetY = targetRect.top + targetRect.height / 2;
+
+    frame.classList.remove("is-maximized");
+    frame.style.setProperty("--window-genie-source-x", `${sourceX}px`);
+    frame.style.setProperty("--window-genie-source-y", `${sourceY}px`);
+    frame.style.setProperty("--window-genie-source-width", `${sourceRect.width}px`);
+    frame.style.setProperty("--window-genie-source-height", `${sourceRect.height}px`);
+    frame.style.setProperty("--window-genie-target-x", `${targetX}px`);
+    frame.style.setProperty("--window-genie-target-y", `${targetY}px`);
+    Object.assign(frame.style, {
+      left: `${sourceX}px`,
+      top: `${sourceY}px`,
+      width: `${sourceRect.width}px`,
+      height: `${sourceRect.height}px`,
+      minWidth: "0",
+      transform: "translate(-50%, -50%)",
       zIndex: `${++state.z + 200}`,
       visibility: "visible",
     });
-    document.body.appendChild(ghost);
+    frame.classList.add("is-genie-active", direction === "from-target" ? "is-genie-restoring" : "is-genie-closing");
 
-    const deltaX = targetRect.left + targetRect.width / 2 - (frameRect.left + frameRect.width / 2);
-    const deltaY = targetRect.top + targetRect.height / 2 - (frameRect.top + frameRect.height / 2);
-    const scaleX = clamp(targetRect.width / frameRect.width, 0.04, 0.32);
-    const scaleY = clamp(targetRect.height / frameRect.height, 0.035, 0.22);
-    const targetBias = clamp(((targetRect.left + targetRect.width / 2) - frameRect.left) / frameRect.width, 0.08, 0.92);
+    await waitForWindowAnimation(frame, 760);
 
-    const collapseFrames = [
-      {
-        opacity: 1,
-        transform: "translate3d(0, 0, 0) scale(1, 1)",
-        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-      },
-      {
-        offset: 0.52,
-        opacity: 0.92,
-        transform: `translate3d(${deltaX * 0.48}px, ${deltaY * 0.36}px, 0) scale(${Math.max(scaleX * 1.8, 0.28)}, 0.72)`,
-        clipPath: `polygon(${targetBias * 42}% 0, ${100 - (1 - targetBias) * 42}% 0, 100% 100%, 0 100%)`,
-      },
-      {
-        opacity: mode === "close" ? 0 : 0.24,
-        transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleX}, ${scaleY})`,
-        clipPath: `polygon(${targetBias * 84}% 0, ${100 - (1 - targetBias) * 84}% 0, 100% 100%, 0 100%)`,
-      },
-    ];
+    frame.classList.remove("is-genie-active", "is-genie-closing", "is-genie-restoring");
+    [
+      "--window-genie-source-x",
+      "--window-genie-source-y",
+      "--window-genie-source-width",
+      "--window-genie-source-height",
+      "--window-genie-target-x",
+      "--window-genie-target-y",
+    ].forEach((property) => frame.style.removeProperty(property));
+    Object.assign(frame.style, styleSnapshot);
+    if (wasMaximized) frame.classList.add("is-maximized");
+  }
 
-    frame.style.visibility = "hidden";
-    const keyframes = mode === "restore" ? [...collapseFrames].reverse() : collapseFrames;
-    await ghost.animate(keyframes, {
-      duration: mode === "restore" ? 360 : 420,
-      easing: "cubic-bezier(0.2, 0.78, 0.18, 1)",
-    }).finished.catch(() => {});
-    ghost.remove();
-    if (mode !== "restore") {
-      frame.style.visibility = "";
-    }
+  function waitForWindowAnimation(frame, fallbackMs) {
+    return new Promise((resolve) => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        window.clearTimeout(timeout);
+        frame.removeEventListener("animationend", finish);
+        frame.removeEventListener("animationcancel", finish);
+        resolve();
+      };
+      const timeout = window.setTimeout(finish, fallbackMs);
+      frame.addEventListener("animationend", finish);
+      frame.addEventListener("animationcancel", finish);
+    });
   }
 
   function getTaskTargetRect(win) {
@@ -938,6 +1063,23 @@
     const rect = target.getBoundingClientRect();
     if (rect.width && rect.height) return rect;
     return launcherButton.getBoundingClientRect();
+  }
+
+  function findWindowTargetRect(targetId) {
+    if (!targetId) return null;
+    const targets = document.querySelectorAll(`[data-app-id="${targetId}"]`);
+    for (const target of targets) {
+      const rect = target.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        return {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        };
+      }
+    }
+    return null;
   }
 
   function renderTasks() {
@@ -1412,14 +1554,16 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: #ffffff;
-        color: #111111;
+        background: var(--bg, #ffffff);
+        color: var(--ink, #111111);
         font-family: sans-serif;
       }
       .web-document-body {
         width: 100%;
         height: 100%;
         overflow: auto;
+        background: var(--bg, transparent);
+        color: var(--ink, inherit);
       }
       .deck,
       main,
@@ -1545,10 +1689,15 @@
   }
 
   function scopeCss(css) {
+    const htmlToken = "__DINDB_HTML__";
+    const bodyToken = "__DINDB_BODY__";
     return css
       .replace(/:root/g, ":host")
-      .replace(/html\s*,\s*body/g, ":host, .web-document-body")
-      .replace(/\bbody\b/g, ".web-document-body");
+      .replace(/html\s*,\s*body/g, `${htmlToken}, ${bodyToken}`)
+      .replace(/\bhtml\b/g, htmlToken)
+      .replace(/\bbody\b/g, bodyToken)
+      .replaceAll(htmlToken, ":host")
+      .replaceAll(bodyToken, ".web-document-body");
   }
 
   function renderBrowserBlocked(viewport, url, error) {
@@ -1844,6 +1993,7 @@
     if (command === "about-shell") openWindow("shell-about", {
       title: t("title.shellAbout"),
       getTitle: () => t("title.shellAbout"),
+      targetId: "launcher",
       width: 520,
       height: 330,
       x: 410,
@@ -2076,16 +2226,20 @@
     localStorage.setItem(LANGUAGE_STORAGE_KEY, state.locale);
   }
 
+  function isMobileViewport() {
+    return window.matchMedia("(max-width: 760px)").matches;
+  }
+
   function loadIconPositions() {
     try {
-      return JSON.parse(localStorage.getItem("dindbos-icon-positions") || "{}");
+      return JSON.parse(localStorage.getItem(ICON_POSITIONS_STORAGE_KEY) || "{}");
     } catch {
       return {};
     }
   }
 
   function saveIconPositions() {
-    localStorage.setItem("dindbos-icon-positions", JSON.stringify(state.iconPositions));
+    localStorage.setItem(ICON_POSITIONS_STORAGE_KEY, JSON.stringify(state.iconPositions));
   }
 
   function clamp(value, min, max) {

@@ -28,7 +28,7 @@
 
     <main class="os-shell" id="app" aria-label="DindbOS portfolio desktop">
       <header class="top-bar" aria-label="System bar">
-        <button class="system-button" id="launcherButton" type="button">
+        <button class="system-button" id="launcherButton" type="button" data-app-id="launcher">
           DindbOS
         </button>
         <nav class="task-strip" id="taskStrip" aria-label="Open windows"></nav>
@@ -40,11 +40,11 @@
       <section class="desktop" id="desktop" aria-label="Desktop icons"></section>
 
       <aside class="dock" aria-label="Pinned applications">
-        <button class="dock-item" type="button" data-app="about">About</button>
-        <button class="dock-item" type="button" data-app="projects">Projects</button>
-        <button class="dock-item" type="button" data-app="browser">Browser</button>
-        <button class="dock-item" type="button" data-app="terminal">Terminal</button>
-        <button class="dock-item" type="button" data-app="settings">Settings</button>
+        <button class="dock-item" type="button" data-app="about" data-app-id="about">About</button>
+        <button class="dock-item" type="button" data-app="projects" data-app-id="projects">Projects</button>
+        <button class="dock-item" type="button" data-app="browser" data-app-id="browser">Browser</button>
+        <button class="dock-item" type="button" data-app="terminal" data-app-id="terminal">Terminal</button>
+        <button class="dock-item" type="button" data-app="settings" data-app-id="settings">Settings</button>
       </aside>
 
       <div class="window-layer" id="windowLayer" aria-live="polite"></div>
