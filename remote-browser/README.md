@@ -39,6 +39,21 @@ Render에 올릴 때는 최소한 아래 환경 변수를 설정합니다.
 ALLOWED_ORIGIN=https://dindb-dong.github.io
 ```
 
+Blueprint 배포:
+
+1. Render Dashboard에서 New > Blueprint를 선택합니다.
+2. `Dindb-dong/Dindb-dong.github.io` 저장소를 연결합니다.
+3. 루트의 `render.yaml`을 선택해서 `dindbos-remote-browser` 서비스를 생성합니다.
+4. 배포가 끝나면 Render가 발급한 `https://...onrender.com` 주소를 확인합니다.
+5. 루트의 `remote-browser.config.json`에 아래처럼 반영합니다.
+
+```json
+{
+  "productionWebSocketUrl": "wss://YOUR-SERVICE.onrender.com/browser",
+  "productionHealthUrl": "https://YOUR-SERVICE.onrender.com/health"
+}
+```
+
 주의:
 
 - `productionWebSocketUrl`과 `productionHealthUrl`은 브라우저가 접속해야 하므로 공개 값입니다.

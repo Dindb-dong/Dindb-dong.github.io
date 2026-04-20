@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: dindbos-remote-browser
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    dockerfilePath: ./remote-browser/Dockerfile
+    dockerContext: ./remote-browser
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8787"
+      - key: ALLOWED_ORIGIN
+        value: https://dindb-dong.github.io
+      - key: MAX_SESSION_MS
+        value: "180000"
+      - key: IDLE_TIMEOUT_MS
+        value: "60000"
