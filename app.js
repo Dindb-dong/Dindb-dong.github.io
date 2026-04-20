@@ -2,6 +2,219 @@
   const LEGACY_BASE = "legacy/public";
   const DEFAULT_LOCAL_BROWSER_WS = "ws://127.0.0.1:8787/browser";
   const REMOTE_BROWSER_STORAGE_KEY = "dindbos-remote-browser-ws";
+  const LANGUAGE_STORAGE_KEY = "dindbos-language";
+  const SUPPORTED_LOCALES = ["ko", "en"];
+  const MIN_WINDOW_WIDTH = 320;
+  const MIN_WINDOW_HEIGHT = 240;
+  const WINDOW_BOUNDS = { left: 8, top: 70, right: 8, bottom: 12 };
+  const LEGACY_FILES = {
+    ko: {
+      projects: "projectDetails.json",
+      introduce: "introduce.json",
+      experiences: "experiences.json",
+    },
+    en: {
+      projects: "eng_projectDetails.json",
+      introduce: "eng_introduce.json",
+      experiences: "eng_experiences.json",
+    },
+  };
+  const COPY = {
+    ko: {
+      "meta.description": "김동욱의 웹 데스크톱 포트폴리오. 프로젝트, 경험, 소개를 OS처럼 탐색합니다.",
+      "boot.copy": "legacy archive mounting...",
+      "status.mounting": "레거시 마운트 중",
+      "status.mounted": "프로젝트 {count}개 마운트됨",
+      "status.mountFailed": "레거시 마운트 실패",
+      "status.browserPinged": "브라우저 엔진 깨움",
+      "status.browserSleeping": "브라우저 엔진 대기 중",
+      "status.languageSwitching": "언어 전환 중",
+      "status.languageChanged": "{language}로 전환됨",
+      "language.ko": "한국어",
+      "language.en": "English",
+      "language.toggle": "언어 전환",
+      "dock.about": "소개",
+      "dock.projects": "프로젝트",
+      "dock.browser": "브라우저",
+      "dock.terminal": "터미널",
+      "dock.settings": "설정",
+      "context.openProjects": "프로젝트 열기",
+      "context.openBrowser": "브라우저 열기",
+      "context.openPresentations": "발표 자료 열기",
+      "context.openSettings": "설정 열기",
+      "context.newTerminal": "새 터미널",
+      "context.arrangeIcons": "아이콘 정렬",
+      "context.aboutShell": "DindbOS 정보",
+      "icon.about": "About.mdx",
+      "icon.projects": "Projects",
+      "icon.browser": "Browser.app",
+      "icon.presentations": "Presentations",
+      "icon.experience": "Experience.log",
+      "icon.terminal": "Terminal",
+      "icon.settings": "Settings.app",
+      "icon.contact": "Contact.url",
+      "title.welcome": "Welcome - DindbOS",
+      "title.projects": "Projects - Finder",
+      "title.experience": "Experience.log",
+      "title.browser": "Browser.app",
+      "title.presentations": "Presentations - PDF Viewer",
+      "title.terminal": "Terminal",
+      "title.contact": "Contact.url",
+      "title.settings": "Settings",
+      "title.shellAbout": "About DindbOS",
+      "welcome.eyebrow": "Mounted from legacy archive",
+      "welcome.title": "Portfolio Desktop",
+      "welcome.body": "{name}의 프로젝트와 경험을 바탕화면 파일처럼 열어보세요. 우클릭 메뉴, 창 이동, 창 크기 조절, 최소화, 프로젝트 폴더 탐색이 작동합니다.",
+      "welcome.drag": "더블클릭: 파일 또는 앱 열기",
+      "welcome.menu": "우클릭: 브라우저 기본 메뉴 대신 DindbOS 메뉴 열기",
+      "welcome.browser": "Browser.app: 실제 Chromium 엔진으로 외부 주소 열기",
+      "welcome.presentations": "Presentations: PDF와 HTML 발표 자료를 사이트 안에서 바로 열람",
+      "welcome.terminal": "Terminal: help, ls, open projects 명령 지원",
+      "settings.eyebrow": "System Preferences",
+      "settings.title": "Language",
+      "settings.body": "언어를 바꾸면 레거시 프로젝트 데이터와 시스템 문구가 함께 바뀝니다.",
+      "settings.active": "현재 사용 중",
+      "projects.run": "실행",
+      "projects.openPresentation": "발표 자료 열기",
+      "browser.back": "뒤로",
+      "browser.forward": "앞으로",
+      "browser.reload": "새로고침",
+      "browser.go": "이동",
+      "browser.engine": "엔진 상태",
+      "browser.newTab": "새 탭",
+      "browser.placeholder": "https://example.com",
+      "browser.loading": "{url} 로딩 중",
+      "browser.connecting": "원격 Chromium 연결 중...",
+      "browser.waking": "원격 Chromium 깨우는 중... 재시도 {attempt}",
+      "browser.connected": "원격 Chromium 연결됨",
+      "browser.disconnected": "원격 Chromium 연결 종료",
+      "browser.wakingRetry": "원격 Chromium이 아직 깨어나는 중",
+      "browser.connectionFailed": "원격 Chromium 연결 실패",
+      "browser.retrying": "{reason}. {seconds}초 후 재시도",
+      "browser.homeEyebrow": "Runnable web projects",
+      "browser.homeTitle": "Browser.app",
+      "browser.homeBody": "같은 origin의 HTML과 정적 build는 내부 런타임에서 열고, 외부 사이트는 Render의 Remote Chromium으로 엽니다.",
+      "browser.engineTitle": "Remote Chromium",
+      "browser.engineBody": "임의 주소는 포트폴리오 JS가 직접 여는 게 아니라 실제 Chromium 엔진이 엽니다.",
+      "browser.engineRequired": "Start Chromium",
+      "browser.engineRequiredBody": "{url} 같은 외부 주소는 iframe이나 fetch로 열 수 없습니다. 실제 Chromium 엔진을 실행하면 이 창 안에서 열립니다.",
+      "browser.blockedEyebrow": "Browser runtime blocked",
+      "browser.blockedTitle": "Archive Required",
+      "browser.blockedBody": "{url} 문서를 직접 읽지 못했습니다. 외부 도메인은 Remote Chromium 엔진이 필요합니다.",
+      "browser.openExternal": "일반 브라우저 탭 열기",
+      "presentations.body": "PDF와 HTML 발표 자료는 assets/presentations 폴더에 넣고 manifest에 등록하면 이곳에서 열립니다.",
+      "presentations.openBrowser": "브라우저에서 열기",
+      "presentations.openPdf": "PDF 열기",
+      "pdf.newTab": "새 탭",
+      "pdf.checking": "PDF 확인 중...",
+      "pdf.missingTitle": "PDF 파일을 아직 찾지 못했습니다.",
+      "pdf.missingBody": "{path} 위치에 파일을 넣으면 이 창에서 바로 열립니다.",
+      "terminal.name": "DindbOS 터미널",
+      "terminal.helpHint": "명령어는 'help'를 입력하세요",
+      "terminal.help": "commands: help, ls, whoami, projects, open about, open projects, open browser, open pdfs, open experience, open settings, clear, date",
+      "terminal.opened": "{target} 열림",
+      "terminal.notFound": "명령을 찾지 못했습니다: {command}",
+      "contact.body": "프로젝트와 코드는 GitHub에서 이어서 볼 수 있습니다.",
+      "shellAbout.body": "legacy 폴더의 JSON과 썸네일을 브라우저 데스크톱 안에 마운트한 포트폴리오 셸입니다.",
+    },
+    en: {
+      "meta.description": "Kim Dong Wook's web desktop portfolio for exploring projects, experience, and profile like an OS.",
+      "boot.copy": "mounting legacy archive...",
+      "status.mounting": "Mounting legacy",
+      "status.mounted": "{count} projects mounted",
+      "status.mountFailed": "Legacy mount failed",
+      "status.browserPinged": "Browser engine pinged",
+      "status.browserSleeping": "Browser engine sleeping",
+      "status.languageSwitching": "Switching language",
+      "status.languageChanged": "Switched to {language}",
+      "language.ko": "한국어",
+      "language.en": "English",
+      "language.toggle": "Switch language",
+      "dock.about": "About",
+      "dock.projects": "Projects",
+      "dock.browser": "Browser",
+      "dock.terminal": "Terminal",
+      "dock.settings": "Settings",
+      "context.openProjects": "Open Projects",
+      "context.openBrowser": "Open Browser",
+      "context.openPresentations": "Open Presentations",
+      "context.openSettings": "Open Settings",
+      "context.newTerminal": "New Terminal",
+      "context.arrangeIcons": "Arrange icons",
+      "context.aboutShell": "About DindbOS",
+      "icon.about": "About.mdx",
+      "icon.projects": "Projects",
+      "icon.browser": "Browser.app",
+      "icon.presentations": "Presentations",
+      "icon.experience": "Experience.log",
+      "icon.terminal": "Terminal",
+      "icon.settings": "Settings.app",
+      "icon.contact": "Contact.url",
+      "title.welcome": "Welcome - DindbOS",
+      "title.projects": "Projects - Finder",
+      "title.experience": "Experience.log",
+      "title.browser": "Browser.app",
+      "title.presentations": "Presentations - PDF Viewer",
+      "title.terminal": "Terminal",
+      "title.contact": "Contact.url",
+      "title.settings": "Settings",
+      "title.shellAbout": "About DindbOS",
+      "welcome.eyebrow": "Mounted from legacy archive",
+      "welcome.title": "Portfolio Desktop",
+      "welcome.body": "Open {name}'s projects and experience like files on a desktop. Context menus, window moving, resizing, minimizing, and project folders work.",
+      "welcome.drag": "Double-click: open a file or app",
+      "welcome.menu": "Right-click: open the DindbOS menu before the browser menu",
+      "welcome.browser": "Browser.app: open external URLs through a real Chromium engine",
+      "welcome.presentations": "Presentations: view PDF and HTML decks inside the portfolio",
+      "welcome.terminal": "Terminal: supports help, ls, and open projects",
+      "settings.eyebrow": "System Preferences",
+      "settings.title": "Language",
+      "settings.body": "Changing language switches both the legacy project data and system copy.",
+      "settings.active": "Active",
+      "projects.run": "Run",
+      "projects.openPresentation": "Open presentation",
+      "browser.back": "Back",
+      "browser.forward": "Forward",
+      "browser.reload": "Reload",
+      "browser.go": "Go",
+      "browser.engine": "Engine status",
+      "browser.newTab": "New tab",
+      "browser.placeholder": "https://example.com",
+      "browser.loading": "Loading {url}",
+      "browser.connecting": "Connecting remote Chromium...",
+      "browser.waking": "Waking remote Chromium... retry {attempt}",
+      "browser.connected": "Remote Chromium connected",
+      "browser.disconnected": "Remote Chromium disconnected",
+      "browser.wakingRetry": "Remote Chromium is still waking",
+      "browser.connectionFailed": "Remote Chromium connection failed",
+      "browser.retrying": "{reason}. Retrying in {seconds}s",
+      "browser.homeEyebrow": "Runnable web projects",
+      "browser.homeTitle": "Browser.app",
+      "browser.homeBody": "Same-origin HTML and static builds run inside the local runtime. External websites open through Render Remote Chromium.",
+      "browser.engineTitle": "Remote Chromium",
+      "browser.engineBody": "Arbitrary URLs are opened by a real Chromium engine, not directly by portfolio JavaScript.",
+      "browser.engineRequired": "Start Chromium",
+      "browser.engineRequiredBody": "External URLs like {url} cannot be opened through iframe or fetch. Start the real Chromium engine to open them inside this window.",
+      "browser.blockedEyebrow": "Browser runtime blocked",
+      "browser.blockedTitle": "Archive Required",
+      "browser.blockedBody": "Could not read {url} directly. External domains need the Remote Chromium engine.",
+      "browser.openExternal": "Open normal browser tab",
+      "presentations.body": "PDF and HTML decks registered in assets/presentations/manifest.json open here.",
+      "presentations.openBrowser": "Open in Browser",
+      "presentations.openPdf": "Open PDF",
+      "pdf.newTab": "New tab",
+      "pdf.checking": "Checking PDF...",
+      "pdf.missingTitle": "PDF file was not found yet.",
+      "pdf.missingBody": "Place it at {path} to open it directly in this window.",
+      "terminal.name": "DindbOS terminal",
+      "terminal.helpHint": "type 'help' for commands",
+      "terminal.help": "commands: help, ls, whoami, projects, open about, open projects, open browser, open pdfs, open experience, open settings, clear, date",
+      "terminal.opened": "opened {target}",
+      "terminal.notFound": "command not found: {command}",
+      "contact.body": "Projects and code continue on GitHub.",
+      "shellAbout.body": "A portfolio shell that mounts JSON and thumbnails from the legacy folder into a browser desktop.",
+    },
+  };
   const MEDIA = {
     1: ["proj_1_1.mp4", "proj_1_2.png"],
     2: ["proj_2_1.png", "proj_2_2.png", "proj_2_3.png"],
@@ -25,6 +238,7 @@
     presentations: [],
     remoteBrowserEndpoint: "",
     remoteBrowserHealthUrl: "",
+    locale: loadLocale(),
     windows: new Map(),
     activeWindow: null,
     z: 20,
@@ -39,10 +253,14 @@
   const clock = document.querySelector("#clock");
   const systemStatus = document.querySelector("#systemStatus");
   const bootScreen = document.querySelector("#bootScreen");
+  const bootCopy = document.querySelector("#bootCopy");
+  const launcherButton = document.querySelector("#launcherButton");
+  const languageToggle = document.querySelector("#languageToggle");
 
   init();
 
   async function init() {
+    applyLocaleChrome();
     bindGlobalEvents();
     tickClock();
     window.setInterval(tickClock, 1000);
@@ -50,10 +268,11 @@
     try {
       await mountLegacyData();
       prewarmRemoteBrowser();
-      systemStatus.textContent = `${state.projects.length} projects mounted`;
+      systemStatus.textContent = t("status.mounted", { count: state.projects.length });
       renderDesktop();
       openWindow("welcome", {
-        title: "Welcome - DindbOS",
+        title: t("title.welcome"),
+        getTitle: () => t("title.welcome"),
         width: 720,
         height: 430,
         x: 310,
@@ -61,7 +280,7 @@
         content: renderWelcome,
       });
     } catch (error) {
-      systemStatus.textContent = "Legacy mount failed";
+      systemStatus.textContent = t("status.mountFailed");
       renderError(error);
     } finally {
       window.setTimeout(() => bootScreen.classList.add("is-hidden"), 400);
@@ -69,10 +288,11 @@
   }
 
   async function mountLegacyData() {
+    const files = LEGACY_FILES[state.locale] || LEGACY_FILES.ko;
     const [projects, introduce, experiences, presentations, browserConfig] = await Promise.all([
-      fetchJson(`${LEGACY_BASE}/projectDetails.json`),
-      fetchJson(`${LEGACY_BASE}/introduce.json`),
-      fetchJson(`${LEGACY_BASE}/experiences.json`),
+      fetchJson(`${LEGACY_BASE}/${files.projects}`),
+      fetchJson(`${LEGACY_BASE}/${files.introduce}`),
+      fetchJson(`${LEGACY_BASE}/${files.experiences}`),
       fetchJson("assets/presentations/manifest.json").catch(() => []),
       fetchJson("remote-browser.config.json").catch(() => ({})),
     ]);
@@ -89,6 +309,9 @@
     }));
     state.remoteBrowserEndpoint = pickRemoteBrowserEndpoint(browserConfig);
     state.remoteBrowserHealthUrl = pickRemoteBrowserHealthUrl(browserConfig);
+    if (state.filter !== "All" && !state.projects.some((project) => project.categories?.includes(state.filter))) {
+      state.filter = "All";
+    }
   }
 
   async function fetchJson(path) {
@@ -128,21 +351,28 @@
       button.addEventListener("click", () => openApp(button.dataset.app));
     });
 
-    document.querySelector("#launcherButton").addEventListener("click", () => {
+    launcherButton.addEventListener("click", () => {
       openApp("terminal");
     });
+
+    languageToggle.addEventListener("click", () => {
+      setLocale(state.locale === "ko" ? "en" : "ko");
+    });
+
+    window.addEventListener("resize", constrainOpenWindows);
   }
 
   function renderDesktop() {
     desktop.innerHTML = "";
     const coreIcons = [
-      { id: "about", label: "About.mdx", type: "doc", app: "about" },
-      { id: "projects", label: "Projects", type: "folder", app: "projects" },
-      { id: "browser", label: "Browser.app", type: "browser", app: "browser" },
-      { id: "presentations", label: "Presentations", type: "pdf", app: "presentations" },
-      { id: "experience", label: "Experience.log", type: "doc", app: "experience" },
-      { id: "terminal", label: "Terminal", type: "terminal", app: "terminal" },
-      { id: "contact", label: "Contact.url", type: "link", app: "contact" },
+      { id: "about", label: t("icon.about"), type: "doc", app: "about" },
+      { id: "projects", label: t("icon.projects"), type: "folder", app: "projects" },
+      { id: "browser", label: t("icon.browser"), type: "browser", app: "browser" },
+      { id: "presentations", label: t("icon.presentations"), type: "pdf", app: "presentations" },
+      { id: "experience", label: t("icon.experience"), type: "doc", app: "experience" },
+      { id: "terminal", label: t("icon.terminal"), type: "terminal", app: "terminal" },
+      { id: "settings", label: t("icon.settings"), type: "settings", app: "settings" },
+      { id: "contact", label: t("icon.contact"), type: "link", app: "contact" },
     ];
     const projectIcons = state.projects.map((project) => ({
       id: `project-${project.id}`,
@@ -244,7 +474,8 @@
   function openApp(app) {
     const openers = {
       about: () => openWindow("about", {
-        title: "About.mdx",
+        title: t("icon.about"),
+        getTitle: () => t("icon.about"),
         width: 760,
         height: 560,
         x: 250,
@@ -252,7 +483,8 @@
         content: renderAbout,
       }),
       projects: () => openWindow("projects", {
-        title: "Projects - Finder",
+        title: t("title.projects"),
+        getTitle: () => t("title.projects"),
         width: 920,
         height: 620,
         x: 180,
@@ -260,7 +492,8 @@
         content: renderProjects,
       }),
       experience: () => openWindow("experience", {
-        title: "Experience.log",
+        title: t("title.experience"),
+        getTitle: () => t("title.experience"),
         width: 820,
         height: 560,
         x: 224,
@@ -269,7 +502,8 @@
       }),
       browser: () => openBrowser(),
       presentations: () => openWindow("presentations", {
-        title: "Presentations - PDF Viewer",
+        title: t("title.presentations"),
+        getTitle: () => t("title.presentations"),
         width: 760,
         height: 520,
         x: 250,
@@ -277,20 +511,32 @@
         content: renderPresentations,
       }),
       terminal: () => openWindow(`terminal-${Date.now()}`, {
-        title: "Terminal",
+        title: t("title.terminal"),
+        getTitle: () => t("title.terminal"),
         width: 680,
         height: 430,
         x: 330,
         y: 150,
         content: renderTerminal,
+        refreshOnLocale: false,
       }),
       contact: () => openWindow("contact", {
-        title: "Contact.url",
+        title: t("title.contact"),
+        getTitle: () => t("title.contact"),
         width: 520,
         height: 340,
         x: 390,
         y: 170,
         content: renderContact,
+      }),
+      settings: () => openWindow("settings", {
+        title: t("title.settings"),
+        getTitle: () => t("title.settings"),
+        width: 560,
+        height: 390,
+        x: 382,
+        y: 142,
+        content: renderSettings,
       }),
     };
     openers[app]?.();
@@ -301,15 +547,16 @@
     if (!project) return;
     openWindow(`project-${project.id}`, {
       title: `${project.title}.app`,
+      getTitle: () => `${state.projects.find((item) => item.id === Number(projectId))?.title || project.title}.app`,
       width: 880,
       height: 570,
       x: 210 + project.id * 8,
       y: 104 + project.id * 6,
-      content: (container) => renderProjectDetail(container, project),
+      content: (container) => renderProjectDetail(container, state.projects.find((item) => item.id === Number(projectId)) || project),
     });
   }
 
-  function openBrowser(initialUrl = "", label = "Browser.app") {
+  function openBrowser(initialUrl = "", label = t("title.browser")) {
     const id = `browser-${Date.now()}`;
     openWindow(id, {
       title: label,
@@ -318,6 +565,7 @@
       x: 150,
       y: 86,
       content: (container) => renderBrowser(container, initialUrl),
+      refreshOnLocale: false,
     });
   }
 
@@ -330,19 +578,26 @@
     const id = `pdf-${entry.projectId || Date.now()}`;
     openWindow(id, {
       title: `${entry.title}.pdf`,
+      getTitle: () => {
+        const current = state.presentations.find((item) => item.file === entry.file) || entry;
+        return `${current.title}.pdf`;
+      },
       width: 920,
       height: 660,
       x: 180,
       y: 84,
-      content: (container) => renderPdfViewer(container, entry),
+      content: (container) => renderPdfViewer(container, state.presentations.find((item) => item.file === entry.file) || entry),
     });
   }
 
   function openWindow(id, options) {
     const existing = state.windows.get(id);
     if (existing) {
-      existing.frame.hidden = false;
-      focusWindow(id);
+      if (existing.frame.hidden) {
+        restoreWindow(id);
+      } else {
+        focusWindow(id);
+      }
       return;
     }
 
@@ -363,22 +618,32 @@
 
     const controls = document.createElement("div");
     controls.className = "window-controls";
-    controls.append(
-      createWindowControl("minimize", "−", () => minimizeWindow(id)),
-      createWindowControl("maximize", "+", () => maximizeWindow(id)),
-      createWindowControl("close", "×", () => closeWindow(id)),
-    );
+    const minimizeControl = createWindowControl("minimize", "-", () => minimizeWindow(id));
+    const maximizeControl = createWindowControl("maximize", "+", () => maximizeWindow(id));
+    const closeControl = createWindowControl("close", "x", () => closeWindow(id));
+    controls.append(minimizeControl, maximizeControl, closeControl);
 
     const content = document.createElement("div");
     content.className = "window-content";
 
     titlebar.append(title, controls);
-    frame.append(titlebar, content);
+    frame.append(titlebar, content, createResizeHandles());
     windowLayer.appendChild(frame);
-    state.windows.set(id, { frame, title: options.title });
+    state.windows.set(id, {
+      frame,
+      titleEl: title,
+      contentEl: content,
+      closeControl,
+      title: options.title,
+      getTitle: options.getTitle,
+      content: options.content,
+      refreshOnLocale: options.refreshOnLocale !== false,
+      animating: false,
+    });
 
     options.content(content);
     makeWindowDraggable(frame, titlebar);
+    makeWindowResizable(frame);
     frame.addEventListener("pointerdown", () => focusWindow(id));
     focusWindow(id);
     renderTasks();
@@ -394,6 +659,17 @@
       action();
     });
     return button;
+  }
+
+  function createResizeHandles() {
+    const fragment = document.createDocumentFragment();
+    ["n", "e", "s", "w", "ne", "nw", "se", "sw"].forEach((direction) => {
+      const handle = document.createElement("span");
+      handle.className = `resize-handle resize-${direction}`;
+      handle.dataset.resize = direction;
+      fragment.appendChild(handle);
+    });
+    return fragment;
   }
 
   function makeWindowDraggable(frame, handle) {
@@ -428,6 +704,119 @@
     });
   }
 
+  function makeWindowResizable(frame) {
+    frame.querySelectorAll("[data-resize]").forEach((handle) => {
+      let startX = 0;
+      let startY = 0;
+      let startRect = null;
+      let resizing = false;
+      const direction = handle.dataset.resize;
+
+      handle.addEventListener("pointerdown", (event) => {
+        if (frame.classList.contains("is-maximized")) return;
+        resizing = true;
+        startX = event.clientX;
+        startY = event.clientY;
+        startRect = {
+          left: frame.offsetLeft,
+          top: frame.offsetTop,
+          width: frame.offsetWidth,
+          height: frame.offsetHeight,
+        };
+        frame.classList.add("is-resizing");
+        focusWindow(frame.dataset.windowId);
+        handle.setPointerCapture(event.pointerId);
+        event.preventDefault();
+        event.stopPropagation();
+      });
+
+      handle.addEventListener("pointermove", (event) => {
+        if (!resizing || !startRect) return;
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        applyWindowRect(frame, resizeRect(startRect, direction, dx, dy));
+      });
+
+      handle.addEventListener("pointerup", (event) => {
+        if (!resizing) return;
+        resizing = false;
+        startRect = null;
+        frame.classList.remove("is-resizing");
+        handle.releasePointerCapture(event.pointerId);
+      });
+
+      handle.addEventListener("pointercancel", () => {
+        resizing = false;
+        startRect = null;
+        frame.classList.remove("is-resizing");
+      });
+    });
+  }
+
+  function resizeRect(startRect, direction, dx, dy) {
+    let left = startRect.left;
+    let top = startRect.top;
+    let width = startRect.width;
+    let height = startRect.height;
+
+    if (direction.includes("e")) width = startRect.width + dx;
+    if (direction.includes("s")) height = startRect.height + dy;
+    if (direction.includes("w")) {
+      width = startRect.width - dx;
+      left = startRect.left + dx;
+    }
+    if (direction.includes("n")) {
+      height = startRect.height - dy;
+      top = startRect.top + dy;
+    }
+
+    if (width < MIN_WINDOW_WIDTH) {
+      if (direction.includes("w")) left = startRect.left + startRect.width - MIN_WINDOW_WIDTH;
+      width = MIN_WINDOW_WIDTH;
+    }
+    if (height < MIN_WINDOW_HEIGHT) {
+      if (direction.includes("n")) top = startRect.top + startRect.height - MIN_WINDOW_HEIGHT;
+      height = MIN_WINDOW_HEIGHT;
+    }
+
+    return constrainRect({ left, top, width, height });
+  }
+
+  function applyWindowRect(frame, rect) {
+    frame.style.left = `${rect.left}px`;
+    frame.style.top = `${rect.top}px`;
+    frame.style.width = `${rect.width}px`;
+    frame.style.height = `${rect.height}px`;
+  }
+
+  function constrainRect(rect) {
+    const minLeft = WINDOW_BOUNDS.left;
+    const minTop = WINDOW_BOUNDS.top;
+    const maxRight = window.innerWidth - WINDOW_BOUNDS.right;
+    const maxBottom = window.innerHeight - WINDOW_BOUNDS.bottom;
+    let width = Math.max(MIN_WINDOW_WIDTH, Math.min(rect.width, maxRight - minLeft));
+    let height = Math.max(MIN_WINDOW_HEIGHT, Math.min(rect.height, maxBottom - minTop));
+    let left = clamp(rect.left, minLeft, maxRight - width);
+    let top = clamp(rect.top, minTop, maxBottom - height);
+
+    if (left + width > maxRight) width = maxRight - left;
+    if (top + height > maxBottom) height = maxBottom - top;
+
+    return { left, top, width, height };
+  }
+
+  function constrainOpenWindows() {
+    state.windows.forEach((win) => {
+      if (win.frame.hidden || win.frame.classList.contains("is-maximized")) return;
+      applyWindowRect(win.frame, constrainRect({
+        left: win.frame.offsetLeft,
+        top: win.frame.offsetTop,
+        width: win.frame.offsetWidth,
+        height: win.frame.offsetHeight,
+      }));
+    });
+  }
+
   function focusWindow(id) {
     const win = state.windows.get(id);
     if (!win) return;
@@ -436,29 +825,119 @@
     renderTasks();
   }
 
-  function minimizeWindow(id) {
+  async function minimizeWindow(id) {
     const win = state.windows.get(id);
-    if (!win) return;
+    if (!win || win.animating || win.frame.hidden) return;
+    win.animating = true;
+    renderTasks();
+    const targetRect = getTaskTargetRect(win);
+    await playGenieAnimation(win.frame, targetRect, "minimize");
     win.frame.hidden = true;
+    win.animating = false;
     renderTasks();
   }
 
   function maximizeWindow(id) {
     const win = state.windows.get(id);
-    if (!win) return;
+    if (!win || win.animating) return;
     win.frame.classList.toggle("is-maximized");
     focusWindow(id);
   }
 
-  function closeWindow(id) {
+  async function closeWindow(id) {
     const win = state.windows.get(id);
-    if (!win) return;
+    if (!win || win.animating) return;
+    win.animating = true;
+    const targetRect = win.closeControl.getBoundingClientRect();
+    await playGenieAnimation(win.frame, targetRect, "close");
     win.frame.remove();
     state.windows.delete(id);
     if (state.activeWindow === id) {
       state.activeWindow = [...state.windows.keys()].at(-1) || null;
     }
     renderTasks();
+  }
+
+  async function restoreWindow(id) {
+    const win = state.windows.get(id);
+    if (!win || win.animating || !win.frame.hidden) {
+      if (win && !win?.frame.hidden) focusWindow(id);
+      return;
+    }
+
+    win.animating = true;
+    const sourceRect = getTaskTargetRect(win);
+    win.frame.hidden = false;
+    win.frame.style.visibility = "hidden";
+    focusWindow(id);
+    await playGenieAnimation(win.frame, sourceRect, "restore");
+    win.frame.style.visibility = "";
+    win.animating = false;
+    renderTasks();
+  }
+
+  async function playGenieAnimation(frame, targetRect, mode) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const frameRect = frame.getBoundingClientRect();
+    if (!frameRect.width || !frameRect.height || !targetRect.width || !targetRect.height) return;
+
+    const ghost = frame.cloneNode(true);
+    ghost.classList.add("genie-ghost", `genie-${mode}`);
+    ghost.removeAttribute("id");
+    ghost.removeAttribute("data-window-id");
+    ghost.setAttribute("aria-hidden", "true");
+    Object.assign(ghost.style, {
+      left: `${frameRect.left}px`,
+      top: `${frameRect.top}px`,
+      width: `${frameRect.width}px`,
+      height: `${frameRect.height}px`,
+      zIndex: `${++state.z + 200}`,
+      visibility: "visible",
+    });
+    document.body.appendChild(ghost);
+
+    const deltaX = targetRect.left + targetRect.width / 2 - (frameRect.left + frameRect.width / 2);
+    const deltaY = targetRect.top + targetRect.height / 2 - (frameRect.top + frameRect.height / 2);
+    const scaleX = clamp(targetRect.width / frameRect.width, 0.04, 0.32);
+    const scaleY = clamp(targetRect.height / frameRect.height, 0.035, 0.22);
+    const targetBias = clamp(((targetRect.left + targetRect.width / 2) - frameRect.left) / frameRect.width, 0.08, 0.92);
+
+    const collapseFrames = [
+      {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0) scale(1, 1)",
+        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+      },
+      {
+        offset: 0.52,
+        opacity: 0.92,
+        transform: `translate3d(${deltaX * 0.48}px, ${deltaY * 0.36}px, 0) scale(${Math.max(scaleX * 1.8, 0.28)}, 0.72)`,
+        clipPath: `polygon(${targetBias * 42}% 0, ${100 - (1 - targetBias) * 42}% 0, 100% 100%, 0 100%)`,
+      },
+      {
+        opacity: mode === "close" ? 0 : 0.24,
+        transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleX}, ${scaleY})`,
+        clipPath: `polygon(${targetBias * 84}% 0, ${100 - (1 - targetBias) * 84}% 0, 100% 100%, 0 100%)`,
+      },
+    ];
+
+    frame.style.visibility = "hidden";
+    const keyframes = mode === "restore" ? [...collapseFrames].reverse() : collapseFrames;
+    await ghost.animate(keyframes, {
+      duration: mode === "restore" ? 360 : 420,
+      easing: "cubic-bezier(0.2, 0.78, 0.18, 1)",
+    }).finished.catch(() => {});
+    ghost.remove();
+    if (mode !== "restore") {
+      frame.style.visibility = "";
+    }
+  }
+
+  function getTaskTargetRect(win) {
+    const target = win.taskButton || taskStrip || launcherButton;
+    const rect = target.getBoundingClientRect();
+    if (rect.width && rect.height) return rect;
+    return launcherButton.getBoundingClientRect();
   }
 
   function renderTasks() {
@@ -469,11 +948,20 @@
       button.type = "button";
       button.textContent = win.title;
       button.classList.toggle("is-active", state.activeWindow === id && !win.frame.hidden);
+      button.classList.toggle("is-minimized", win.frame.hidden);
       button.addEventListener("click", () => {
-        win.frame.hidden = !win.frame.hidden && state.activeWindow === id;
-        if (!win.frame.hidden) focusWindow(id);
-        renderTasks();
+        if (win.animating) return;
+        if (!win.frame.hidden && state.activeWindow === id) {
+          minimizeWindow(id);
+          return;
+        }
+        if (win.frame.hidden) {
+          restoreWindow(id);
+          return;
+        }
+        focusWindow(id);
       });
+      win.taskButton = button;
       taskStrip.appendChild(button);
     });
   }
@@ -481,18 +969,17 @@
   function renderWelcome(container) {
     const profile = state.introduce.profile;
     container.innerHTML = `
-      <p class="panel-eyebrow">Mounted from legacy archive</p>
-      <h1 class="panel-title">Portfolio Desktop</h1>
+      <p class="panel-eyebrow">${escapeHtml(t("welcome.eyebrow"))}</p>
+      <h1 class="panel-title">${escapeHtml(t("welcome.title"))}</h1>
       <p class="muted">
-        ${escapeHtml(profile.nameKo)}의 프로젝트와 경험을 바탕화면 파일처럼 열어보세요.
-        우클릭 메뉴, 창 이동, 최소화, 프로젝트 폴더 탐색이 작동합니다.
+        ${escapeHtml(t("welcome.body", { name: state.locale === "ko" ? profile.nameKo : profile.nameEn }))}
       </p>
       <div class="rich-stack">
-        <p>더블클릭: 파일 또는 앱 열기</p>
-        <p>우클릭: 브라우저 기본 메뉴 대신 DindbOS 메뉴 열기</p>
-        <p>Browser.app: 같은 origin의 HTML/build를 iframe 없이 Shadow DOM 런타임에서 실행</p>
-        <p>Presentations: PDF와 HTML 발표 자료를 사이트 안에서 바로 열람</p>
-        <p>Terminal: <strong>help</strong>, <strong>ls</strong>, <strong>open projects</strong> 명령 지원</p>
+        <p>${escapeHtml(t("welcome.drag"))}</p>
+        <p>${escapeHtml(t("welcome.menu"))}</p>
+        <p>${escapeHtml(t("welcome.browser"))}</p>
+        <p>${escapeHtml(t("welcome.presentations"))}</p>
+        <p>${escapeHtml(t("welcome.terminal"))}</p>
       </div>
     `;
   }
@@ -594,9 +1081,9 @@
           </ul>
           <div class="link-row">
             ${runnableLinks
-              .map((link) => `<button class="action-link" type="button" data-browser-url="${escapeAttr(link.url)}" data-browser-title="${escapeAttr(project.title)}">${escapeHtml(link.name)} 실행</button>`)
+              .map((link) => `<button class="action-link" type="button" data-browser-url="${escapeAttr(link.url)}" data-browser-title="${escapeAttr(project.title)}">${escapeHtml(link.name)} ${escapeHtml(t("projects.run"))}</button>`)
               .join("")}
-            ${presentation ? `<button class="action-link" type="button" data-pdf-project="${escapeAttr(project.id)}">발표 자료 열기</button>` : ""}
+            ${presentation ? `<button class="action-link" type="button" data-pdf-project="${escapeAttr(project.id)}">${escapeHtml(t("projects.openPresentation"))}</button>` : ""}
             ${(project.links || [])
               .filter((link) => link.url)
               .map((link) => `<a class="action-link" href="${escapeAttr(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.name)}</a>`)
@@ -647,13 +1134,13 @@
     container.innerHTML = `
       <form class="browser-shell">
         <div class="browser-toolbar">
-          <button class="browser-button" type="button" data-browser-back>Back</button>
-          <button class="browser-button" type="button" data-browser-forward>Forward</button>
-          <button class="browser-button" type="button" data-browser-reload>Reload</button>
-          <input class="browser-address" aria-label="Browser address" placeholder="https://example.com" value="${escapeAttr(initialUrl)}" />
-          <button class="browser-button" type="submit">Go</button>
-          <button class="browser-button" type="button" data-browser-engine>Engine status</button>
-          <button class="browser-button" type="button" data-open-external>New tab</button>
+          <button class="browser-button" type="button" data-browser-back>${escapeHtml(t("browser.back"))}</button>
+          <button class="browser-button" type="button" data-browser-forward>${escapeHtml(t("browser.forward"))}</button>
+          <button class="browser-button" type="button" data-browser-reload>${escapeHtml(t("browser.reload"))}</button>
+          <input class="browser-address" aria-label="Browser address" placeholder="${escapeAttr(t("browser.placeholder"))}" value="${escapeAttr(initialUrl)}" />
+          <button class="browser-button" type="submit">${escapeHtml(t("browser.go"))}</button>
+          <button class="browser-button" type="button" data-browser-engine>${escapeHtml(t("browser.engine"))}</button>
+          <button class="browser-button" type="button" data-open-external>${escapeHtml(t("browser.newTab"))}</button>
         </div>
         <div class="browser-viewport"></div>
       </form>
@@ -725,7 +1212,7 @@
   }
 
   async function loadWebDocument(viewport, url, navigate) {
-    viewport.innerHTML = `<div class="browser-status">Loading ${escapeHtml(url)}</div>`;
+    viewport.innerHTML = `<div class="browser-status">${escapeHtml(t("browser.loading", { url }))}</div>`;
 
     try {
       const absoluteUrl = new URL(url, window.location.href);
@@ -756,7 +1243,7 @@
   function renderRemoteBrowser(viewport, url, endpoint, attempt = 1) {
     viewport.innerHTML = `
       <div class="remote-browser">
-        <div class="remote-browser-status">${attempt === 1 ? "Connecting remote Chromium..." : `Waking remote Chromium... retry ${attempt}`}</div>
+        <div class="remote-browser-status">${escapeHtml(attempt === 1 ? t("browser.connecting") : t("browser.waking", { attempt }))}</div>
         <img class="remote-browser-screen" alt="Remote browser viewport" draggable="false" />
       </div>
     `;
@@ -783,7 +1270,7 @@
       closedByRetry = true;
       socket.close();
       const delay = Math.min(12000, 1500 * attempt);
-      status.textContent = `${reason}. Retrying in ${Math.round(delay / 1000)}s`;
+      status.textContent = t("browser.retrying", { reason, seconds: Math.round(delay / 1000) });
       window.setTimeout(() => {
         renderRemoteBrowser(viewport, url, endpoint, attempt + 1);
       }, delay);
@@ -795,7 +1282,7 @@
     });
 
     socket.addEventListener("open", () => {
-      status.textContent = "Remote Chromium connected";
+      status.textContent = t("browser.connected");
       send({ type: "navigate", url, ...viewportSize() });
     });
 
@@ -816,14 +1303,14 @@
     socket.addEventListener("close", () => {
       if (closedByRetry) return;
       if (!receivedFrame) {
-        retry("Remote Chromium is still waking");
+        retry(t("browser.wakingRetry"));
         return;
       }
-      status.textContent = "Remote Chromium disconnected";
+      status.textContent = t("browser.disconnected");
     });
 
     socket.addEventListener("error", () => {
-      retry("Remote Chromium connection failed");
+      retry(t("browser.connectionFailed"));
     });
 
     const toPoint = (event) => {
@@ -874,10 +1361,11 @@
       <div class="browser-blocked">
         <div class="engine-card">
           <p class="panel-eyebrow">Browser Engine</p>
-          <h1 class="panel-title">Remote Chromium</h1>
+          <h1 class="panel-title">${escapeHtml(t("browser.engineTitle"))}</h1>
           <p class="muted">
-            임의 주소는 포트폴리오 JS가 직접 여는 게 아니라 실제 Chromium 엔진이 엽니다.
-            로컬에서는 기본값으로 <strong>${escapeHtml(DEFAULT_LOCAL_BROWSER_WS)}</strong>에 자동 연결합니다.
+            ${escapeHtml(t("browser.engineBody"))}
+            <br />
+            Local default: <strong>${escapeHtml(DEFAULT_LOCAL_BROWSER_WS)}</strong>
           </p>
           <div class="command-box">cd remote-browser && npm install && npm start</div>
           <p class="muted">현재 endpoint: ${escapeHtml(endpoint || "not configured")}</p>
@@ -891,16 +1379,15 @@
       <div class="browser-blocked">
         <div class="engine-card">
           <p class="panel-eyebrow">Engine Required</p>
-          <h1 class="panel-title">Start Chromium</h1>
+          <h1 class="panel-title">${escapeHtml(t("browser.engineRequired"))}</h1>
           <p class="muted">
-            ${escapeHtml(url)} 같은 외부 주소는 iframe이나 fetch로 열 수 없습니다.
-            실제 Chromium 엔진을 실행하면 이 창 안에서 열립니다.
+            ${escapeHtml(t("browser.engineRequiredBody", { url }))}
           </p>
           <div class="command-box">cd remote-browser && npm install && npm start</div>
           <p class="muted">
-            로컬 개발에서는 Browser.app이 자동으로 ${escapeHtml(DEFAULT_LOCAL_BROWSER_WS)}에 연결합니다.
+            Local default: ${escapeHtml(DEFAULT_LOCAL_BROWSER_WS)}
           </p>
-          <a class="action-link" href="${escapeAttr(url)}" target="_blank" rel="noreferrer">Open normal tab</a>
+          <a class="action-link" href="${escapeAttr(url)}" target="_blank" rel="noreferrer">${escapeHtml(t("browser.openExternal"))}</a>
         </div>
       </div>
     `;
@@ -1068,16 +1555,16 @@
     viewport.innerHTML = `
       <div class="browser-blocked">
         <div>
-          <p class="panel-eyebrow">Browser runtime blocked</p>
-          <h1 class="panel-title">Archive Required</h1>
+          <p class="panel-eyebrow">${escapeHtml(t("browser.blockedEyebrow"))}</p>
+          <h1 class="panel-title">${escapeHtml(t("browser.blockedTitle"))}</h1>
           <p class="muted">
-            ${escapeHtml(url)} 문서를 직접 읽지 못했습니다. 외부 도메인은 포트폴리오 JS가 직접 열 수 없고, Remote Chromium 엔진이 필요합니다.
+            ${escapeHtml(t("browser.blockedBody", { url }))}
           </p>
           <p class="muted">
-            로컬에서는 <strong>cd remote-browser && npm install && npm start</strong>만 실행하면 Browser.app이 자동으로 붙습니다.
+            <strong>cd remote-browser && npm install && npm start</strong>
           </p>
           <p class="muted">Reason: ${escapeHtml(error.message)}</p>
-          <a class="action-link" href="${escapeAttr(url)}" target="_blank" rel="noreferrer">Open real browser tab</a>
+          <a class="action-link" href="${escapeAttr(url)}" target="_blank" rel="noreferrer">${escapeHtml(t("browser.openExternal"))}</a>
         </div>
       </div>
     `;
@@ -1092,11 +1579,10 @@
       .map((entry) => ({ project: state.projects.find((project) => project.id === entry.projectId), entry }));
     viewport.innerHTML = `
       <div class="browser-home">
-        <p class="panel-eyebrow">Runnable web projects</p>
-        <h1 class="panel-title">Browser.app</h1>
+        <p class="panel-eyebrow">${escapeHtml(t("browser.homeEyebrow"))}</p>
+        <h1 class="panel-title">${escapeHtml(t("browser.homeTitle"))}</h1>
         <p class="muted">
-          같은 origin에 있는 HTML과 정적 build를 직접 읽어서 Shadow DOM 런타임에서 실행합니다.
-          외부 사이트는 보안 정책 때문에 로컬 archive가 필요합니다.
+          ${escapeHtml(t("browser.homeBody"))}
         </p>
         <div class="shortcut-grid">
           ${localDocuments.map(({ project, entry }) => `
@@ -1128,10 +1614,10 @@
       project: state.projects.find((project) => project.id === entry.projectId),
     }));
     container.innerHTML = `
-      <p class="panel-eyebrow">Presentations</p>
-      <h1 class="panel-title">Presentations</h1>
+      <p class="panel-eyebrow">${escapeHtml(t("icon.presentations"))}</p>
+      <h1 class="panel-title">${escapeHtml(t("icon.presentations"))}</h1>
       <p class="muted">
-        PDF와 HTML 발표 자료는 <strong>assets/presentations</strong> 폴더에 넣고 manifest에 등록하면 이곳에서 열립니다.
+        ${escapeHtml(t("presentations.body"))}
       </p>
       <div class="pdf-list">
         ${entries.map((entry) => `
@@ -1140,7 +1626,7 @@
               <h3>${escapeHtml(entry.title)}</h3>
               <p>${escapeHtml(entry.project?.title || "Project")} · ${escapeHtml(entry.filePath)}</p>
             </div>
-            <button class="action-link" type="button" data-pdf-file="${escapeAttr(entry.file)}">${isHtmlPresentation(entry) ? "Open in Browser" : "Open PDF"}</button>
+            <button class="action-link" type="button" data-pdf-file="${escapeAttr(entry.file)}">${escapeHtml(isHtmlPresentation(entry) ? t("presentations.openBrowser") : t("presentations.openPdf"))}</button>
           </article>
         `).join("")}
       </div>
@@ -1156,12 +1642,12 @@
   function renderPdfViewer(container, entry) {
     container.innerHTML = `
       <div class="pdf-viewer">
-        <div class="pdf-toolbar">
-          <div class="pdf-title">${escapeHtml(entry.title)}</div>
-          <a class="action-link" href="${escapeAttr(entry.filePath)}" target="_blank" rel="noreferrer">New tab</a>
+          <div class="pdf-toolbar">
+            <div class="pdf-title">${escapeHtml(entry.title)}</div>
+          <a class="action-link" href="${escapeAttr(entry.filePath)}" target="_blank" rel="noreferrer">${escapeHtml(t("pdf.newTab"))}</a>
         </div>
         <div class="pdf-body">
-          <div class="pdf-missing">Checking PDF...</div>
+          <div class="pdf-missing">${escapeHtml(t("pdf.checking"))}</div>
         </div>
       </div>
     `;
@@ -1175,8 +1661,8 @@
         body.innerHTML = `
           <div class="pdf-missing">
             <div>
-              <strong>PDF 파일을 아직 찾지 못했습니다.</strong>
-              <span>${escapeHtml(entry.filePath)} 위치에 파일을 넣으면 이 창에서 바로 열립니다.</span>
+              <strong>${escapeHtml(t("pdf.missingTitle"))}</strong>
+              <span>${escapeHtml(t("pdf.missingBody", { path: entry.filePath }))}</span>
             </div>
           </div>
         `;
@@ -1185,8 +1671,8 @@
 
   function renderTerminal(container) {
     const output = [
-      "DindbOS terminal",
-      "type 'help' for commands",
+      t("terminal.name"),
+      t("terminal.helpHint"),
       "",
     ];
 
@@ -1222,7 +1708,7 @@
   function runTerminalCommand(command, print, output, outputEl) {
     const normalized = command.toLowerCase();
     if (normalized === "help") {
-      print("commands: help, ls, whoami, projects, open about, open projects, open browser, open pdfs, open experience, clear, date");
+      print(t("terminal.help"));
       return;
     }
     if (normalized === "ls") {
@@ -1241,7 +1727,7 @@
       const target = normalized.replace("open ", "");
       const app = target.includes("project") ? "projects" : target === "pdfs" ? "presentations" : target;
       openApp(app);
-      print(`opened ${target}`);
+      print(t("terminal.opened", { target }));
       return;
     }
     if (normalized === "clear") {
@@ -1250,10 +1736,31 @@
       return;
     }
     if (normalized === "date") {
-      print(new Date().toLocaleString("ko-KR"));
+      print(new Date().toLocaleString(localeTag()));
       return;
     }
-    print(`command not found: ${command}`);
+    print(t("terminal.notFound", { command }));
+  }
+
+  function renderSettings(container) {
+    container.innerHTML = `
+      <div class="settings-panel">
+        <p class="panel-eyebrow">${escapeHtml(t("settings.eyebrow"))}</p>
+        <h1 class="panel-title">${escapeHtml(t("settings.title"))}</h1>
+        <p class="muted">${escapeHtml(t("settings.body"))}</p>
+        <div class="language-options">
+          ${SUPPORTED_LOCALES.map((locale) => `
+            <button class="language-option ${state.locale === locale ? "is-active" : ""}" type="button" data-locale="${escapeAttr(locale)}">
+              <strong>${escapeHtml(t(`language.${locale}`))}</strong>
+              <span>${state.locale === locale ? escapeHtml(t("settings.active")) : ""}</span>
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    `;
+    container.querySelectorAll("[data-locale]").forEach((button) => {
+      button.addEventListener("click", () => setLocale(button.dataset.locale));
+    });
   }
 
   function renderContact(container) {
@@ -1261,7 +1768,7 @@
     container.innerHTML = `
       <p class="panel-eyebrow">Contact</p>
       <h1 class="panel-title">${escapeHtml(profile.nameKo)}</h1>
-      <p class="muted">프로젝트와 코드는 GitHub에서 이어서 볼 수 있습니다.</p>
+      <p class="muted">${escapeHtml(t("contact.body"))}</p>
       <div class="link-row">
         <a class="action-link" href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">GitHub</a>
         <a class="action-link" href="https://dindb-dong.github.io" target="_blank" rel="noreferrer">Portfolio URL</a>
@@ -1273,7 +1780,7 @@
     desktop.innerHTML = `
       <div class="empty-state">
         <div>
-          <h1>Legacy mount failed</h1>
+          <h1>${escapeHtml(t("status.mountFailed"))}</h1>
           <p>${escapeHtml(error.message)}</p>
         </div>
       </div>
@@ -1331,10 +1838,12 @@
     if (command === "open-projects") openApp("projects");
     if (command === "open-browser") openApp("browser");
     if (command === "open-presentations") openApp("presentations");
+    if (command === "open-settings") openApp("settings");
     if (command === "new-terminal") openApp("terminal");
     if (command === "arrange-icons") arrangeIcons();
     if (command === "about-shell") openWindow("shell-about", {
-      title: "About DindbOS",
+      title: t("title.shellAbout"),
+      getTitle: () => t("title.shellAbout"),
       width: 520,
       height: 330,
       x: 410,
@@ -1344,7 +1853,7 @@
           <p class="panel-eyebrow">DindbOS</p>
           <h1 class="panel-title">Web Desktop</h1>
           <p class="muted">
-            legacy 폴더의 JSON과 썸네일을 브라우저 데스크톱 안에 마운트한 포트폴리오 셸입니다.
+            ${escapeHtml(t("shellAbout.body"))}
           </p>
         `;
       },
@@ -1355,6 +1864,80 @@
     state.iconPositions = {};
     saveIconPositions();
     renderDesktop();
+  }
+
+  async function setLocale(locale) {
+    if (!SUPPORTED_LOCALES.includes(locale) || locale === state.locale) return;
+    state.locale = locale;
+    saveLocale();
+    applyLocaleChrome();
+    systemStatus.textContent = t("status.languageSwitching");
+
+    try {
+      await mountLegacyData();
+      renderDesktop();
+      refreshLocaleSensitiveWindows();
+      systemStatus.textContent = t("status.languageChanged", { language: t(`language.${locale}`) });
+      prewarmRemoteBrowser();
+    } catch (error) {
+      systemStatus.textContent = t("status.mountFailed");
+      renderError(error);
+    }
+  }
+
+  function refreshLocaleSensitiveWindows() {
+    state.windows.forEach((win) => {
+      const nextTitle = win.getTitle?.() || win.title;
+      win.title = nextTitle;
+      win.titleEl.textContent = nextTitle;
+      if (win.refreshOnLocale) {
+        win.content(win.contentEl);
+      }
+    });
+    renderTasks();
+  }
+
+  function applyLocaleChrome() {
+    document.documentElement.lang = state.locale;
+    document.title = state.locale === "ko"
+      ? "DindbOS | Kim Dong Wook Portfolio"
+      : "DindbOS | Kim Dong Wook Portfolio";
+    document.querySelector('meta[name="description"]')?.setAttribute("content", t("meta.description"));
+    if (bootCopy) bootCopy.textContent = t("boot.copy");
+    if (systemStatus) systemStatus.textContent = t("status.mounting");
+    if (languageToggle) {
+      languageToggle.textContent = state.locale.toUpperCase();
+      languageToggle.setAttribute("aria-label", t("language.toggle"));
+      languageToggle.title = t("language.toggle");
+    }
+    document.querySelectorAll("[data-app]").forEach((button) => {
+      button.textContent = t(`dock.${button.dataset.app}`) || button.textContent;
+    });
+    const contextLabels = {
+      "open-projects": "context.openProjects",
+      "open-browser": "context.openBrowser",
+      "open-presentations": "context.openPresentations",
+      "open-settings": "context.openSettings",
+      "new-terminal": "context.newTerminal",
+      "arrange-icons": "context.arrangeIcons",
+      "about-shell": "context.aboutShell",
+    };
+    Object.entries(contextLabels).forEach(([command, key]) => {
+      const button = contextMenu.querySelector(`[data-command="${command}"]`);
+      if (button) button.textContent = t(key);
+    });
+    tickClock();
+  }
+
+  function t(key, replacements = {}) {
+    const phrase = COPY[state.locale]?.[key] ?? COPY.ko[key] ?? key;
+    return Object.entries(replacements).reduce((result, [name, value]) => (
+      result.replaceAll(`{${name}}`, String(value))
+    ), phrase);
+  }
+
+  function localeTag() {
+    return state.locale === "en" ? "en-US" : "ko-KR";
   }
 
   function getRunnableLinks(project) {
@@ -1439,10 +2022,10 @@
       keepalive: true,
     })
       .then(() => {
-        systemStatus.textContent = "Browser engine pinged";
+        systemStatus.textContent = t("status.browserPinged");
       })
       .catch(() => {
-        systemStatus.textContent = "Browser engine sleeping";
+        systemStatus.textContent = t("status.browserSleeping");
       });
   }
 
@@ -1470,7 +2053,7 @@
   }
 
   function tickClock() {
-    clock.textContent = new Date().toLocaleTimeString("ko-KR", {
+    clock.textContent = new Date().toLocaleTimeString(localeTag(), {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -1482,6 +2065,15 @@
       .replace(/\s+/g, " ")
       .trim();
     return clean.length > 22 ? `${clean.slice(0, 20)}...` : clean;
+  }
+
+  function loadLocale() {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    return SUPPORTED_LOCALES.includes(saved) ? saved : "ko";
+  }
+
+  function saveLocale() {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, state.locale);
   }
 
   function loadIconPositions() {
