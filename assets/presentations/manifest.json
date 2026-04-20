@@ -1,0 +1,22 @@
+[
+  {
+    "projectId": 5,
+    "title": "Emotion Classification & Style Transfer 발표 자료",
+    "file": "emotion-style-transfer.pdf"
+  },
+  {
+    "projectId": 6,
+    "title": "CLIP + BLIP2 Retrieval 발표 자료",
+    "file": "clip-blip2-retrieval.html"
+  },
+  {
+    "projectId": 7,
+    "title": "Dueling DDQN Pokemon Agent 발표 자료",
+    "file": "dueling-ddqn-yakemon-agent.pdf"
+  },
+  {
+    "projectId": 13,
+    "title": "QCNN 발표 자료",
+    "file": "qcnn.pdf"
+  }
+]
