@@ -1,6 +1,6 @@
 {
   "localWebSocketUrl": "ws://127.0.0.1:8787/browser",
   "localHealthUrl": "http://127.0.0.1:8787/health",
-  "productionWebSocketUrl": "",
-  "productionHealthUrl": ""
+  "productionWebSocketUrl": "wss://dindbos-remote-browser.onrender.com/browser",
+  "productionHealthUrl": "https://dindbos-remote-browser.onrender.com/health"
 }
