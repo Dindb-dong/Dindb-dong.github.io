@@ -23,7 +23,7 @@
   <body>
     <div class="boot-screen" id="bootScreen" aria-hidden="true">
       <div class="boot-mark">DindbOS</div>
-      <div class="boot-copy">legacy archive mounting...</div>
+      <div class="boot-copy" id="bootCopy">legacy archive mounting...</div>
     </div>
 
     <main class="os-shell" id="app" aria-label="DindbOS portfolio desktop">
@@ -33,6 +33,7 @@
         </button>
         <nav class="task-strip" id="taskStrip" aria-label="Open windows"></nav>
         <div class="system-status" id="systemStatus">Mounting legacy</div>
+        <button class="system-button language-toggle" id="languageToggle" type="button">KO</button>
         <time class="clock" id="clock"></time>
       </header>
 
@@ -43,6 +44,7 @@
         <button class="dock-item" type="button" data-app="projects">Projects</button>
         <button class="dock-item" type="button" data-app="browser">Browser</button>
         <button class="dock-item" type="button" data-app="terminal">Terminal</button>
+        <button class="dock-item" type="button" data-app="settings">Settings</button>
       </aside>
 
       <div class="window-layer" id="windowLayer" aria-live="polite"></div>
@@ -51,6 +53,7 @@
         <button type="button" data-command="open-projects">Open Projects</button>
         <button type="button" data-command="open-browser">Open Browser</button>
         <button type="button" data-command="open-presentations">Open Presentations</button>
+        <button type="button" data-command="open-settings">Open Settings</button>
         <button type="button" data-command="new-terminal">New Terminal</button>
         <button type="button" data-command="arrange-icons">Arrange icons</button>
         <button type="button" data-command="about-shell">About DindbOS</button>

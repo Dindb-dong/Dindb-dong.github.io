@@ -124,7 +124,7 @@ button {
   right: 16px;
   z-index: 120;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
   align-items: center;
   gap: 10px;
   height: 44px;
@@ -134,6 +134,12 @@ button {
   background: rgba(15, 18, 14, 0.76);
   box-shadow: 0 12px 42px rgba(0, 0, 0, 0.24);
   backdrop-filter: blur(20px);
+}
+
+/* Language toggle button */
+.language-toggle {
+  min-width: 46px;
+  font-weight: 700;
 }
 
 /* Launcher button */
@@ -178,6 +184,12 @@ button {
 .task-button.is-active {
   border-color: rgba(59, 130, 246, 0.72);
   background: rgba(59, 130, 246, 0.16);
+}
+
+/* Minimized task button */
+.task-button.is-minimized {
+  color: var(--muted);
+  opacity: 0.72;
 }
 
 /* System loading status */
@@ -324,6 +336,20 @@ button {
   content: "";
 }
 
+/* Settings icon art */
+.icon-art.settings {
+  background: linear-gradient(160deg, #eef2e5, #8ac66a);
+}
+
+/* Settings gear mark */
+.icon-art.settings::before {
+  width: 28px;
+  height: 28px;
+  border: 6px double rgba(16, 19, 15, 0.74);
+  border-radius: 50%;
+  content: "";
+}
+
 /* PDF icon art */
 .icon-art.pdf {
   background: linear-gradient(160deg, #eef2e5, #e15845);
@@ -400,6 +426,7 @@ button {
   box-shadow: var(--shadow);
   backdrop-filter: blur(20px);
   pointer-events: auto;
+  touch-action: none;
 }
 
 /* Maximized window frame */
@@ -407,6 +434,110 @@ button {
   inset: 70px 16px 18px 16px !important;
   width: auto !important;
   height: auto !important;
+}
+
+/* Window resizing state */
+.window-frame.is-resizing {
+  user-select: none;
+}
+
+/* Window resize handle base */
+.resize-handle {
+  position: absolute;
+  z-index: 3;
+  display: block;
+}
+
+/* North resize handle */
+.resize-n {
+  top: -4px;
+  right: 10px;
+  left: 10px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+/* East resize handle */
+.resize-e {
+  top: 10px;
+  right: -4px;
+  bottom: 10px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+/* South resize handle */
+.resize-s {
+  right: 10px;
+  bottom: -4px;
+  left: 10px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+/* West resize handle */
+.resize-w {
+  top: 10px;
+  bottom: 10px;
+  left: -4px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+/* North east resize handle */
+.resize-ne {
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  cursor: nesw-resize;
+}
+
+/* North west resize handle */
+.resize-nw {
+  top: -5px;
+  left: -5px;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+}
+
+/* South east resize handle */
+.resize-se {
+  right: -5px;
+  bottom: -5px;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+}
+
+/* South west resize handle */
+.resize-sw {
+  bottom: -5px;
+  left: -5px;
+  width: 18px;
+  height: 18px;
+  cursor: nesw-resize;
+}
+
+/* Maximized resize handle disabled state */
+.window-frame.is-maximized .resize-handle {
+  display: none;
+}
+
+/* Genie animation clone */
+.genie-ghost {
+  position: fixed;
+  display: grid;
+  grid-template-rows: 42px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  transform-origin: center center;
+  will-change: transform, clip-path, opacity;
 }
 
 /* Window titlebar */
@@ -1079,6 +1210,46 @@ button.action-link {
   font: inherit;
 }
 
+/* Settings panel layout */
+.settings-panel {
+  display: grid;
+  gap: 16px;
+}
+
+/* Language option list */
+.language-options {
+  display: grid;
+  gap: 10px;
+}
+
+/* Language option button */
+.language-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 54px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+/* Active language option */
+.language-option.is-active {
+  border-color: rgba(59, 130, 246, 0.72);
+  background: rgba(59, 130, 246, 0.16);
+}
+
+/* Language option status */
+.language-option span {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 /* Context menu */
 .context-menu {
   position: fixed;
@@ -1141,7 +1312,7 @@ button.action-link {
   .top-bar {
     left: 10px;
     right: 10px;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
   }
 
   /* Mobile system status */
@@ -1169,7 +1340,7 @@ button.action-link {
     right: 10px;
     bottom: 14px;
     left: 10px;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     transform: none;
   }
 
@@ -1184,6 +1355,11 @@ button.action-link {
     right: 10px;
     width: auto !important;
     max-width: none;
+  }
+
+  /* Mobile resize handle disabled state */
+  .resize-handle {
+    display: none;
   }
 
   /* Mobile about layout */
