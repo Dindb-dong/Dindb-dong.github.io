@@ -1,37 +1,21 @@
 import { createAndBootDindbOS } from "dindbos";
 import "dindbos/styles.css";
 import "./portfolio.css";
-
-const LEGACY_BASE = "/legacy/public";
-const PRESENTATIONS_MANIFEST = "/assets/presentations/manifest.json";
+import {
+  buildPortfolioFileSystem,
+  CONTACT_LINKS,
+  currentData,
+  loadPortfolioRuntime,
+  persistLocale,
+  portfolioDataForBuiltin,
+  SKILLS,
+} from "./portfolio-data.js";
 
 bootPortfolioOS();
 
 async function bootPortfolioOS() {
-  const [projectsJson, introduce, experiences, presentations, browserConfig] = await Promise.all([
-    fetchJson(`${LEGACY_BASE}/projectDetails.json`),
-    fetchJson(`${LEGACY_BASE}/introduce.json`),
-    fetchJson(`${LEGACY_BASE}/experiences.json`),
-    fetchJson(PRESENTATIONS_MANIFEST).catch(() => []),
-    fetchJson("/remote-browser.config.json").catch(() => ({})),
-  ]);
-  const projects = Object.entries(projectsJson).map(([id, project]) => ({
-    id: Number(id),
-    ...project,
-  }));
-  const portfolioData = {
-    name: introduce?.profile?.nameEn || "Kim Dong Wook",
-    summary: [
-      introduce?.profile?.role || "Full-Stack AI Engineer",
-      introduce?.profile?.subtitle || "",
-      "Mounted as a real DindbOS browser runtime.",
-    ].filter(Boolean).join(" · "),
-    projects: projects.map((project) => ({
-      name: project.title,
-      type: [project.role, ...(project.categories || [])].filter(Boolean).join(" · "),
-      description: firstText(project.description) || firstText(project.extraDescription) || "Portfolio project mounted from legacy data.",
-    })),
-  };
+  const runtime = await loadPortfolioRuntime();
+  const data = currentData(runtime);
 
   await createAndBootDindbOS({
     root: "#app",
@@ -47,26 +31,26 @@ async function bootPortfolioOS() {
     },
     builtins: {
       includePortfolio: true,
-      portfolioData,
+      portfolioData: portfolioDataForBuiltin(data),
     },
-    browserProvider: browserProvider(browserConfig),
-    fileSystem: portfolioFileSystem({ projects, introduce, experiences, presentations }),
-    apps: portfolioApps({ projects, introduce, experiences, presentations }),
-    launch: ["portfolio", "files", "terminal"],
+    browserProvider: browserProvider(runtime.browserConfig),
+    fileSystem: buildPortfolioFileSystem(runtime),
+    apps: portfolioApps(runtime),
+    launch: ["about-portfolio", "projects-portfolio", "settings-portfolio", "files", "terminal"],
     diagnostics: {
       evidence: [{
-        id: "portfolio-host-install",
+        id: "portfolio-host-restore",
         profile: "github-pages",
         status: "pass",
         runner: "DindbOS portfolio host",
         categories: ["sdk", "portfolio", "github-pages"],
-        notes: "DindbOS boots from the installed npm package tarball and mounts legacy portfolio data into the VFS.",
+        notes: "DindbOS boots from the installed package tarball and restores legacy portfolio data as apps and VFS files.",
       }],
     },
   });
 }
 
-function portfolioApps(data) {
+function portfolioApps(runtime) {
   return [
     {
       id: "about-portfolio",
@@ -75,13 +59,10 @@ function portfolioApps(data) {
       icon: "text",
       pinned: true,
       singleton: true,
-      width: 760,
-      height: 560,
-      manifest: {
-        capabilities: ["app.launch"],
-        fileSystem: { read: ["/mnt/portfolio"], write: [] },
-      },
-      render: ({ content }) => renderAbout(content, data.introduce, data.experiences),
+      width: 940,
+      height: 660,
+      manifest: appManifest(),
+      render: ({ content }) => registerView(runtime, "about", content, renderAbout),
     },
     {
       id: "projects-portfolio",
@@ -90,118 +71,465 @@ function portfolioApps(data) {
       icon: "folder",
       pinned: true,
       singleton: true,
+      width: 1080,
+      height: 720,
+      manifest: appManifest(),
+      render: ({ content }) => registerView(runtime, "projects", content, renderProjects),
+    },
+    {
+      id: "experience-portfolio",
+      name: "Experience",
+      title: "Experience.log",
+      icon: "text",
+      pinned: true,
+      singleton: true,
       width: 920,
-      height: 640,
-      manifest: {
-        capabilities: ["app.launch"],
-        fileSystem: { read: ["/mnt/portfolio"], write: [] },
-      },
-      render: ({ content }) => renderProjects(content, data.projects, data.presentations),
+      height: 660,
+      manifest: appManifest(),
+      render: ({ content }) => registerView(runtime, "experience", content, renderExperience),
+    },
+    {
+      id: "skills-portfolio",
+      name: "Skills",
+      title: "Skills.app",
+      icon: "terminal",
+      pinned: true,
+      singleton: true,
+      width: 860,
+      height: 620,
+      manifest: appManifest(),
+      render: ({ content }) => registerView(runtime, "skills", content, renderSkills),
+    },
+    {
+      id: "settings-portfolio",
+      name: "Portfolio Settings",
+      title: "Portfolio Settings.app",
+      icon: "settings",
+      pinned: true,
+      singleton: true,
+      width: 760,
+      height: 560,
+      manifest: appManifest(),
+      render: ({ content }) => registerView(runtime, "settings", content, renderSettings),
     },
   ];
 }
 
-function renderAbout(content, introduce, experiences) {
-  const profile = introduce?.profile || {};
+function appManifest() {
+  return {
+    capabilities: ["app.launch"],
+    fileSystem: { read: ["/mnt/portfolio", "/home/kimdongwook"], write: [] },
+  };
+}
+
+function registerView(runtime, id, content, render) {
+  runtime.views.set(id, { content, render });
+  render(content, runtime);
+}
+
+function refreshViews(runtime) {
+  for (const view of runtime.views.values()) {
+    if (view.content.isConnected) view.render(view.content, runtime);
+  }
+}
+
+function renderAbout(content, runtime) {
+  const data = currentData(runtime);
+  const profile = data.introduce?.profile || {};
   content.innerHTML = `
-    <section class="portfolio-host-app">
-      <header class="portfolio-host-hero">
-        <p class="dos-kicker">About</p>
-        <h1>${escapeHtml(profile.nameEn || "Kim Dong Wook")}</h1>
-        <p>${escapeHtml(profile.role || "Full-Stack AI Engineer")} · ${escapeHtml(profile.subtitle || "")}</p>
-        ${(profile.intro || []).map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
-      </header>
-      <section class="portfolio-host-section">
-        <h2>Experience</h2>
-        <div class="portfolio-host-grid">
-          ${(experiences || []).map((entry) => `
-            <article class="portfolio-host-card">
-              <strong>${escapeHtml(entry.title || entry.company || "Experience")}</strong>
-              <span>${escapeHtml([entry.period, entry.role].filter(Boolean).join(" · "))}</span>
-              <p>${escapeHtml(firstText(entry.description || entry.details) || "")}</p>
-            </article>
-          `).join("")}
-        </div>
-      </section>
+    <section class="portfolio-os-app portfolio-about" data-locale="${escapeAttr(runtime.locale)}">
+      ${renderAppSidebar("about", runtime)}
+      <main class="portfolio-main-pane">
+        <header class="portfolio-hero">
+          <div>
+            <p class="portfolio-kicker">Profile mounted from legacy archive</p>
+            <h1>${escapeHtml(profile.nameEn || "Kim Dong Wook")}</h1>
+            <p class="portfolio-subtitle">${escapeHtml([profile.nameKo, profile.role, profile.subtitle].filter(Boolean).join(" · "))}</p>
+          </div>
+          <div class="portfolio-language-pill">${runtime.locale.toUpperCase()}</div>
+        </header>
+        <section class="portfolio-profile-grid">
+          <article class="portfolio-profile-card">
+            ${profile.imageUrl ? `<img class="portfolio-avatar" src="${escapeAttr(profile.imageUrl)}" alt="${escapeAttr(profile.nameEn || "Profile")}">` : ""}
+            <div class="portfolio-profile-copy">
+              ${(profile.intro || []).map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+            </div>
+          </article>
+          <aside class="portfolio-inspector-card">
+            <h2>Contact</h2>
+            <div class="portfolio-link-list">
+              ${CONTACT_LINKS.map((link) => `<a href="${escapeAttr(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`).join("")}
+            </div>
+            <h2>Mounted files</h2>
+            <code>/home/kimdongwook/profile.md</code>
+            <code>/mnt/portfolio/${escapeHtml(runtime.locale)}/introduce.json</code>
+          </aside>
+        </section>
+        <section class="portfolio-section">
+          <h2>${escapeHtml(data.introduce?.sectionTitle || "About")}</h2>
+          <div class="portfolio-rich-text">
+            ${(data.introduce?.details || []).map((paragraph) => `<p>${sanitizeTrustedLegacyHtml(paragraph)}</p>`).join("")}
+          </div>
+        </section>
+        <section class="portfolio-section">
+          <h2>Portfolio index</h2>
+          <div class="portfolio-metric-row">
+            <div><strong>${data.projects.length}</strong><span>Projects</span></div>
+            <div><strong>${data.experiences.length}</strong><span>Experience groups</span></div>
+            <div><strong>${unique(data.projects.flatMap((project) => project.techStacks)).length}</strong><span>Tech stacks</span></div>
+          </div>
+        </section>
+      </main>
     </section>
+  `;
+  wireSidebar(content, runtime);
+}
+
+function renderProjects(content, runtime) {
+  const data = currentData(runtime);
+  const projects = filteredProjects(data.projects, runtime.projectFilter);
+  const selected = data.projects.find((project) => project.id === runtime.selectedProjectId) || projects[0] || data.projects[0];
+  if (selected) runtime.selectedProjectId = selected.id;
+
+  content.innerHTML = `
+    <section class="portfolio-os-app portfolio-projects" data-locale="${escapeAttr(runtime.locale)}">
+      ${renderAppSidebar("projects", runtime)}
+      <main class="portfolio-main-pane portfolio-finder">
+        <header class="portfolio-toolbar">
+          <div>
+            <p class="portfolio-kicker">Projects Finder</p>
+            <h1>Projects Experience</h1>
+          </div>
+          <div class="portfolio-filter-group" role="group" aria-label="Project filters">
+            ${renderFilterButton("all", "All", runtime.projectFilter)}
+            ${renderFilterButton("category", "AI", runtime.projectFilter)}
+            ${renderFilterButton("category", "Web", runtime.projectFilter)}
+            ${renderFilterButton("category", "Mobile", runtime.projectFilter)}
+            ${renderFilterButton("category", "Data Science", runtime.projectFilter)}
+          </div>
+        </header>
+        <section class="portfolio-finder-layout">
+          <div class="portfolio-project-list" role="listbox" aria-label="Projects">
+            ${projects.map((project) => renderProjectRow(project, selected?.id)).join("")}
+          </div>
+          <article class="portfolio-detail-pane">
+            ${selected ? renderProjectDetail(selected) : renderEmptyDetail()}
+          </article>
+        </section>
+      </main>
+    </section>
+  `;
+
+  wireSidebar(content, runtime);
+  content.querySelectorAll("[data-project-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      runtime.selectedProjectId = Number(button.dataset.projectId);
+      renderProjects(content, runtime);
+    });
+  });
+  content.querySelectorAll("[data-filter-type]").forEach((button) => {
+    button.addEventListener("click", () => {
+      runtime.projectFilter = {
+        type: button.dataset.filterType,
+        value: button.dataset.filterValue,
+      };
+      const nextProjects = filteredProjects(currentData(runtime).projects, runtime.projectFilter);
+      runtime.selectedProjectId = nextProjects[0]?.id || currentData(runtime).projects[0]?.id;
+      renderProjects(content, runtime);
+    });
+  });
+}
+
+function renderExperience(content, runtime) {
+  const data = currentData(runtime);
+  content.innerHTML = `
+    <section class="portfolio-os-app portfolio-experience" data-locale="${escapeAttr(runtime.locale)}">
+      ${renderAppSidebar("experience", runtime)}
+      <main class="portfolio-main-pane">
+        <header class="portfolio-hero">
+          <div>
+            <p class="portfolio-kicker">Experience.log</p>
+            <h1>Experience</h1>
+            <p class="portfolio-subtitle">Roles, achievements, and project links restored from legacy JSON.</p>
+          </div>
+        </header>
+        <div class="portfolio-timeline">
+          ${data.experiences.map((experience, index) => renderExperienceCard(experience, index)).join("")}
+        </div>
+      </main>
+    </section>
+  `;
+  wireSidebar(content, runtime);
+}
+
+function renderSkills(content, runtime) {
+  const data = currentData(runtime);
+  const languages = unique([...SKILLS.languages, ...data.projects.flatMap((project) => project.languages)]);
+  const techStacks = unique([...SKILLS.techStacks, ...data.projects.flatMap((project) => project.techStacks)]);
+  const interests = unique([...SKILLS.interests, ...data.projects.flatMap((project) => project.categories)]);
+
+  content.innerHTML = `
+    <section class="portfolio-os-app portfolio-skills" data-locale="${escapeAttr(runtime.locale)}">
+      ${renderAppSidebar("skills", runtime)}
+      <main class="portfolio-main-pane">
+        <header class="portfolio-hero">
+          <div>
+            <p class="portfolio-kicker">Skills.app</p>
+            <h1>Skills and interests</h1>
+            <p class="portfolio-subtitle">Clicking a skill scopes Projects.app to matching work.</p>
+          </div>
+        </header>
+        <section class="portfolio-skill-board">
+          ${renderSkillGroup("Languages", languages, "language")}
+          ${renderSkillGroup("Tech Stacks", techStacks, "tech")}
+          ${renderSkillGroup("Interests", interests, "category")}
+        </section>
+      </main>
+    </section>
+  `;
+  wireSidebar(content, runtime);
+  content.querySelectorAll("[data-skill-filter]").forEach((button) => {
+    button.addEventListener("click", () => {
+      runtime.projectFilter = {
+        type: button.dataset.skillFilter,
+        value: button.dataset.skillValue,
+      };
+      const nextProjects = filteredProjects(currentData(runtime).projects, runtime.projectFilter);
+      runtime.selectedProjectId = nextProjects[0]?.id || runtime.selectedProjectId;
+      refreshViews(runtime);
+    });
+  });
+}
+
+function renderSettings(content, runtime) {
+  const data = currentData(runtime);
+  content.innerHTML = `
+    <section class="portfolio-os-app portfolio-settings" data-locale="${escapeAttr(runtime.locale)}">
+      ${renderAppSidebar("settings", runtime)}
+      <main class="portfolio-main-pane">
+        <header class="portfolio-hero">
+          <div>
+            <p class="portfolio-kicker">System Preferences</p>
+            <h1>Portfolio settings</h1>
+            <p class="portfolio-subtitle">Language switches the restored legacy data across open portfolio apps.</p>
+          </div>
+        </header>
+        <section class="portfolio-settings-list">
+          <div class="portfolio-setting-row">
+            <div>
+              <strong>Language</strong>
+              <span>Current data locale: ${escapeHtml(runtime.locale.toUpperCase())}</span>
+            </div>
+            <div class="portfolio-segmented" role="group" aria-label="Language">
+              <button type="button" data-locale-choice="ko" class="${runtime.locale === "ko" ? "is-active" : ""}">한국어</button>
+              <button type="button" data-locale-choice="en" class="${runtime.locale === "en" ? "is-active" : ""}">English</button>
+            </div>
+          </div>
+          <div class="portfolio-setting-row">
+            <div>
+              <strong>Data mounted</strong>
+              <span>${data.projects.length} projects · ${data.experiences.length} experience groups · ${runtime.presentations.length} decks</span>
+            </div>
+            <code>/mnt/portfolio/${escapeHtml(runtime.locale)}</code>
+          </div>
+          <div class="portfolio-setting-row">
+            <div>
+              <strong>DindbOS runtime</strong>
+              <span>SDK package host with Files, Terminal, Portfolio apps, and mounted VFS.</span>
+            </div>
+            <code>IndexedDB storage</code>
+          </div>
+        </section>
+      </main>
+    </section>
+  `;
+  wireSidebar(content, runtime);
+  content.querySelectorAll("[data-locale-choice]").forEach((button) => {
+    button.addEventListener("click", () => {
+      runtime.locale = persistLocale(button.dataset.localeChoice);
+      runtime.selectedProjectId = currentData(runtime).projects[0]?.id || runtime.selectedProjectId;
+      refreshViews(runtime);
+    });
+  });
+}
+
+function renderAppSidebar(active, runtime) {
+  const items = [
+    ["about", "About", "About Kim.app"],
+    ["projects", "Projects", "Projects.app"],
+    ["experience", "Experience", "Experience.log"],
+    ["skills", "Skills", "Skills.app"],
+    ["settings", "Settings", "Settings.app"],
+    ["contact", "Contact", "Contact.url"],
+  ];
+  return `
+    <aside class="portfolio-sidebar">
+      <div class="portfolio-sidebar-title">
+        <strong>DindbOS</strong>
+        <span>${escapeHtml(runtime.locale.toUpperCase())}</span>
+      </div>
+      <nav class="portfolio-sidebar-nav" aria-label="Portfolio sections">
+        ${items.map(([id, label, meta]) => `
+          <button type="button" class="${active === id ? "is-active" : ""}" data-sidebar-target="${escapeAttr(id)}">
+            <span>${escapeHtml(label)}</span>
+            <small>${escapeHtml(meta)}</small>
+          </button>
+        `).join("")}
+      </nav>
+      <div class="portfolio-sidebar-foot">
+        <span>${currentData(runtime).projects.length} projects restored</span>
+      </div>
+    </aside>
   `;
 }
 
-function renderProjects(content, projects, presentations) {
-  content.innerHTML = `
-    <section class="portfolio-host-app">
-      <header class="portfolio-host-hero">
-        <p class="dos-kicker">Projects</p>
-        <h1>Mounted Portfolio Projects</h1>
-        <p>Legacy project JSON is now mounted through DindbOS and mirrored under /mnt/portfolio.</p>
-      </header>
-      <div class="portfolio-host-grid">
-        ${projects.map((project) => {
-          const deck = presentations.find((entry) => Number(entry.projectId) === Number(project.id));
-          return `
-            <article class="portfolio-host-card">
-              <strong>${escapeHtml(project.title)}</strong>
-              <span>${escapeHtml(project.role || "Project")}</span>
-              <p>${escapeHtml(firstText(project.description) || firstText(project.extraDescription) || "")}</p>
-              <div class="portfolio-host-tags">
-                ${(project.categories || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
-              </div>
-              ${(project.links || []).map((link) => `<a href="${escapeAttr(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.name || "Open")}</a>`).join("")}
-              ${deck ? `<a href="/assets/presentations/${escapeAttr(deck.file)}" target="_blank" rel="noreferrer">Open deck</a>` : ""}
-            </article>
-          `;
-        }).join("")}
+function wireSidebar(content, runtime) {
+  content.querySelectorAll("[data-sidebar-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.sidebarTarget;
+      if (target === "contact") {
+        window.open(CONTACT_LINKS[0].href, "_blank", "noreferrer");
+        return;
+      }
+      const view = runtime.views.get(target);
+      if (view) {
+        view.render(view.content, runtime);
+        return;
+      }
+      renderInlineView(target, content, runtime);
+    });
+  });
+}
+
+function renderInlineView(target, content, runtime) {
+  const renderers = {
+    about: renderAbout,
+    projects: renderProjects,
+    experience: renderExperience,
+    skills: renderSkills,
+    settings: renderSettings,
+  };
+  renderers[target]?.(content, runtime);
+}
+
+function renderFilterButton(type, value, activeFilter) {
+  const active = activeFilter.type === type && activeFilter.value === value;
+  return `
+    <button type="button" class="${active ? "is-active" : ""}" data-filter-type="${escapeAttr(type)}" data-filter-value="${escapeAttr(value)}">
+      ${escapeHtml(value)}
+    </button>
+  `;
+}
+
+function renderProjectRow(project, selectedId) {
+  const cover = project.media[0];
+  return `
+    <button type="button" class="portfolio-project-row ${project.id === selectedId ? "is-selected" : ""}" data-project-id="${project.id}">
+      <span class="portfolio-project-cover">
+        ${cover ? renderMedia(cover, project.title, true) : "<span>No media</span>"}
+      </span>
+      <span class="portfolio-project-summary">
+        <strong>${escapeHtml(project.title)}</strong>
+        <small>${escapeHtml(project.role)}</small>
+        <span>${escapeHtml(firstText(project.description))}</span>
+      </span>
+      <span class="portfolio-project-count">${project.media.length}</span>
+    </button>
+  `;
+}
+
+function renderProjectDetail(project) {
+  return `
+    <div class="portfolio-detail-header">
+      <p class="portfolio-kicker">Project Detail</p>
+      <h2>${escapeHtml(project.title)}</h2>
+      <p>${escapeHtml(project.role)}</p>
+    </div>
+    <div class="portfolio-tag-row">
+      ${[...project.categories, ...project.languages, ...project.techStacks].map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
+    </div>
+    <div class="portfolio-media-grid">
+      ${project.media.map((item) => renderMedia(item, project.title, false)).join("")}
+    </div>
+    <section class="portfolio-detail-section">
+      <h3>Project introduction</h3>
+      ${project.description.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+    </section>
+    <section class="portfolio-detail-section">
+      <h3>Details</h3>
+      <ul>
+        ${project.extraDescription.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
+      </ul>
+    </section>
+    <section class="portfolio-detail-section">
+      <h3>Links</h3>
+      <div class="portfolio-link-list">
+        ${project.links.map((link) => `<a href="${escapeAttr(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.name || "Open")}</a>`).join("")}
+        ${project.deck ? `<a href="/assets/presentations/${escapeAttr(project.deck.file)}" target="_blank" rel="noreferrer">Open presentation</a>` : ""}
       </div>
     </section>
   `;
 }
 
-function portfolioFileSystem({ projects, introduce, experiences, presentations }) {
-  return {
-    "/etc/motd": [
-      "Welcome to DindbOS Portfolio.",
-      "This runtime is installed from the DindbOS SDK package.",
-      "Try: ls /mnt/portfolio, cat /home/kimdongwook/readme.md, open /mnt/portfolio/projects.json",
-    ].join("\n"),
-    "/home/kimdongwook/readme.md": [
-      "# Kim Dong Wook Portfolio",
-      "",
-      "This site now boots as a real DindbOS runtime.",
-      "Open Files.app, Terminal.app, Settings.app, or Portfolio.app to inspect the mounted data.",
-      "",
-      "- `/mnt/portfolio/projects.json`",
-      "- `/mnt/portfolio/introduce.json`",
-      "- `/mnt/portfolio/experiences.json`",
-      "- `/mnt/portfolio/presentations.json`",
-    ].join("\n"),
-    "/home/kimdongwook/Desktop/README.md": "symlink:/home/kimdongwook/readme.md",
-    "/mnt/portfolio/projects.json": `${JSON.stringify(projects, null, 2)}\n`,
-    "/mnt/portfolio/introduce.json": `${JSON.stringify(introduce, null, 2)}\n`,
-    "/mnt/portfolio/experiences.json": `${JSON.stringify(experiences, null, 2)}\n`,
-    "/mnt/portfolio/presentations.json": `${JSON.stringify(presentations, null, 2)}\n`,
-    ...Object.fromEntries(projects.map((project) => [
-      `/mnt/portfolio/projects/${safeFileName(project.title)}.md`,
-      projectMarkdown(project, presentations.find((entry) => Number(entry.projectId) === Number(project.id))),
-    ])),
-  };
+function renderEmptyDetail() {
+  return `
+    <div class="portfolio-empty">
+      <h2>No project selected</h2>
+      <p>Choose a project from the Finder list.</p>
+    </div>
+  `;
 }
 
-function projectMarkdown(project, deck) {
-  return [
-    `# ${project.title}`,
-    "",
-    `Role: ${project.role || "-"}`,
-    `Categories: ${(project.categories || []).join(", ") || "-"}`,
-    `Languages: ${(project.languages || []).join(", ") || "-"}`,
-    `Tech: ${(project.techStacks || []).join(", ") || "-"}`,
-    "",
-    ...(project.description || []),
-    "",
-    ...(project.extraDescription || []),
-    "",
-    ...(project.links || []).map((link) => `- [${link.name || "Open"}](${link.url})`),
-    deck ? `- [Presentation](/assets/presentations/${deck.file})` : "",
-  ].filter(Boolean).join("\n");
+function renderMedia(item, title, compact) {
+  if (item.type === "video") {
+    return `<video class="${compact ? "is-compact" : ""}" src="${escapeAttr(item.src)}" autoplay loop muted playsinline aria-label="${escapeAttr(title)}"></video>`;
+  }
+  return `<img class="${compact ? "is-compact" : ""}" src="${escapeAttr(item.src)}" alt="${escapeAttr(title)}">`;
+}
+
+function renderExperienceCard(experience, index) {
+  return `
+    <article class="portfolio-timeline-card">
+      <div class="portfolio-timeline-index">${String(index + 1).padStart(2, "0")}</div>
+      <div class="portfolio-timeline-body">
+        <header>
+          <h2>${escapeHtml(experience.groupName || experience.title || "Experience")}</h2>
+          <p>${escapeHtml([experience.position, experience.period].filter(Boolean).join(" · "))}</p>
+        </header>
+        <ul>
+          ${(experience.description || []).map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
+        </ul>
+        <div class="portfolio-mini-projects">
+          ${(experience.projects || []).map((project) => `<span>${escapeHtml(project)}</span>`).join("")}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderSkillGroup(title, values, filterType) {
+  return `
+    <article class="portfolio-skill-group">
+      <h2>${escapeHtml(title)}</h2>
+      <div class="portfolio-skill-pills">
+        ${values.map((value) => `
+          <button type="button" data-skill-filter="${escapeAttr(filterType)}" data-skill-value="${escapeAttr(value)}">
+            ${escapeHtml(value)}
+          </button>
+        `).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function filteredProjects(projects, filter) {
+  if (!filter || filter.type === "all") return projects;
+  return projects.filter((project) => {
+    if (filter.type === "category") return project.categories.includes(filter.value);
+    if (filter.type === "language") return project.languages.includes(filter.value);
+    if (filter.type === "tech") return project.techStacks.includes(filter.value);
+    return true;
+  });
 }
 
 function browserProvider(config) {
@@ -214,10 +542,8 @@ function browserProvider(config) {
   };
 }
 
-async function fetchJson(path) {
-  const response = await fetch(path);
-  if (!response.ok) throw new Error(`Failed to load ${path}: ${response.status}`);
-  return response.json();
+function unique(values) {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
 }
 
 function firstText(value) {
@@ -225,11 +551,11 @@ function firstText(value) {
   return String(value || "");
 }
 
-function safeFileName(value) {
-  return String(value || "project")
-    .replace(/[^\p{Letter}\p{Number}._-]+/gu, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "project";
+function sanitizeTrustedLegacyHtml(value) {
+  return escapeHtml(value)
+    .replaceAll("&lt;br&gt;", "<br>")
+    .replaceAll("&lt;br/&gt;", "<br>")
+    .replaceAll("&lt;br /&gt;", "<br>");
 }
 
 function escapeHtml(value) {
