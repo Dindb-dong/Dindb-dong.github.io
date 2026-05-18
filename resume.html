@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="One-page English resume for Kim Dong Wook, styled as a traditional academic and professional resume."
+    />
+    <title>Kim Dong Wook | Resume</title>
+    <style>
+      /* Document color and typography tokens */
+      :root {
+        --paper: #ffffff;
+        --ink: #050505;
+        --muted-ink: #1d1d1d;
+        --rule: #050505;
+        --desk: #8f8f8f;
+        --font-serif: "Times New Roman", Times, serif;
+      }
+
+      /* Universal box sizing */
+      * {
+        box-sizing: border-box;
+      }
+
+      /* Browser page foundation */
+      html {
+        min-height: 100%;
+        background: var(--desk);
+      }
+
+      /* Browser canvas */
+      body {
+        min-height: 100%;
+        margin: 0;
+        padding: 20px;
+        background: var(--desk);
+        color: var(--ink);
+        font-family: var(--font-serif);
+        font-size: 13px;
+        line-height: 1.04;
+        letter-spacing: 0;
+      }
+
+      /* Printable resume page */
+      .resume-page {
+        width: min(100%, 210mm);
+        min-height: 297mm;
+        margin: 0 auto;
+        padding: 10mm 14mm 9mm;
+        background: var(--paper);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22), 0 3px 18px rgba(0, 0, 0, 0.35);
+      }
+
+      /* Top identity row */
+      .resume-header {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 18px;
+      }
+
+      /* Name block with reference-like density */
+      .identity {
+        display: inline-block;
+        justify-self: start;
+        min-width: 206px;
+        width: max-content;
+        padding: 8px 14px 9px;
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      /* Candidate name */
+      .identity h1 {
+        margin: 0;
+        font-size: 19px;
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      /* Candidate tagline */
+      .identity p {
+        margin: 4px 0 0;
+        font-size: 11px;
+        letter-spacing: 0;
+      }
+
+      /* Contact block */
+      .contact {
+        justify-self: end;
+        margin-top: 0;
+        color: var(--ink);
+        font-size: 11px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1.32;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      /* Contact links */
+      .contact a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* Major resume section */
+      .resume-section {
+        margin-top: 8px;
+      }
+
+      /* First resume section adjustment */
+      .resume-section:first-of-type {
+        margin-top: 0;
+      }
+
+      /* Section title row */
+      .section-heading {
+        display: flex;
+        align-items: flex-end;
+        gap: 0;
+        margin: 0 0 3px;
+      }
+
+      /* Section heading text */
+      .section-heading h2 {
+        margin: 0;
+        padding-right: 8px;
+        border-bottom: 2px solid var(--rule);
+        font-size: 15px;
+        line-height: 0.92;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      /* Section horizontal rule */
+      .section-heading::after {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 24px;
+        border-bottom: 2px solid var(--rule);
+        content: "";
+      }
+
+      /* Section entry */
+      .entry {
+        margin: 0 0 6px 22px;
+      }
+
+      /* Compact section entry */
+      .entry.compact {
+        margin-bottom: 4px;
+      }
+
+      /* Entry title row */
+      .entry-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) max-content;
+        align-items: baseline;
+        column-gap: 14px;
+      }
+
+      /* Entry organization or award name */
+      .entry-title {
+        min-width: 0;
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.14;
+      }
+
+      /* Entry date range */
+      .entry-date {
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      /* Italic role line */
+      .entry-role {
+        margin: 2px 0 0;
+        color: var(--muted-ink);
+        font-size: 12px;
+        font-style: italic;
+      }
+
+      /* Bullet list */
+      .entry ul {
+        margin: 1px 0 0 24px;
+        padding: 0;
+      }
+
+      /* Bullet item */
+      .entry li {
+        margin: 1px 0;
+        padding-left: 7px;
+      }
+
+      /* Bullet marker */
+      .entry li::marker {
+        font-size: 15px;
+        line-height: 0;
+      }
+
+      /* Skills table */
+      .skills-table {
+        width: calc(100% - 22px);
+        margin: 0 0 0 22px;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      /* Skills row label */
+      .skills-table th {
+        width: 106px;
+        padding: 1px 18px 1px 0;
+        font-weight: 700;
+        text-align: left;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+
+      /* Skills row body */
+      .skills-table td {
+        padding: 1px 0;
+        vertical-align: top;
+      }
+
+      /* Small screen page scaling */
+      @media (max-width: 760px) {
+        /* Mobile body breathing room */
+        body {
+          padding: 0;
+          background: var(--paper);
+          font-size: 14px;
+        }
+
+        /* Mobile page shell */
+        .resume-page {
+          width: 100%;
+          min-height: 0;
+          padding: 28px 18px;
+          box-shadow: none;
+        }
+
+        /* Mobile header stack */
+        .resume-header {
+          grid-template-columns: auto minmax(0, 1fr);
+          gap: 12px;
+          margin-bottom: 22px;
+        }
+
+        /* Mobile contact alignment */
+        .contact {
+          max-width: 100%;
+          margin-top: 0;
+          font-size: 10px;
+          text-align: right;
+          white-space: normal;
+        }
+
+        /* Mobile date width */
+        .entry-date {
+          font-size: 12px;
+        }
+      }
+
+      /* Print configuration */
+      @media print {
+        /* Printed page dimensions */
+        @page {
+          size: A4;
+          margin: 0;
+        }
+
+        /* Print body reset */
+        body {
+          padding: 0;
+          background: var(--paper);
+        }
+
+        /* Print page without browser shadow */
+        .resume-page {
+          width: 210mm;
+          min-height: 297mm;
+          margin: 0;
+          box-shadow: none;
+        }
+
+        /* Print link cleanup */
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="resume-page" aria-label="Resume">
+      <header class="resume-header">
+        <div class="identity" aria-label="Candidate">
+          <h1>Kim Dong Wook</h1>
+          <p>Full-Stack AI Engineer</p>
+        </div>
+        <address class="contact">
+          Seoul, Republic of Korea<br />
+          <a href="mailto:dongwook443@yonsei.ac.kr">dongwook443@yonsei.ac.kr</a><br />
+          <a href="https://github.com/Dindb-dong">github.com/Dindb-dong</a>
+        </address>
+      </header>
+
+      <section class="resume-section" aria-labelledby="education-heading">
+        <div class="section-heading">
+          <h2 id="education-heading">Education</h2>
+        </div>
+        <article class="entry compact">
+          <div class="entry-header">
+            <h3 class="entry-title">Yonsei University, Seoul, Korea</h3>
+            <div class="entry-date">| Mar 2020 - Present</div>
+          </div>
+          <p class="entry-role">Candidate for Bachelor of Science in Applied Statistics and Computer Science</p>
+          <ul>
+            <li>Coursework and project concentration in data science, software engineering, AI, and visualization.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="resume-section" aria-labelledby="experience-heading">
+        <div class="section-heading">
+          <h2 id="experience-heading">Work Experience</h2>
+        </div>
+        <article class="entry">
+          <div class="entry-header">
+            <h3 class="entry-title">Alus Healthcare Co., Ltd., Seoul, Korea</h3>
+            <div class="entry-date">| Jun 2025 - Sep 2025</div>
+          </div>
+          <p class="entry-role">Researcher</p>
+          <ul>
+            <li>Conducted data analysis for new business development and executive decision support.</li>
+            <li>Developed and operated a Cafe24-based shopping mall after an external vendor became inactive.</li>
+            <li>Built a logistics management automation system with React, Node.js, Supabase, and Cafe24 API integration.</li>
+            <li>Supported OEM meetings, product launch preparation, brand promotion, and C-level operational tasks.</li>
+          </ul>
+        </article>
+
+        <article class="entry">
+          <div class="entry-header">
+            <h3 class="entry-title">Noi Lab Co., Ltd., Seoul, Korea</h3>
+            <div class="entry-date">| Jul 2024 - Nov 2025</div>
+          </div>
+          <p class="entry-role">Development Team Intern</p>
+          <ul>
+            <li>Developed Python scripts to generate structured brain capability reports from measurement results.</li>
+            <li>Systematized indicators for cognitive measurement activities with founders and internal operators.</li>
+            <li>Generated PDF reports, Google Drive download links, and QR-ready printable outputs for users.</li>
+          </ul>
+        </article>
+
+        <article class="entry compact">
+          <div class="entry-header">
+            <h3 class="entry-title">UN Youth Sustainable Development Society SDP, Seoul, Korea</h3>
+            <div class="entry-date">| Mar 2024 - Feb 2025</div>
+          </div>
+          <p class="entry-role">14th Tech Team Leader</p>
+          <ul>
+            <li>Led React Native development for UPCY, a secondhand clothing trading platform.</li>
+            <li>Coordinated with marketing, design, and research teams to implement user-facing app features.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="resume-section" aria-labelledby="projects-heading">
+        <div class="section-heading">
+          <h2 id="projects-heading">Projects & Research</h2>
+        </div>
+        <article class="entry">
+          <div class="entry-header">
+            <h3 class="entry-title">Yonsei University AI Club YAI, Seoul, Korea</h3>
+            <div class="entry-date">| Mar 2025 - Present</div>
+          </div>
+          <p class="entry-role">Research Member & External Relations Executive</p>
+          <ul>
+            <li>Fine-tuned EfficientFace and AdaIN models for emotion classification and style transfer workflows.</li>
+            <li>Built a CLIP + BLIP2 text-to-image retrieval pipeline to locate video scenes from natural language queries.</li>
+            <li>Developed a Dueling DDQN Pokemon battle agent trained on a self-developed battle simulator.</li>
+          </ul>
+        </article>
+
+        <article class="entry">
+          <div class="entry-header">
+            <h3 class="entry-title">Yakemon: Self-Developed Pokemon Battle Simulator</h3>
+            <div class="entry-date">| 2024 - 2025</div>
+          </div>
+          <p class="entry-role">Frontend Developer & Reinforcement Learning Engineer</p>
+          <ul>
+            <li>Implemented battle logic, effects, characteristics, sprites, and progressive opponents in React and TypeScript.</li>
+            <li>Ported simulator logic to Python for reinforcement learning and trained a Dueling DDQN agent on 5M+ battles.</li>
+          </ul>
+        </article>
+
+      </section>
+
+      <section class="resume-section" aria-labelledby="activities-heading">
+        <div class="section-heading">
+          <h2 id="activities-heading">Extracurricular Activities</h2>
+        </div>
+        <article class="entry compact">
+          <div class="entry-header">
+            <h3 class="entry-title">Yonsei University Central Computer Club YCC, Seoul, Korea</h3>
+            <div class="entry-date">| Mar 2024 - Jun 2025</div>
+          </div>
+          <p class="entry-role">Club Member; React Native Study Leader; Unity Study Leader</p>
+          <ul>
+            <li>Led study groups and shared implementation practices across mobile, game, and web development tracks.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="resume-section" aria-labelledby="skills-heading">
+        <div class="section-heading">
+          <h2 id="skills-heading">Skills & Interests</h2>
+        </div>
+        <table class="skills-table" aria-label="Skills and interests">
+          <tbody>
+            <tr>
+              <th scope="row">Languages</th>
+              <td>JavaScript, TypeScript, Python, R, C++, C#, Java, Dart</td>
+            </tr>
+            <tr>
+              <th scope="row">Frameworks</th>
+              <td>React, React Native, Flutter, Node.js, Supabase, AWS, Docker, Kubernetes</td>
+            </tr>
+            <tr>
+              <th scope="row">AI / Data</th>
+              <td>PyTorch, TensorFlow, Qiskit, Pennylane, computer vision, reinforcement learning, data visualization</td>
+            </tr>
+            <tr>
+              <th scope="row">Interests</th>
+              <td>AI products, education technology, game AI, quantum computing, tools for children in need</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </body>
+</html>
