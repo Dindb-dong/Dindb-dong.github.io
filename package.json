@@ -12,7 +12,7 @@
     "dev:full": "node scripts/dev.mjs"
   },
   "dependencies": {
-    "dindbos": "0.1.0",
+    "dindbos": "0.1.1",
     "vite": "^5.4.21"
   },
   "devDependencies": {
