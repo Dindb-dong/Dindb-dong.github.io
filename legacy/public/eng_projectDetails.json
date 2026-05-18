@@ -243,5 +243,68 @@
     "links": [
       {"name": "GitHub", "url": "https://github.com/Dindb-dong/QCNN"}
     ]
+  },
+  "14": {
+    "title": "web-shadow-boxing: AI Shadowboxing Partner",
+    "role": "YAI Project Member",
+    "languages": ["TypeScript", "JavaScript"],
+    "techStacks": ["MediaPipe", "Three.js", "Vite", "MongoDB", "Vercel"],
+    "categories": ["Web", "AI", "Game", "Data Science"],
+    "description": [
+      "Yonsei University AI Club YAI project conducted from March 2026 to April 2026.",
+      "Browser-based AI shadowboxing partner using real-time webcam pose estimation and future punch trajectory prediction."
+    ],
+    "extraDescription": [
+      "Extracts user pose data at 20FPS with MediaPipe and feeds a 12-frame window into a lightweight GRU inference runtime implemented in TypeScript.",
+      "Predicts attack state and 0.3-second future wrist trajectories, then drives an interactive combat loop where the AI avatar evades and counterattacks.",
+      "Built a 5-pass offline preprocessing pipeline for pose extraction, smoothing, labeling, timestamp downsampling, sliding-window generation, and visualization validation.",
+      "Ships as a serverless browser game with Vercel Serverless Functions and MongoDB-backed match records and leaderboard."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/web-shadow-boxing"},
+      {"name": "Website", "url": "https://web-shadow-boxing.vercel.app/"}
+    ]
+  },
+  "15": {
+    "title": "DindbOS",
+    "role": "Open-Source SDK Developer",
+    "languages": ["TypeScript", "JavaScript"],
+    "techStacks": ["React", "Vite", "npm"],
+    "categories": ["Web", "Computer Science"],
+    "description": [
+      "Open-source web OS SDK installable with npm install dindbos.",
+      "This portfolio website is built by installing and booting the DindbOS SDK."
+    ],
+    "extraDescription": [
+      "Designed an SDK that lets web projects mount apps, files, browser-like surfaces, and portfolio data inside a DindbOS runtime.",
+      "Published the package to npm so other projects can install it as a reusable web OS layer.",
+      "Migrated this portfolio site to consume the published SDK instead of keeping the OS runtime only as local application code."
+    ],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/Dindb-dong/dindbos"},
+      {"name": "npm", "url": "https://www.npmjs.com/package/dindbos"}
+    ]
+  },
+  "16": {
+    "title": "NotchNote",
+    "role": "macOS App Developer",
+    "languages": [],
+    "techStacks": ["macOS", "Keychain", "Google Calendar", "JSON"],
+    "categories": ["Computer Science"],
+    "description": [
+      "macOS note app that attaches memos to the user's current working context such as app, browser host, project, or session.",
+      "Distributed through GitHub Releases as a downloadable NotchNote.dmg."
+    ],
+    "extraDescription": [
+      "Implemented context-aware memos, quick-open overlay, pinned memo windows, library workspace, calendar workspace, reminders, backup and restore flows.",
+      "Supports linked notes so related contexts can share one memo body, plus Open Context shortcuts for returning to the original working file or project.",
+      "Uses macOS Keychain for secure local database key access and keeps user memo/settings data outside the app bundle during updates.",
+      "Includes productivity features such as todo history, XP/level progression, category rules, retention settings, and customizable themes."
+    ],
+    "links": [
+      {"name": "Website", "url": "https://notchnote.com/"},
+      {"name": "GitHub Releases", "url": "https://github.com/Dindb-dong/NotchNote-Releases"},
+      {"name": "Download", "url": "https://github.com/Dindb-dong/NotchNote-Releases/releases"}
+    ]
   }
 }

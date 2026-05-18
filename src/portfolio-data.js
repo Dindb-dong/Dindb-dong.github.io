@@ -30,6 +30,18 @@ const MEDIA = {
   11: ["proj_11_1.png", "proj_11_2.png", "proj_11_3.png"],
   12: ["proj_12_1.png"],
   13: ["proj_13_1.png"],
+  14: ["proj_14_1.png", "proj_14_2.png"],
+  15: ["proj_15_1.png"],
+  16: [
+    "proj_16_0.png",
+    "proj_16_7.png",
+    "proj_16_1.jpeg",
+    "proj_16_2.png",
+    "proj_16_3.png",
+    "proj_16_4.png",
+    "proj_16_5.png",
+    "proj_16_6.png",
+  ],
 };
 
 export const CONTACT_LINKS = [
