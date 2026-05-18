@@ -1,0 +1,113 @@
+html,
+body,
+#app {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #e9f1f7;
+}
+
+.portfolio-host-app {
+  display: grid;
+  gap: 18px;
+  min-height: 100%;
+  padding: 22px;
+  color: #17212d;
+}
+
+.portfolio-host-hero {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.72), transparent 38%),
+    rgba(255, 255, 255, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76), 0 18px 46px rgba(34, 48, 63, 0.1);
+}
+
+.portfolio-host-hero h1,
+.portfolio-host-section h2 {
+  margin: 0;
+  color: #111827;
+  letter-spacing: 0;
+}
+
+.portfolio-host-hero p,
+.portfolio-host-section p {
+  max-width: 72ch;
+  margin: 0;
+  color: #455466;
+  line-height: 1.55;
+}
+
+.portfolio-host-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.portfolio-host-card {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(244, 249, 252, 0.24)),
+    rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76), 0 14px 34px rgba(34, 48, 63, 0.09);
+}
+
+.portfolio-host-card strong {
+  color: #111827;
+  font-size: 15px;
+}
+
+.portfolio-host-card span,
+.portfolio-host-card small {
+  color: #5c6b7c;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.portfolio-host-card a {
+  width: fit-content;
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.portfolio-host-section {
+  display: grid;
+  gap: 12px;
+}
+
+.portfolio-host-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.portfolio-host-tags span {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #245da8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .portfolio-host-app {
+    padding: 14px;
+  }
+}
