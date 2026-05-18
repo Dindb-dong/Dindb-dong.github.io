@@ -158,6 +158,7 @@ body {
 
 /* Portfolio content pane */
 .portfolio-main-pane {
+  container-type: inline-size;
   display: grid;
   align-content: start;
   gap: 16px;
@@ -247,6 +248,11 @@ body {
   gap: 14px;
 }
 
+/* Portfolio profile grid children */
+.portfolio-profile-grid > * {
+  min-width: 0;
+}
+
 /* Portfolio profile card */
 .portfolio-profile-card {
   display: grid;
@@ -283,6 +289,7 @@ body {
   margin: 0;
   color: #334155;
   line-height: 1.64;
+  overflow-wrap: anywhere;
 }
 
 /* Portfolio inspector card */
@@ -820,6 +827,51 @@ body {
   .portfolio-setting-row code {
     background: rgba(15, 23, 42, 0.48);
     color: #dbeafe;
+  }
+}
+
+/* Narrow portfolio pane layout */
+@container (max-width: 1040px) {
+  /* Narrow pane profile stack */
+  .portfolio-profile-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Narrow pane contact position */
+  .portfolio-inspector-card {
+    order: 2;
+  }
+
+  /* Narrow pane profile card */
+  .portfolio-profile-card {
+    grid-template-columns: 132px minmax(0, 1fr);
+  }
+}
+
+/* Compact portfolio pane layout */
+@container (max-width: 560px) {
+  /* Compact pane hero */
+  .portfolio-hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  /* Compact pane profile card */
+  .portfolio-profile-card {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  /* Compact pane avatar */
+  .portfolio-avatar {
+    width: 112px;
+    height: 112px;
+  }
+
+  /* Compact pane contact links */
+  .portfolio-link-list {
+    display: grid;
+    grid-template-columns: minmax(0, max-content);
   }
 }
 
