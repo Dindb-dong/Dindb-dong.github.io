@@ -30,13 +30,13 @@ async function bootPortfolioOS() {
       name: "dindbos-portfolio-runtime",
     },
     builtins: {
-      includePortfolio: true,
+      includePortfolio: false,
       portfolioData: portfolioDataForBuiltin(data),
     },
     browserProvider: browserProvider(runtime.browserConfig),
     fileSystem: buildPortfolioFileSystem(runtime),
     apps: portfolioApps(runtime),
-    launch: ["about-portfolio", "projects-portfolio", "settings-portfolio", "files", "terminal"],
+    launch: ["portfolio"],
     diagnostics: {
       evidence: [{
         id: "portfolio-host-restore",
@@ -53,16 +53,15 @@ async function bootPortfolioOS() {
 function portfolioApps(runtime) {
   return [
     {
-      id: "about-portfolio",
-      name: "About",
-      title: "About Kim.app",
-      icon: "text",
+      id: "portfolio",
+      name: "Portfolio",
+      title: "Kim Dong Wook.app",
+      icon: "portfolio",
       pinned: true,
+      desktop: true,
       singleton: true,
-      width: 940,
-      height: 660,
       manifest: appManifest(),
-      render: ({ content }) => registerView(runtime, "about", content, renderAbout),
+      render: ({ content }) => registerView(runtime, "portfolio", content, renderAbout),
     },
     {
       id: "projects-portfolio",
@@ -70,47 +69,10 @@ function portfolioApps(runtime) {
       title: "Projects.app",
       icon: "folder",
       pinned: true,
+      desktop: true,
       singleton: true,
-      width: 1080,
-      height: 720,
       manifest: appManifest(),
       render: ({ content }) => registerView(runtime, "projects", content, renderProjects),
-    },
-    {
-      id: "experience-portfolio",
-      name: "Experience",
-      title: "Experience.log",
-      icon: "text",
-      pinned: true,
-      singleton: true,
-      width: 920,
-      height: 660,
-      manifest: appManifest(),
-      render: ({ content }) => registerView(runtime, "experience", content, renderExperience),
-    },
-    {
-      id: "skills-portfolio",
-      name: "Skills",
-      title: "Skills.app",
-      icon: "terminal",
-      pinned: true,
-      singleton: true,
-      width: 860,
-      height: 620,
-      manifest: appManifest(),
-      render: ({ content }) => registerView(runtime, "skills", content, renderSkills),
-    },
-    {
-      id: "settings-portfolio",
-      name: "Portfolio Settings",
-      title: "Portfolio Settings.app",
-      icon: "settings",
-      pinned: true,
-      singleton: true,
-      width: 760,
-      height: 560,
-      manifest: appManifest(),
-      render: ({ content }) => registerView(runtime, "settings", content, renderSettings),
     },
   ];
 }
@@ -192,13 +154,12 @@ function renderProjects(content, runtime) {
   if (selected) runtime.selectedProjectId = selected.id;
 
   content.innerHTML = `
-    <section class="portfolio-os-app portfolio-projects" data-locale="${escapeAttr(runtime.locale)}">
-      ${renderAppSidebar("projects", runtime)}
+    <section class="portfolio-os-app portfolio-os-app--plain portfolio-projects" data-locale="${escapeAttr(runtime.locale)}">
       <main class="portfolio-main-pane portfolio-finder">
         <header class="portfolio-toolbar">
           <div>
             <p class="portfolio-kicker">Projects Finder</p>
-            <h1>Projects Experience</h1>
+            <h1>Projects</h1>
           </div>
           <div class="portfolio-filter-group" role="group" aria-label="Project filters">
             ${renderFilterButton("all", "All", runtime.projectFilter)}
@@ -220,7 +181,6 @@ function renderProjects(content, runtime) {
     </section>
   `;
 
-  wireSidebar(content, runtime);
   content.querySelectorAll("[data-project-id]").forEach((button) => {
     button.addEventListener("click", () => {
       runtime.selectedProjectId = Number(button.dataset.projectId);
@@ -276,7 +236,7 @@ function renderSkills(content, runtime) {
           <div>
             <p class="portfolio-kicker">Skills.app</p>
             <h1>Skills and interests</h1>
-            <p class="portfolio-subtitle">Clicking a skill scopes Projects.app to matching work.</p>
+            <p class="portfolio-subtitle">Clicking a skill scopes the Projects app to matching work.</p>
           </div>
         </header>
         <section class="portfolio-skill-board">
@@ -355,11 +315,10 @@ function renderSettings(content, runtime) {
 
 function renderAppSidebar(active, runtime) {
   const items = [
-    ["about", "About", "About Kim.app"],
-    ["projects", "Projects", "Projects.app"],
-    ["experience", "Experience", "Experience.log"],
-    ["skills", "Skills", "Skills.app"],
-    ["settings", "Settings", "Settings.app"],
+    ["about", "About", "Profile"],
+    ["experience", "Experience", "Timeline"],
+    ["skills", "Skills", "Filters"],
+    ["settings", "Preferences", "Language"],
     ["contact", "Contact", "Contact.url"],
   ];
   return `
@@ -409,7 +368,15 @@ function renderInlineView(target, content, runtime) {
     skills: renderSkills,
     settings: renderSettings,
   };
-  renderers[target]?.(content, runtime);
+  const renderer = renderers[target];
+  if (!renderer) return;
+  for (const [viewId, view] of runtime.views.entries()) {
+    if (view.content === content) {
+      runtime.views.set(viewId, { content, render: renderer });
+      break;
+    }
+  }
+  renderer(content, runtime);
 }
 
 function renderFilterButton(type, value, activeFilter) {

@@ -46,6 +46,11 @@ body {
   background: rgba(245, 248, 251, 0.2);
 }
 
+/* Plain portfolio app frame */
+.portfolio-os-app--plain {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 /* Portfolio side navigation */
 .portfolio-sidebar {
   display: grid;
