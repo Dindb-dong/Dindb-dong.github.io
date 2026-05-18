@@ -1,6 +1,26 @@
 [
   {
     "id": 1,
+    "groupName": "Leviosa AI",
+    "period": "2026.03 ~",
+    "position": "AI Engineer & Founding Member",
+    "description": [
+      "Cafe24 CS 자동화, 앱 설치/OAuth, 스토어프론트 채팅 위젯, 상품 소싱, 업로드 자동화, AI 상세페이지 생성 흐름 등 커머스 자동화 제품의 핵심 플로우 구축",
+      "TypeScript, React, Node.js, Python/FastAPI, Supabase/RDS, Redis, S3/Object Storage, Docker, AWS EC2, GitHub Actions 기반의 운영 가능한 AI 워크플로우 인프라 개발",
+      "sourcing, products, orders, CS, content 업무를 통제된 AI tool call로 실행할 수 있도록 Chat MCP workspace와 표준 JSON-RPC 도구 인터페이스 구현",
+      "대시보드, 설정 모달, 랜딩 페이지, 채팅 위젯, 상품 관리 화면, Figma-style 상세페이지 에디터 등 사용자-facing 제품 경험 구현",
+      "token refresh, credential boundary, durable job queue, external IO retry guard, observability hook, regression test, CI/CD 정리를 통해 운영 안정성 개선"
+    ],
+    "projects": [
+      "Cafe24 CS 자동화 플랫폼",
+      "Cafe24 소싱 및 상품 업로드 자동화",
+      "AI 상세페이지 생성 및 비주얼 에디터",
+      "Chat MCP 기반 업무 실행 플랫폼",
+      "스토어프론트 채팅 위젯 및 운영 대시보드"
+    ]
+  },
+  {
+    "id": 2,
     "groupName": "(주) 알루스 헬스케어",
     "period": "2025.06 - 2025.09",
     "position": "Researcher",
@@ -20,7 +40,7 @@
     ]
   },
   {
-    "id": 2,
+    "id": 3,
     "groupName": "연세대학교 인공지능학회 YAI",
     "period": "2025.03 ~",
     "position": "연구부원 및 대외팀 임원진",
@@ -36,7 +56,7 @@
     ]
   },
   {
-    "id": 3,
+    "id": 4,
     "groupName": "(주) 노이랩",
     "period": "2024.07 ~ 2025.11",
     "position": "개발팀 인턴",
@@ -48,7 +68,7 @@
     "projects": ["노이랩 뇌지컬 리포트 자동 생성 스크립트"]
   },
   {
-    "id": 4,
+    "id": 5,
     "groupName": "연세대학교 중앙컴퓨터동아리 YCC",
     "period": "2024.03 ~ 2025.06",
     "position": "동아리원",
@@ -56,7 +76,7 @@
     "projects": ["Yakemon: 자체 개발 시뮬레이션 웹 게임"]
   },
   {
-    "id": 5,
+    "id": 6,
     "groupName": "UN Youth 산하 지속가능개발 학회 SDP",
     "period": "2024.03 ~ 2025.02",
     "position": "14기 테크팀 팀장",

@@ -1,6 +1,26 @@
 [
   {
     "id": 1,
+    "groupName": "Leviosa AI",
+    "period": "2026.03 ~",
+    "position": "AI Engineer & Founding Member",
+    "description": [
+      "Built core Cafe24 commerce automation product flows across CS automation, app installation/OAuth, storefront chat widget, product sourcing, upload automation, and AI-generated detail page workflows",
+      "Developed production-facing AI workflow infrastructure using TypeScript, React, Node.js, Python/FastAPI, Supabase/RDS, Redis, S3/Object Storage, Docker, AWS EC2, and GitHub Actions",
+      "Implemented Chat MCP workspace and standard JSON-RPC tool interfaces so sourcing, products, orders, CS, and content workflows could be executed through controlled AI tool calls",
+      "Shipped user-facing dashboards, settings modals, landing pages, chat widgets, product management screens, and a Figma-style detail page editor while keeping sensitive credentials and approval flows behind service boundaries",
+      "Improved operational reliability through token refresh handling, credential boundaries, durable job queues, external IO retry guards, observability hooks, regression tests, and CI/CD cleanup"
+    ],
+    "projects": [
+      "Cafe24 CS Automation Platform",
+      "Cafe24 Sourcing and Product Upload Automation",
+      "AI Detail Page Generation and Visual Editor",
+      "Chat MCP Workspace and Tool Execution Platform",
+      "Storefront Chat Widget and Dashboard Operations"
+    ]
+  },
+  {
+    "id": 2,
     "groupName": "Alus Healthcare Co., Ltd.",
     "period": "2025.06 - 2025.09",
     "position": "Researcher",
@@ -20,7 +40,7 @@
     ]
   },
   {
-    "id": 2,
+    "id": 3,
     "groupName": "Yonsei University AI Club YAI",
     "period": "2025.03 ~",
     "position": "Research Member & External Relations Executive",
@@ -36,7 +56,7 @@
     ]
   },
   {
-    "id": 3,
+    "id": 4,
     "groupName": "Noi Lab Co., Ltd.",
     "period": "2024.07 ~ 2025.11",
     "position": "Development Team Intern",
@@ -48,7 +68,7 @@
     "projects": ["Noi Lab Brain Report Auto-Generation Script"]
   },
   {
-    "id": 4,
+    "id": 5,
     "groupName": "Yonsei University Central Computer Club YCC",
     "period": "2024.03 ~ 2025.06",
     "position": "Club Member",
@@ -56,7 +76,7 @@
     "projects": ["Yakemon: Self-Developed Simulation Web Game"]
   },
   {
-    "id": 5,
+    "id": 6,
     "groupName": "UN Youth Sustainable Development Society SDP",
     "period": "2024.03 ~ 2025.02",
     "position": "14th Tech Team Leader",
