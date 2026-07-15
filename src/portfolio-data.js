@@ -87,6 +87,7 @@ export async function loadPortfolioRuntime() {
     presentations,
     selectedProjectId: datasets.ko.projects[0]?.id || 1,
     projectFilter: { type: "all", value: "All" },
+    projectQuery: "",
     views: new Map(),
   };
 }
