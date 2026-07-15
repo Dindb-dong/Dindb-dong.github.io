@@ -38,8 +38,8 @@
         background: var(--desk);
         color: var(--ink);
         font-family: var(--font-serif);
-        font-size: 13px;
-        line-height: 1.04;
+        font-size: 16px;
+        line-height: 1.1;
         letter-spacing: 0;
       }
 
@@ -48,7 +48,7 @@
         width: min(100%, 210mm);
         min-height: 297mm;
         margin: 0 auto;
-        padding: 10mm 14mm 9mm;
+        padding: 12mm 14mm 10mm;
         background: var(--paper);
         box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22), 0 3px 18px rgba(0, 0, 0, 0.35);
       }
@@ -59,16 +59,16 @@
         grid-template-columns: auto minmax(0, 1fr);
         align-items: center;
         gap: 24px;
-        margin-bottom: 18px;
+        margin-bottom: 24px;
       }
 
       /* Name block with reference-like density */
       .identity {
         display: inline-block;
         justify-self: start;
-        min-width: 206px;
+        min-width: 238px;
         width: max-content;
-        padding: 8px 14px 9px;
+        padding: 9px 16px 10px;
         background: var(--ink);
         color: var(--paper);
       }
@@ -76,7 +76,7 @@
       /* Candidate name */
       .identity h1 {
         margin: 0;
-        font-size: 19px;
+        font-size: 24px;
         line-height: 1;
         letter-spacing: 0;
       }
@@ -84,7 +84,7 @@
       /* Candidate tagline */
       .identity p {
         margin: 4px 0 0;
-        font-size: 11px;
+        font-size: 14px;
         letter-spacing: 0;
       }
 
@@ -93,7 +93,7 @@
         justify-self: end;
         margin-top: 0;
         color: var(--ink);
-        font-size: 11px;
+        font-size: 14px;
         font-style: normal;
         font-weight: 700;
         line-height: 1.32;
@@ -109,7 +109,7 @@
 
       /* Major resume section */
       .resume-section {
-        margin-top: 8px;
+        margin-top: 12px;
       }
 
       /* First resume section adjustment */
@@ -130,7 +130,7 @@
         margin: 0;
         padding-right: 8px;
         border-bottom: 2px solid var(--rule);
-        font-size: 15px;
+        font-size: 20px;
         line-height: 0.92;
         text-transform: uppercase;
         white-space: nowrap;
@@ -147,12 +147,12 @@
 
       /* Section entry */
       .entry {
-        margin: 0 0 6px 22px;
+        margin: 0 0 9px 22px;
       }
 
       /* Compact section entry */
       .entry.compact {
-        margin-bottom: 4px;
+        margin-bottom: 7px;
       }
 
       /* Entry title row */
@@ -167,7 +167,7 @@
       .entry-title {
         min-width: 0;
         margin: 0;
-        font-size: 13px;
+        font-size: 16px;
         font-weight: 700;
         line-height: 1.14;
       }
@@ -180,7 +180,7 @@
 
       /* Entry date range */
       .entry-date {
-        font-size: 12px;
+        font-size: 15px;
         font-weight: 700;
         white-space: nowrap;
       }
@@ -189,13 +189,13 @@
       .entry-role {
         margin: 2px 0 0;
         color: var(--muted-ink);
-        font-size: 12px;
+        font-size: 15px;
         font-style: italic;
       }
 
       /* Bullet list */
       .entry ul {
-        margin: 1px 0 0 24px;
+        margin: 2px 0 0 24px;
         padding: 0;
       }
 
@@ -207,7 +207,7 @@
 
       /* Bullet marker */
       .entry li::marker {
-        font-size: 15px;
+        font-size: 18px;
         line-height: 0;
       }
 
@@ -216,7 +216,7 @@
         width: calc(100% - 22px);
         margin: 0 0 0 22px;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: 15px;
       }
 
       /* Skills row label */
@@ -286,14 +286,92 @@
         body {
           padding: 0;
           background: var(--paper);
+          font-size: 17px;
+          line-height: 1.08;
         }
 
         /* Print page without browser shadow */
         .resume-page {
           width: 210mm;
           min-height: 297mm;
+          padding: 9mm 10mm 7mm;
           margin: 0;
           box-shadow: none;
+        }
+
+        /* Print header balance */
+        .resume-header {
+          margin-bottom: 18px;
+        }
+
+        /* Print name block */
+        .identity {
+          min-width: 250px;
+        }
+
+        /* Print name */
+        .identity h1 {
+          font-size: 24px;
+        }
+
+        /* Print tagline */
+        .identity p {
+          font-size: 15px;
+        }
+
+        /* Print contact */
+        .contact {
+          font-size: 15px;
+        }
+
+        /* Print section spacing */
+        .resume-section {
+          margin-top: 9px;
+        }
+
+        /* Print section title */
+        .section-heading h2 {
+          font-size: 19px;
+        }
+
+        /* Print entry spacing */
+        .entry {
+          margin-bottom: 6px;
+        }
+
+        /* Print compact entry spacing */
+        .entry.compact {
+          margin-bottom: 5px;
+        }
+
+        /* Print entry title */
+        .entry-title {
+          font-size: 17px;
+        }
+
+        /* Print entry date */
+        .entry-date {
+          font-size: 15px;
+        }
+
+        /* Print role */
+        .entry-role {
+          font-size: 15px;
+        }
+
+        /* Print bullet list spacing */
+        .entry ul {
+          margin-left: 20px;
+        }
+
+        /* Print bullets */
+        .entry li::marker {
+          font-size: 19px;
+        }
+
+        /* Print skills */
+        .skills-table {
+          font-size: 16px;
         }
 
         /* Print link cleanup */

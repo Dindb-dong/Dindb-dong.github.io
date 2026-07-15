@@ -7,12 +7,14 @@ const staticEntries = [
   ["assets", "dist/assets"],
   [".nojekyll", "dist/.nojekyll"],
   ["remote-browser.config.json", "dist/remote-browser.config.json"],
+  ["resume.html", "dist/resume.html"],
+  ["resume.pdf", "dist/resume.pdf"],
 ];
 
 for (const [from, to] of staticEntries) {
   if (!existsSync(from)) continue;
   await mkdir(dirname(to), { recursive: true });
-  if (from.endsWith(".json") || from.endsWith(".nojekyll")) {
+  if (from.endsWith(".json") || from.endsWith(".nojekyll") || from.endsWith(".html") || from.endsWith(".pdf")) {
     await copyFile(from, to);
   } else {
     await cp(from, to, { recursive: true });

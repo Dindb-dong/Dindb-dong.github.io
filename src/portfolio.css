@@ -253,6 +253,12 @@ body {
   min-width: 0;
 }
 
+/* Portfolio toolbar link alignment */
+.portfolio-link-list--toolbar {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+}
+
 /* Portfolio profile card */
 .portfolio-profile-card {
   display: grid;
@@ -613,6 +619,25 @@ body {
   text-decoration: none;
 }
 
+/* Resume embedded frame shell */
+.portfolio-resume-frame-shell {
+  min-height: min(78vh, 1080px);
+  padding: 10px;
+  border-radius: var(--portfolio-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), var(--portfolio-shadow-soft);
+}
+
+/* Resume embedded frame */
+.portfolio-resume-frame {
+  width: 100%;
+  min-height: min(74vh, 1020px);
+  border: 0;
+  border-radius: calc(var(--portfolio-radius-lg) - 6px);
+  background: #ffffff;
+}
+
 /* Portfolio timeline list */
 .portfolio-timeline {
   display: grid;
@@ -873,6 +898,11 @@ body {
     display: grid;
     grid-template-columns: minmax(0, max-content);
   }
+
+  /* Compact pane toolbar links */
+  .portfolio-link-list--toolbar {
+    justify-content: start;
+  }
 }
 
 /* Tablet viewport layout */
@@ -934,6 +964,12 @@ body {
   .portfolio-setting-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  /* Mobile resume frame */
+  .portfolio-resume-frame,
+  .portfolio-resume-frame-shell {
+    min-height: 72vh;
   }
 
   /* Mobile profile card */

@@ -74,6 +74,17 @@ function portfolioApps(runtime) {
       manifest: appManifest(),
       render: ({ content }) => registerView(runtime, "projects", content, renderProjects),
     },
+    {
+      id: "resume",
+      name: "Resume",
+      title: "Resume.app",
+      icon: "document",
+      pinned: true,
+      desktop: true,
+      singleton: true,
+      manifest: appManifest(),
+      render: ({ content }) => registerView(runtime, "resume", content, renderResume),
+    },
   ];
 }
 
@@ -313,9 +324,39 @@ function renderSettings(content, runtime) {
   });
 }
 
+function renderResume(content, runtime) {
+  content.innerHTML = `
+    <section class="portfolio-os-app portfolio-os-app--plain portfolio-resume-app" data-locale="${escapeAttr(runtime.locale)}">
+      <main class="portfolio-main-pane">
+        <header class="portfolio-toolbar">
+          <div>
+            <p class="portfolio-kicker">Resume.app</p>
+            <h1>Resume</h1>
+            <p class="portfolio-subtitle">Embedded resume view with direct access to the HTML and PDF export.</p>
+          </div>
+          <div class="portfolio-link-list portfolio-link-list--toolbar">
+            <a href="/resume.html" target="_blank" rel="noreferrer">Open HTML</a>
+            <a href="/resume.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+          </div>
+        </header>
+        <section class="portfolio-resume-frame-shell">
+          <iframe
+            class="portfolio-resume-frame"
+            src="/resume.html"
+            title="Kim Dong Wook Resume"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </section>
+      </main>
+    </section>
+  `;
+}
+
 function renderAppSidebar(active, runtime) {
   const items = [
     ["about", "About", "Profile"],
+    ["resume", "Resume", "resume.html"],
     ["experience", "Experience", "Timeline"],
     ["skills", "Skills", "Filters"],
     ["settings", "Preferences", "Language"],
@@ -364,6 +405,7 @@ function renderInlineView(target, content, runtime) {
   const renderers = {
     about: renderAbout,
     projects: renderProjects,
+    resume: renderResume,
     experience: renderExperience,
     skills: renderSkills,
     settings: renderSettings,
