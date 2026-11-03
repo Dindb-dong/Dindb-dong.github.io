@@ -163,6 +163,26 @@ for (const width of [1440, 390]) {
   });
 }
 
+test("selecting another project resets only the detail scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
+  await page.locator('[data-project-id="16"]').click();
+  const detail = page.locator(".portfolio-detail-pane");
+  await detail.evaluate(el => { el.scrollTop = el.scrollHeight; });
+  expect(await detail.evaluate(el => el.scrollTop)).toBeGreaterThan(100);
+  const scrollPositions = () => page.locator(".portfolio-finder, .portfolio-project-list").evaluateAll(elements => elements.map(el => el.scrollTop));
+  const before = await scrollPositions();
+  const next = page.locator('[data-project-id="20"]');
+  await next.click();
+  await expect(next).toHaveAttribute("aria-selected", "true");
+  await expect(detail).toHaveJSProperty("scrollTop", 0);
+  expect(await scrollPositions()).toEqual(before);
+  await expect(next).toBeFocused();
+  const title = await detail.locator("h2").boundingBox();
+  expect(title.y).toBeGreaterThanOrEqual((await detail.boundingBox()).y);
+});
+
 test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");

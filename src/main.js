@@ -279,7 +279,9 @@ function renderProjects(content, runtime) {
         row.classList.toggle("is-selected", selected);
       });
       const project = data.projects.find((project) => project.id === runtime.selectedProjectId);
-      content.querySelector(".portfolio-detail-pane").innerHTML = renderProjectDetail(project, runtime);
+      const detail = content.querySelector(".portfolio-detail-pane");
+      detail.innerHTML = renderProjectDetail(project, runtime);
+      detail.scrollTop = 0;
     });
   });
   content.querySelectorAll("[data-filter-type]").forEach((button) => {
