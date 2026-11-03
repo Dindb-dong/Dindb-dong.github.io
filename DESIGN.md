@@ -134,7 +134,7 @@
 
 - Current visual board: `/design-board.html` (source: `public/design-board.html`), following the user-supplied Oh My Canvas design-system reference. This is a local review surface, not a new desktop app.
 - Color source of truth: `assets/design-tokens.css`, imported by app CSS and linked by the board. Main #7c9fe5; sub #2563eb. Sky #7dd3fc and lavender #c4b5fd are supporting swatches, not competing primary UI colors. Brand logos retain their original colors.
-- Shared desktop navigation: 14px labels (down from 18px), 22px outline icons, 56px row targets, 16px row radius, white sidebar, main-color selected row. Narrow windows use 13px labels and 44px targets.
+- Shared desktop navigation: 14px labels (down from 18px), 22px outline icons, 44px row targets, 12px row radius, white sidebar, main-color selected row. Narrow windows use 13px labels and 44px targets.
 - Portfolio and all six experience apps reuse `portfolio-sidebar-nav` and `src/navigation-icons.js`. Experience navigation retains its project/media counts and four destinations.
 - Main-colored actions and selected navigation use white text; secondary-colored hover actions also use white. Links and focus use the secondary blue.
 
@@ -146,3 +146,10 @@
 - Replace the native experience-app select with shared `src/dropdown.js`: 16px trigger radius, 20px popup radius, 14px option radius, 44px targets, organization logos and selected checkmark.
 - Use the native popover top layer so menus escape window/sidebar clipping; place above or below according to available space. Arrow/Home/End navigation, Enter selection, Escape/Tab dismissal and native outside dismissal remain available. Dispose listeners/popovers when apps rerender or close.
 - User explicitly requests no focus border/ring on portfolio controls. Suppress SDK focus shadows and app outlines within host apps; keep keyboard focus visible via background fill. Do not patch the SDK package for a host-specific presentation preference.
+
+## Product-first overview (2026-11-03)
+
+- Lead with “AI를 설계하고, 서비스로 완성합니다.” at 30px maximum, smaller than the previous 34px name. Use 28px/26px in narrower windows; retain neutral ink and SUIT.
+- Move the portrait and identity into the sidebar. Narrow desktop sidebars from 240px to 196px with 44px navigation rows and reduced padding, shared with experience apps.
+- Hero uses the supplied actual Yomates desktop screenshot, with a caption and a working project-detail action, on the existing soft-blue surface. Do not present a reconstructed editor or landing-page artwork as a real editor capture.
+- Call the featured section “만든 제품” / “Products I build”. Give detail-page development more width, and replace long role labels with concrete product contributions. Stack hero/media and products in narrow windows.

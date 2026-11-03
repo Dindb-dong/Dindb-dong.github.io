@@ -153,12 +153,15 @@ function renderAbout(content, runtime) {
   const profile = data.introduce?.profile || {};
   const featuredProjects = FEATURED_PROJECT_IDS.map((id) => data.projects.find((project) => project.id === id)).filter(Boolean);
   const copy = runtime.locale === "ko" ? {
-    lead: "AI 모델부터 제품 경험까지 직접 설계하고 구현합니다.",
+    headline: "AI를 설계하고, 서비스로 완성합니다.",
+    lead: "편집기와 AI 생성 워크플로우부터 백엔드 아키텍처, 배포와 운영까지 직접 만듭니다.",
+    screen: "Yomates 데스크톱 · 실제 에이전트 대화 화면",
+    screenAction: "Yomates 개발 내용 보기",
     projects: "프로젝트 보기",
     resume: "이력서 열기",
     github: "GitHub",
-    featured: "대표 프로젝트",
-    featuredDescription: "Leviosa AI에서 직접 만든 서비스와 백엔드 설계·운영 작업입니다.",
+    featured: "만든 제품",
+    featuredDescription: "제품별로 직접 설계하고 구현한 핵심 기능입니다.",
     viewAll: "전체 프로젝트",
     story: data.introduce?.sectionTitle || "소개",
     projectLabel: "프로젝트",
@@ -166,12 +169,15 @@ function renderAbout(content, runtime) {
     stackLabel: "기술 스택",
     systemLabel: "DindbOS에서 실행 중",
   } : {
-    lead: "I design and build the whole path from AI models to product experiences.",
+    headline: "Designing AI. Building products.",
+    lead: "From editors and AI generation workflows to backend architecture, deployment, and operations.",
+    screen: "Yomates desktop · An actual agent conversation",
+    screenAction: "Explore my work on Yomates",
     projects: "View projects",
     resume: "Open resume",
     github: "GitHub",
-    featured: "Featured projects",
-    featuredDescription: "End-to-end product development and backend architecture at Leviosa AI.",
+    featured: "Products I build",
+    featuredDescription: "The core systems and features I designed and built for each product.",
     viewAll: "View all projects",
     story: data.introduce?.sectionTitle || "About",
     projectLabel: "Projects",
@@ -184,20 +190,20 @@ function renderAbout(content, runtime) {
       ${renderAppSidebar("about", runtime)}
       <main class="portfolio-main-pane">
         <header class="portfolio-hero portfolio-hero--profile">
-          <div class="portfolio-identity">
-            <div class="portfolio-profile-copy">
-              <h1>${escapeHtml(profile.nameEn || "Kim Dong Wook")}</h1>
-              <p class="portfolio-profile-role">${escapeHtml(profile.nameKo || "김동욱")} · Full-Stack AI Engineer</p>
-              <p class="portfolio-subtitle">${escapeHtml(profile.subtitle || "")}</p>
-              <p class="portfolio-profile-lead">${escapeHtml(copy.lead)}</p>
-              <div class="portfolio-action-row">
-                <button class="portfolio-action portfolio-action--primary" type="button" data-sidebar-target="projects">${copy.projects} ↗</button>
-                <button class="portfolio-action" type="button" data-sidebar-target="resume">${copy.resume}</button>
-                <a class="portfolio-action" href="${escapeAttr(CONTACT_LINKS[0].href)}" target="_blank" rel="noreferrer">${copy.github} ↗</a>
-              </div>
+          <div class="portfolio-profile-copy">
+            <h1>${escapeHtml(copy.headline)}</h1>
+            <p class="portfolio-profile-lead">${escapeHtml(copy.lead)}</p>
+            <div class="portfolio-action-row">
+              <button class="portfolio-action portfolio-action--primary" type="button" data-sidebar-target="projects">${copy.projects} ↗</button>
+              <button class="portfolio-action" type="button" data-sidebar-target="resume">${copy.resume}</button>
+              <a class="portfolio-action" href="${escapeAttr(CONTACT_LINKS[0].href)}" target="_blank" rel="noreferrer">${copy.github} ↗</a>
             </div>
-            <img class="portfolio-avatar" src="/assets/images/kim-dong-wook.png" alt="${escapeAttr(profile.nameEn || "Kim Dong Wook")}">
+            <p class="portfolio-profile-education">${escapeHtml(profile.subtitle || "")}</p>
           </div>
+          <button class="portfolio-product-preview" type="button" data-hero-project="19" aria-label="${escapeAttr(copy.screenAction)}">
+            <img src="/legacy/public/thumbnails/proj_19_2.png" alt="${escapeAttr(copy.screen)}" width="1275" height="818">
+            <span>${escapeHtml(copy.screen)}<span aria-hidden="true">↗</span></span>
+          </button>
         </header>
         <section class="portfolio-section portfolio-featured-section">
           <div class="portfolio-section-heading">
@@ -208,7 +214,7 @@ function renderAbout(content, runtime) {
             <button class="portfolio-text-action" type="button" data-sidebar-target="projects">${copy.viewAll} →</button>
           </div>
           <div class="portfolio-featured-grid">
-            ${featuredProjects.map((project) => renderFeaturedProject(project)).join("")}
+            ${featuredProjects.map((project) => renderFeaturedProject(project, runtime.locale)).join("")}
           </div>
         </section>
         <section class="portfolio-metric-row" aria-label="Portfolio summary">
@@ -503,9 +509,8 @@ function renderAppSidebar(active, runtime) {
   return `
     <aside class="portfolio-sidebar">
       <div class="portfolio-sidebar-title">
-        <span class="portfolio-sidebar-mark" aria-hidden="true">D</span>
-        <strong>Kim Dong Wook</strong>
-        <span>${escapeHtml(runtime.locale.toUpperCase())}</span>
+        <img class="portfolio-avatar" src="/assets/images/kim-dong-wook.png" alt="Kim Dong Wook">
+        <div class="portfolio-sidebar-person"><strong>Kim Dong Wook</strong><small>Full-Stack AI Engineer</small></div>
       </div>
       <nav class="portfolio-sidebar-nav" aria-label="Portfolio sections">
         ${items.map(([id, label]) => `
@@ -541,9 +546,9 @@ function wireSidebar(content, runtime) {
       renderInlineView(target, content, runtime);
     });
   });
-  content.querySelectorAll("[data-featured-project]").forEach((button) => {
+  content.querySelectorAll("[data-featured-project], [data-hero-project]").forEach((button) => {
     button.addEventListener("click", () => {
-      runtime.selectedProjectId = Number(button.dataset.featuredProject);
+      runtime.selectedProjectId = Number(button.dataset.featuredProject || button.dataset.heroProject);
       runtime.projectFilter = { type: "all", value: "All" };
       runtime.projectQuery = "";
       renderInlineView("projects", content, runtime);
@@ -597,15 +602,22 @@ function renderProjectRow(project, selectedId) {
   `;
 }
 
-function renderFeaturedProject(project) {
+function renderFeaturedProject(project, locale) {
+  const contributions = locale === "ko" ? {
+    17: "자체 편집기 · AI 생성 워크플로우 · 설계부터 운영까지",
+    19: "백엔드 아키텍처 · 공통 에러 처리 · 모니터링 연결",
+  } : {
+    17: "Custom editor · AI workflows · Architecture to operations",
+    19: "Backend architecture · Shared error handling · Monitoring",
+  };
   const cover = project.media.find((item) => item.type === "image") || project.media[0];
   return `
     <button class="portfolio-featured-project" type="button" data-featured-project="${project.id}">
       <span class="portfolio-featured-media">${cover ? renderMedia(cover, project.title, true) : `<span class="portfolio-project-placeholder">${escapeHtml(project.title)}</span>`}</span>
       <span class="portfolio-featured-copy">
-        <small>${escapeHtml(project.role || project.categories[0] || "Project")}</small>
+        <small>${escapeHtml(project.id === 17 ? "Leviosa AI" : "Yomates")}</small>
         <strong>${escapeHtml(project.title)}</strong>
-        <span>${escapeHtml(firstText(project.description))}</span>
+        <span>${escapeHtml(contributions[project.id] || firstText(project.description))}</span>
       </span>
       <span class="portfolio-featured-arrow" aria-hidden="true">↗</span>
     </button>

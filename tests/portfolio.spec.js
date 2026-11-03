@@ -3,13 +3,22 @@ import { expect, test } from "@playwright/test";
 test("overview leads with identity, work, and primary actions", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "프로젝트 보기" })).toBeVisible();
   await expect(page.getByRole("button", { name: "이력서 열기" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "대표 프로젝트" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "만든 제품" })).toBeVisible();
   await expect(page.locator(".portfolio-featured-project")).toHaveCount(2);
   await expect(page.locator(".portfolio-avatar")).toHaveJSProperty("complete", true);
   expect(await page.locator(".portfolio-avatar").evaluate((image) => image.naturalWidth)).toBeGreaterThan(0);
+  expect(await page.locator(".portfolio-about h1").evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeLessThan(34);
+  await expect(page.locator(".portfolio-sidebar .portfolio-avatar")).toBeVisible();
+  const hero = page.locator("[data-hero-project]");
+  await expect(hero.locator("img")).toHaveJSProperty("complete", true);
+  expect(await hero.locator("img").evaluate(image => image.naturalWidth)).toBeGreaterThan(1000);
+  expect((await page.locator(".portfolio-sidebar").boundingBox()).width).toBeLessThan(210);
+  await hero.click();
+  await expect(page.locator('[data-project-id="19"]')).toHaveAttribute("aria-selected", "true");
+
   expect(await page.evaluate(() => document.body.scrollWidth)).toBe(await page.evaluate(() => document.body.clientWidth));
 });
 
@@ -125,14 +134,14 @@ test("language and resume controls work inside the portfolio window", async ({ p
 test("portfolio minimizes, restores, closes, and reopens on the new runtime", async ({ page }) => {
   await page.goto("/");
   const window = page.locator(".dos-window").filter({ has: page.locator(".portfolio-os-app") });
-  await expect(window.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
+  await expect(window.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
   await window.getByRole("button", { name: "Minimize", exact: true }).click();
   await page.getByRole("button", { name: "Restore Kim Dong Wook.app", exact: true }).click();
-  await expect(window.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
+  await expect(window.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
   await window.getByRole("button", { name: "Close", exact: true }).click();
   await expect(window).toHaveCount(0);
   await page.getByRole("button", { name: "Launch Portfolio", exact: true }).click();
-  await expect(window.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
+  await expect(window.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
 });
 
 
