@@ -137,3 +137,6 @@
 - Shared desktop navigation: 14px labels (down from 18px), 22px outline icons, 56px row targets, 16px row radius, white sidebar, main-color selected row. Narrow windows use 13px labels and 44px targets.
 - Portfolio and all six experience apps reuse `portfolio-sidebar-nav` and `src/navigation-icons.js`. Experience navigation retains its project/media counts and four destinations.
 - Main-colored actions and selected navigation use white text; secondary-colored hover actions also use white. Links and focus use the secondary blue.
+
+- Experience app names and overview headlines use ink #202124, not accent blue. Reserve blue for interactive controls and links.
+- Shared navigation styles target both `portfolio-sidebar-nav` and the stable `.experience-sidebar > nav` structure. Previously opened app markup must retain its menu layout while local CSS updates load.

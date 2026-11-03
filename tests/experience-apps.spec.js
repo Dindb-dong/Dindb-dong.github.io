@@ -26,6 +26,8 @@ for (const [id, name] of apps) {
     await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("background-color", "rgb(124, 159, 229)");
     await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("color", "rgb(255, 255, 255)");
     await expect(navigation.locator("button span").first()).toHaveCSS("font-size", "14px");
+    await expect(app.locator(".experience-identity strong")).toHaveCSS("color", "rgb(32, 33, 36)");
+    await expect(app.locator(".experience-intro h2")).toHaveCSS("color", "rgb(32, 33, 36)");
     const logo = app.locator(".experience-identity img");
     await expect(logo).toHaveJSProperty("complete", true);
     expect(await logo.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0);
@@ -106,3 +108,24 @@ for (const width of [1024, 390]) {
     expect(await page.evaluate(() => document.body.scrollWidth <= document.body.clientWidth)).toBe(true);
   });
 }
+
+
+test("an already-open experience menu stays styled with its previous markup", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const app = await openExperience(page, 1);
+  const nav = app.getByRole("navigation", { name: "Experience sections" });
+  // Reproduce the older open app: no shared nav class or icon elements.
+  await nav.evaluate(el => { el.removeAttribute("class"); el.querySelectorAll("svg").forEach(icon => icon.remove()); });
+  await expect(nav).toHaveCSS("display", "grid");
+  const selected = nav.locator('[aria-current="page"]');
+  await expect(selected).toHaveCSS("background-color", "rgb(124, 159, 229)");
+  await expect(selected).toHaveCSS("border-radius", "16px");
+  await expect(selected.locator("span")).toHaveCSS("font-size", "14px");
+  const first = await nav.locator("button").nth(0).boundingBox();
+  const second = await nav.locator("button").nth(1).boundingBox();
+  expect(second.y - first.y).toBeGreaterThanOrEqual(60);
+  await page.screenshot({ path: testInfo.outputPath("existing-menu.png") });
+  await nav.locator('[data-experience-tab="projects"]').click();
+  await expect(app.locator("[data-experience-case]")).toBeVisible();
+  await expect(app.locator("nav button svg")).toHaveCount(4);
+});
