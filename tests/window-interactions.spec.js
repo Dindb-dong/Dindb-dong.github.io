@@ -6,7 +6,10 @@ for (const app of ["portfolio", "terminal", "experience-leviosa"]) {
     await page.goto("/");
     await expect(page.locator('.portfolio-about')).toBeVisible();
     if (app === "terminal") await page.locator('.dos-icon[aria-label="Open Terminal.app"]').dblclick();
-    if (app === "experience-leviosa") await page.locator('.dos-icon[aria-label="Open Leviosa-AI.app"]').dblclick();
+    if (app === "experience-leviosa") {
+      await page.locator('.dos-window[data-window-id="portfolio"]').getByRole("button", { name: "Minimize", exact: true }).click();
+      await page.locator('.dos-icon[aria-label="Open Leviosa-AI.app"]').dblclick();
+    }
     const frame = page.locator(`.dos-window[data-window-id="${app}"]`);
     await expect(frame).toBeVisible();
     const before = await frame.boundingBox();
