@@ -65,10 +65,12 @@ test("experience viewer supports keyboard, state, multiple apps, and language re
   await window.getByRole("button", { name: "Minimize", exact: true }).click();
   await page.getByRole("button", { name: "Restore Leviosa-AI.app", exact: true }).click();
   await expect(app.locator('[data-experience-case="19"]')).toBeVisible();
-  await app.locator("[data-experience-switch]").selectOption("3");
+  await app.locator("[data-dropdown-trigger]").click();
+  await app.getByRole("option", { name: "YAI.app", exact: true }).click();
   const yai = page.locator('.experience-app[data-experience-app="3"]');
   await expect(yai).toBeVisible();
-  await yai.locator("[data-experience-switch]").selectOption("1");
+  await yai.locator("[data-dropdown-trigger]").click();
+  await yai.getByRole("option", { name: "Leviosa-AI.app", exact: true }).click();
   await expect(page.locator('.experience-app[data-experience-app="1"]')).toHaveCount(1);
   await expect(app.locator('[data-experience-case="19"]')).toBeVisible();
   await page.getByRole("button", { name: "Focus Kim Dong Wook.app", exact: true }).click();
@@ -80,7 +82,8 @@ test("experience viewer supports keyboard, state, multiple apps, and language re
   await expect(app.locator('[data-experience-case="19"]')).toBeVisible();
   await window.getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Focus YAI.app", exact: true }).click();
-  await yai.locator("[data-experience-switch]").selectOption("1");
+  await yai.locator("[data-dropdown-trigger]").click();
+  await yai.getByRole("option", { name: "Leviosa-AI.app", exact: true }).click();
   await expect(app).toHaveAttribute("data-experience-tab-active", "overview");
 });
 
@@ -129,3 +132,48 @@ test("an already-open experience menu stays styled with its previous markup", as
   await expect(app.locator("[data-experience-case]")).toBeVisible();
   await expect(app.locator("nav button svg")).toHaveCount(4);
 });
+
+for (const width of [1440, 390]) {
+  test(`rounded experience dropdown supports keyboard and dismissal at ${width}px`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    const app = await openExperience(page, 1);
+    const trigger = app.locator('[data-dropdown-trigger]');
+    const menu = app.getByRole('listbox');
+    await trigger.click();
+    await expect(menu).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(trigger).toHaveCSS('outline-style', 'none');
+    await expect(trigger).toHaveCSS('box-shadow', 'none');
+    await expect(menu).toHaveCSS('border-radius', '20px');
+    await expect(menu.getByRole('option')).toHaveCount(6);
+    const bounds = await menu.boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+    expect(bounds.y).toBeGreaterThanOrEqual(0);
+    expect(bounds.y + bounds.height).toBeLessThanOrEqual(900);
+    await expect(menu.getByRole('option', { name: 'Leviosa-AI.app', exact: true })).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(menu.getByRole('option', { name: 'SDP.app', exact: true })).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await expect(menu.getByRole('option', { name: 'YCC.app', exact: true })).toBeFocused();
+    await page.screenshot({ path: testInfo.outputPath(`dropdown-${width}.png`) });
+    await page.keyboard.press('Escape');
+    await expect(menu).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+    await trigger.press('ArrowDown');
+    await expect(menu).toBeVisible();
+    await page.locator('.dos-window').filter({ has: app }).locator('.dos-window-titlebar strong').click();
+    await expect(menu).not.toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await trigger.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.experience-app[data-experience-app="2"]')).toBeVisible();
+    await expect(menu).not.toBeVisible();
+    // Closing an app with an open menu must remove the top-layer popup too.
+    await page.getByRole('button', { name: 'Focus Leviosa-AI.app', exact: true }).click();
+    await trigger.click();
+    await page.locator('.dos-window').filter({ has: app }).getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(page.locator('.app-dropdown-menu:popover-open')).toHaveCount(0);
+  });
+}

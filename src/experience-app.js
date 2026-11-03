@@ -1,9 +1,11 @@
+import { renderDropdown, mountDropdown } from "./dropdown.js";
 import { sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
 
 const html = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 
 export function renderExperienceApp(content, runtime, id, state) {
+  state.disposeDropdown?.();
   const app = experienceContent(runtime, id);
   const ko = runtime.locale === "ko";
   const copy = ko ? {
@@ -68,7 +70,10 @@ export function renderExperienceApp(content, runtime, id, state) {
     <aside class="experience-sidebar">
       <div class="experience-identity"><img src="${html(app.icon)}" alt=""><strong>${html(app.name)}</strong><span>${html(app.experience.period)}</span></div>
       <nav class="portfolio-sidebar-nav" aria-label="Experience sections">${tabs.map((tab) => `<button type="button" data-experience-tab="${tab}" ${state.tab === tab ? 'aria-current="page"' : ""}>${sidebarIcon(tab)}<span>${copy[tab]}</span><small>${tab === "projects" ? app.projects.length : tab === "gallery" ? app.media.length : ""}</small></button>`).join("")}</nav>
-      <label class="experience-switch"><span>${copy.change}</span><select aria-label="${copy.change}" data-experience-switch>${EXPERIENCE_APPS.map((entry) => `<option value="${entry.id}" ${entry.id === id ? "selected" : ""}>${html(entry.name)}.app</option>`).join("")}</select></label>
+      <div class="experience-switch"><span>${copy.change}</span>${renderDropdown({
+        id: `experience-switch-${id}`, label: copy.change, value: String(id),
+        options: EXPERIENCE_APPS.map(entry => ({ value: String(entry.id), label: `${entry.name}.app`, icon: entry.icon || `/assets/experience-icons/${entry.name}-official.svg` })),
+      })}</div>
     </aside>
     <main class="experience-main">
       <header class="experience-app-header"><div><h1>${html(app.experience.groupName)}</h1><p>${html(app.experience.position)}</p></div><span>${html(app.experience.period)}</span></header>
@@ -89,7 +94,7 @@ export function renderExperienceApp(content, runtime, id, state) {
     render();
     content.querySelector(`[data-experience-project="${state.projectId}"]`).focus({ preventScroll: true });
   }));
-  content.querySelector("[data-experience-switch]").addEventListener("change", (event) => runtime.launchExperience(Number(event.target.value)));
+  state.disposeDropdown = mountDropdown(content.querySelector("[data-dropdown]"), value => runtime.launchExperience(Number(value)));
 
   const dialog = content.querySelector("dialog");
   let imageIndex = 0;
@@ -121,4 +126,5 @@ export function renderExperienceApp(content, runtime, id, state) {
   });
   dialog.addEventListener("close", () => { if (opener?.isConnected) opener.focus({ preventScroll: true }); });
   dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+  return () => state.disposeDropdown?.();
 }

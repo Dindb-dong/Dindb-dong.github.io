@@ -140,3 +140,9 @@
 
 - Experience app names and overview headlines use ink #202124, not accent blue. Reserve blue for interactive controls and links.
 - Shared navigation styles target both `portfolio-sidebar-nav` and the stable `.experience-sidebar > nav` structure. Previously opened app markup must retain its menu layout while local CSS updates load.
+
+## Dropdown and focus feedback
+
+- Replace the native experience-app select with shared `src/dropdown.js`: 16px trigger radius, 20px popup radius, 14px option radius, 44px targets, organization logos and selected checkmark.
+- Use the native popover top layer so menus escape window/sidebar clipping; place above or below according to available space. Arrow/Home/End navigation, Enter selection, Escape/Tab dismissal and native outside dismissal remain available. Dispose listeners/popovers when apps rerender or close.
+- User explicitly requests no focus border/ring on portfolio controls. Suppress SDK focus shadows and app outlines within host apps; keep keyboard focus visible via background fill. Do not patch the SDK package for a host-specific presentation preference.

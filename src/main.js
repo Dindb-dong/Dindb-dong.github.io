@@ -135,8 +135,9 @@ function registerView(runtime, id, content, render, windowApi) {
     }
   }
   runtime.views.set(id, { content, render });
-  render(content, runtime);
+  const dispose = render(content, runtime);
   return () => {
+    dispose?.();
     if (runtime.views.get(id)?.content === content) runtime.views.delete(id);
   };
 }

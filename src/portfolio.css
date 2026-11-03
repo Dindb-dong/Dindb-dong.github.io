@@ -1259,7 +1259,6 @@ input {
 .experience-identity strong { font-size: 17px; color: var(--portfolio-ink); }
 .experience-identity > span { font-size: 11px; color: var(--portfolio-muted); }
 .experience-switch { display: grid; gap: 9px; margin-top: auto; font-size: 10px; color: var(--portfolio-muted); }
-.experience-switch select { width: 100%; min-height: 36px; border: 1px solid var(--portfolio-line); border-radius: 5px; padding: 6px; background: var(--portfolio-surface); color: var(--portfolio-ink); font-size: 11px; }
 .experience-main { min-width: 0; overflow: auto; overscroll-behavior: contain; padding: 28px; scrollbar-gutter: stable; }
 .experience-app-header { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--portfolio-line); }
 .experience-app-header h1 { margin: 0 0 8px; font-size: 27px; line-height: 1.2; }
@@ -1353,7 +1352,6 @@ input {
   .experience-sidebar nav button small { font-size: 9px; }
   .experience-switch { display: flex; align-items: center; gap: 10px; margin: 0; }
   .experience-switch > span { flex-shrink: 0; }
-  .experience-switch select { min-height: 36px; }
   .experience-main { padding: 20px 16px; }
   .experience-app-header { display: grid; gap: 8px; padding-bottom: 20px; }
   .experience-app-header h1 { font-size: 24px; }
@@ -1457,3 +1455,24 @@ input {
 }
 
 .portfolio-about .portfolio-action--primary:hover { background: var(--brand-secondary); color: white; }
+
+/* App controls use background feedback; never draw a focus ring. */
+.dos-window:has(.portfolio-os-app) { --focus-ring: 0 0 0 0 transparent; }
+.portfolio-os-app :is(button, a, input, select, textarea):is(:focus, :focus-visible) { outline: none !important; box-shadow: none !important; }
+.portfolio-os-app :is(button, a, input, select, textarea):focus-visible { background-color: var(--brand-accent-soft); }
+.portfolio-os-app :is(.is-active, [aria-current="page"], .portfolio-action--primary, .experience-primary):focus-visible { background-color: var(--brand-accent); }
+.app-dropdown { min-width: 0; width: 100%; }
+.app-dropdown-trigger { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 11px 14px; border: 1px solid var(--brand-border); border-radius: 16px; background: var(--brand-paper); color: var(--brand-ink); cursor: pointer; font-size: 13px; text-align: left; }
+.app-dropdown-trigger > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-dropdown-trigger > svg { width: 18px; height: 18px; flex: 0 0 18px; transition: transform 140ms ease; }
+.app-dropdown-trigger[aria-expanded="true"] { background: var(--brand-surface); }
+.app-dropdown-trigger[aria-expanded="true"] > svg { transform: rotate(180deg); }
+.app-dropdown-menu { position: fixed; inset: auto; margin: 0; padding: 6px; border: 1px solid var(--brand-border); border-radius: 20px; background: var(--brand-paper); color: var(--brand-ink); box-sizing: border-box; overflow: auto; overscroll-behavior: contain; box-shadow: 0 4px 12px rgb(32 33 36 / 6%), 0 16px 40px rgb(32 33 36 / 14%); }
+.app-dropdown-option { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 9px 10px; border: 0; border-radius: 14px; background: transparent; color: var(--brand-ink); cursor: pointer; font-size: 13px; text-align: left; }
+.app-dropdown-option img { width: 26px; height: 26px; flex: 0 0 26px; object-fit: contain; border-radius: 7px; }
+.app-dropdown-option > span { flex: 1; min-width: 0; }
+.app-dropdown-option > svg { width: 17px; height: 17px; flex: 0 0 17px; visibility: hidden; }
+.app-dropdown-option:hover, .app-dropdown-option:focus-visible { background: var(--brand-accent-soft); }
+.app-dropdown-option[aria-selected="true"], .app-dropdown-option[aria-selected="true"]:focus-visible { background: var(--brand-accent); color: white; }
+.app-dropdown-option[aria-selected="true"] > svg { visibility: visible; }
+.app-dropdown :is(button):is(:focus, :focus-visible) { outline: none !important; box-shadow: none !important; }
