@@ -19,6 +19,7 @@ async function bootPortfolioOS() {
 
   await createAndBootDindbOS({
     root: "#app",
+    theme: { mode: "light", accent: "#287a58", wallpaper: "meadow", dockSize: 48 },
     session: {
       user: "kimdongwook",
       product: "DindbOS Portfolio",
@@ -104,6 +105,9 @@ function appManifest() {
 function registerView(runtime, id, content, render) {
   runtime.views.set(id, { content, render });
   render(content, runtime);
+  return () => {
+    if (runtime.views.get(id)?.content === content) runtime.views.delete(id);
+  };
 }
 
 function refreshViews(runtime) {
@@ -197,7 +201,7 @@ function renderAbout(content, runtime) {
             ${(data.introduce?.details || []).map((paragraph) => `<p>${sanitizeTrustedLegacyHtml(paragraph)}</p>`).join("")}
           </div>
         </section>
-        <footer class="portfolio-runtime-note"><span aria-hidden="true"></span>${copy.systemLabel} · v0.1.1</footer>
+        <footer class="portfolio-runtime-note"><span aria-hidden="true"></span>${copy.systemLabel} · v0.2.0</footer>
       </main>
     </section>
   `;

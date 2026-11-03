@@ -43,246 +43,16 @@ input {
   letter-spacing: 0;
 }
 
-/* DindbOS host composition */
-.dos-shell,
-.dos-shell::before,
-.dos-shell::after {
-  background: var(--portfolio-canvas);
-}
-
-.dos-shell::before {
-  inset: 72px 0 0;
-  border-top: 1px solid oklch(0.9 0.015 250);
-  opacity: 1;
-}
-
-.dos-shell::after {
-  display: none;
-}
-
-.dos-menubar {
-  border: 1px solid var(--portfolio-line);
-  border-radius: 8px;
-  background: var(--portfolio-surface);
-  box-shadow: 0 1px 2px oklch(0.24 0.03 255 / 0.08), 0 8px 24px oklch(0.24 0.03 255 / 0.08);
-  backdrop-filter: none;
-}
-
-.dos-menubar::before,
-.dos-dock-item::before,
-.dos-dock-item::after,
-.dos-window::before,
-.dos-window::after,
-.dos-task::after {
-  display: none;
-}
-
-.dos-brand {
-  border: 0;
-  border-radius: 6px;
-  background: var(--portfolio-ink);
-  box-shadow: none;
-}
-
-.dos-task {
-  border-color: var(--portfolio-line);
-  border-radius: 6px;
-  background: var(--portfolio-surface-muted);
-  box-shadow: none;
-}
-
-.dos-desktop {
-  inset: 72px auto 104px 16px;
-  width: 196px;
-  max-width: none;
-  grid-template-columns: repeat(2, 90px);
+/* Keep launchers beside the portfolio while using the SDK shell appearance. */
+.dindbos-host .dos-desktop {
+  inset: 48px auto 100px 14px;
+  width: 200px;
+  grid-template-columns: repeat(2, 96px);
+  grid-template-rows: none;
+  grid-auto-flow: row;
   grid-auto-rows: 104px;
+  direction: ltr;
   gap: 8px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-
-.dos-icon {
-  border-radius: 8px;
-}
-
-.dos-icon[aria-label="Open Portfolio.app"] { order: 1; }
-.dos-icon[aria-label="Open Projects.app"] { order: 2; }
-.dos-icon[aria-label="Open Resume.app"] { order: 3; }
-.dos-icon[aria-label="Open Files.app"] { order: 4; }
-.dos-icon[aria-label="Open Browser.app"] { order: 5; }
-.dos-icon[aria-label="Open Terminal.app"] { order: 6; }
-.dos-icon[aria-label="Open Activity Monitor.app"] { order: 7; }
-.dos-icon[aria-label="Open Settings.app"] { order: 8; }
-.dos-icon[aria-label="Open Calculator.app"] { order: 9; }
-.dos-icon[aria-label="Open README.md"] { order: 10; }
-
-.dos-icon:hover {
-  border-color: var(--portfolio-line-strong);
-  background: oklch(1 0 0 / 0.74);
-  box-shadow: var(--portfolio-shadow-soft);
-  transform: translateY(-2px);
-}
-
-.dos-icon-art {
-  border: 1px solid var(--portfolio-line-strong);
-  border-radius: 12px;
-  background: oklch(0.985 0.004 250);
-  color: var(--portfolio-ink);
-  box-shadow: 0 1px 2px oklch(0.24 0.03 255 / 0.1), 0 8px 18px oklch(0.24 0.03 255 / 0.1);
-}
-
-[data-icon="folder"] .dos-icon-art,
-[data-icon="folder"] .dos-dock-item,
-.dos-dock-item[data-icon="folder"] {
-  background: oklch(0.82 0.085 78);
-  color: oklch(0.28 0.055 72);
-  box-shadow: inset 0 -3px 0 oklch(0.58 0.12 72), 0 2px 5px oklch(0.24 0.03 255 / 0.14);
-}
-
-[data-icon="terminal"] .dos-icon-art,
-[data-icon="terminal"] .dos-dock-item,
-.dos-dock-item[data-icon="terminal"] {
-  background: var(--portfolio-ink);
-  color: white;
-  box-shadow: inset 0 -3px 0 oklch(0.42 0.035 255), 0 2px 5px oklch(0.24 0.03 255 / 0.18);
-}
-
-[data-icon="activity"] .dos-icon-art,
-[data-icon="activity"] .dos-dock-item,
-.dos-dock-item[data-icon="activity"] {
-  background: oklch(0.985 0.004 250);
-  color: oklch(0.48 0.14 154);
-  box-shadow: inset 0 -3px 0 oklch(0.59 0.14 154), 0 2px 5px oklch(0.24 0.03 255 / 0.12);
-}
-
-[data-icon="portfolio"] .dos-icon-art,
-[data-icon="portfolio"] .dos-dock-item,
-.dos-dock-item[data-icon="portfolio"] {
-  background: oklch(0.5 0.17 258);
-  color: white;
-  box-shadow: inset 0 -3px 0 oklch(0.36 0.15 258), 0 2px 5px oklch(0.24 0.03 255 / 0.16);
-}
-
-[data-icon="text"] .dos-icon-art,
-[data-icon="document"] .dos-icon-art,
-[data-icon="pdf"] .dos-icon-art,
-[data-icon="text"] .dos-dock-item,
-[data-icon="document"] .dos-dock-item,
-[data-icon="pdf"] .dos-dock-item,
-.dos-dock-item[data-icon="text"],
-.dos-dock-item[data-icon="document"],
-.dos-dock-item[data-icon="pdf"] {
-  background: oklch(0.985 0.004 250);
-  color: oklch(0.52 0.17 29);
-  box-shadow: inset 0 -3px 0 oklch(0.62 0.17 29), 0 2px 5px oklch(0.24 0.03 255 / 0.12);
-}
-
-[data-icon="browser"] .dos-icon-art,
-[data-icon="browser"] .dos-dock-item,
-.dos-dock-item[data-icon="browser"] {
-  background: oklch(0.985 0.004 250);
-  color: oklch(0.48 0.16 270);
-  box-shadow: inset 0 -3px 0 oklch(0.57 0.16 270), 0 2px 5px oklch(0.24 0.03 255 / 0.12);
-}
-
-[data-icon="calculator"] .dos-icon-art,
-[data-icon="calculator"] .dos-dock-item,
-.dos-dock-item[data-icon="calculator"] {
-  background: oklch(0.985 0.004 250);
-  color: oklch(0.43 0.1 78);
-  box-shadow: inset 0 -3px 0 oklch(0.7 0.12 78), 0 2px 5px oklch(0.24 0.03 255 / 0.12);
-}
-
-[data-icon="settings"] .dos-icon-art,
-[data-icon="settings"] .dos-dock-item,
-.dos-dock-item[data-icon="settings"] {
-  background: oklch(0.985 0.004 250);
-  color: oklch(0.37 0.035 250);
-  box-shadow: inset 0 -3px 0 oklch(0.56 0.04 250), 0 2px 5px oklch(0.24 0.03 255 / 0.12);
-}
-
-[data-icon="device"] .dos-icon-art,
-[data-icon="device"] .dos-dock-item,
-.dos-dock-item[data-icon="device"] {
-  background: oklch(0.985 0.004 250);
-  color: oklch(0.43 0.13 235);
-  box-shadow: inset 0 -3px 0 oklch(0.58 0.13 235), 0 2px 5px oklch(0.24 0.03 255 / 0.12);
-}
-
-.dos-icon-label {
-  display: block;
-  padding: 2px 5px;
-  overflow: hidden;
-  border-radius: 4px;
-  background: oklch(1 0 0 / 0.78);
-  color: var(--portfolio-ink);
-  font-size: 10px;
-  font-weight: 750;
-  text-shadow: none;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  -webkit-line-clamp: unset;
-}
-
-.dos-dock {
-  border: 1px solid oklch(0.31 0.035 255);
-  border-radius: 12px;
-  background: oklch(0.22 0.028 255);
-  box-shadow: var(--portfolio-shadow);
-  backdrop-filter: none;
-}
-
-.dos-dock-item {
-  border: 1px solid oklch(1 0 0 / 0.2);
-  border-radius: 10px;
-  background: oklch(0.985 0.004 250);
-  color: var(--portfolio-ink);
-  box-shadow: 0 2px 5px oklch(0.24 0.03 255 / 0.14);
-  backdrop-filter: none;
-}
-
-.dos-dock-item:hover {
-  border-color: oklch(1 0 0 / 0.52);
-  filter: brightness(0.96);
-}
-
-.dos-dock-glyph {
-  color: currentColor;
-}
-
-.dos-dock-item span:last-child {
-  border: 0;
-  border-radius: 5px;
-  background: var(--portfolio-ink);
-}
-
-.dos-window {
-  border: 1px solid var(--portfolio-line-strong);
-  border-radius: 12px;
-  background: var(--portfolio-surface);
-  box-shadow: var(--portfolio-shadow);
-  backdrop-filter: none;
-}
-
-.dos-window.is-active {
-  border-color: oklch(0.63 0.14 258);
-  box-shadow: var(--portfolio-shadow), 0 0 0 2px oklch(0.63 0.14 258 / 0.18);
-}
-
-.dos-window-titlebar {
-  border-bottom: 1px solid var(--portfolio-line);
-  background: var(--portfolio-surface);
-  backdrop-filter: none;
-}
-
-.dos-window-titlebar strong {
-  font-size: 13px;
-  font-weight: 750;
-}
-
-.dos-window-content {
-  background: var(--portfolio-canvas);
 }
 
 .dos-window:has(.portfolio-os-app) .dos-window-content {
@@ -1230,7 +1000,7 @@ input {
 }
 
 @media (min-width: 761px) and (max-width: 1179px) {
-  .dos-desktop {
+  .dindbos-host .dos-desktop {
     width: 92px;
     grid-template-columns: 90px;
   }
@@ -1242,7 +1012,7 @@ input {
 }
 
 @media (max-width: 760px) {
-  .dos-desktop {
+  .dindbos-host .dos-desktop {
     inset: 72px 10px 92px;
     width: auto;
     grid-template-columns: repeat(3, minmax(0, 1fr));

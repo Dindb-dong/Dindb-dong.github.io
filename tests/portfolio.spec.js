@@ -13,14 +13,14 @@ test("overview leads with identity, work, and primary actions", async ({ page })
   expect(await page.evaluate(() => document.body.scrollWidth)).toBe(await page.evaluate(() => document.body.clientWidth));
 });
 
-test("desktop app shortcuts remain visible beside the default portfolio window", async ({ page }) => {
+test("desktop app shortcuts remain visible beside the default portfolio window", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
 
   const shortcuts = page.locator(".dos-icon");
   await expect(shortcuts).toHaveCount(10);
   for (const name of ["Portfolio.app", "Projects.app", "Resume.app", "Files.app", "Terminal.app"]) {
-    const shortcut = page.getByRole("button", { name: `Open ${name}` });
+    const shortcut = page.locator(`.dos-icon[aria-label="Open ${name}"]`);
     await expect(shortcut).toBeVisible();
     expect(await shortcut.evaluate((element) => {
       const bounds = element.getBoundingClientRect();
@@ -28,6 +28,7 @@ test("desktop app shortcuts remain visible beside the default portfolio window",
       return topElement?.closest(".dos-icon") === element;
     })).toBe(true);
   }
+  await page.screenshot({ path: testInfo.outputPath("desktop.png") });
 });
 
 test("project search, empty state, and reset remain usable", async ({ page }) => {
@@ -46,7 +47,7 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
   await expect(page.getByRole("status")).toContainText("16개 프로젝트");
 });
 
-test("mobile layout exposes every portfolio destination without page overflow", async ({ page }) => {
+test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
@@ -61,6 +62,7 @@ test("mobile layout exposes every portfolio destination without page overflow", 
   await expect(page.getByRole("searchbox", { name: "프로젝트 검색" })).toBeVisible();
   await expect(page.locator("[data-project-id]").first()).toBeVisible();
   await expect(page.locator(".portfolio-detail-pane")).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("mobile.png") });
 });
 
 test("featured work opens the matching project detail", async ({ page }) => {
@@ -82,4 +84,17 @@ test("language and resume controls work inside the portfolio window", async ({ p
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="resume"]').click();
   await expect(page.locator('iframe[title="Kim Dong Wook Resume"]')).toBeVisible();
   await expect(page.frameLocator('iframe[title="Kim Dong Wook Resume"]').getByRole("heading", { name: "Kim Dong Wook" })).toBeVisible();
+});
+
+test("portfolio minimizes, restores, closes, and reopens on the new runtime", async ({ page }) => {
+  await page.goto("/");
+  const window = page.locator(".dos-window").filter({ has: page.locator(".portfolio-os-app") });
+  await expect(window.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
+  await window.getByRole("button", { name: "Minimize", exact: true }).click();
+  await page.getByRole("button", { name: "Restore Kim Dong Wook.app", exact: true }).click();
+  await expect(window.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
+  await window.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(window).toHaveCount(0);
+  await page.getByRole("button", { name: "Launch Portfolio", exact: true }).click();
+  await expect(window.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
 });

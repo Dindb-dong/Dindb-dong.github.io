@@ -3,7 +3,7 @@
 ## Source of truth
 
 - Status: Active
-- Last refreshed: 2026-07-15
+- Last refreshed: 2026-11-03
 - Primary product surfaces: DindbOS desktop, Portfolio app, Projects app, Resume app
 - Evidence reviewed: `src/main.js`, `src/portfolio.css`, `src/portfolio-data.js`, the installed `dindbos` runtime styles and APIs, legacy Korean/English portfolio data, and live screenshots at 1440×900 and 390×844
 
@@ -40,7 +40,8 @@
 
 ## Visual language
 
-- Color: solid cool-gray desktop surfaces, near-black ink, cobalt primary action, amber project/folder role, coral document role, green system/success role; new palette tokens use OKLCH.
+- Shell: DindbOS 0.2.0 native meadow wallpaper, icons, menus, Dock and window chrome; calm green accent through the public theme API.
+- Color: solid cool-gray portfolio app surfaces, near-black ink, cobalt primary action, amber project/folder role, coral document role, green system/success role; new palette tokens use OKLCH.
 - Typography: system sans stack with compact OS chrome and editorial but restrained portfolio headings; no viewport-sized text.
 - Spacing/layout rhythm: 4px base with 8/12/16/24/32px steps; dense navigation and spacious reading areas.
 - Shape/radius/elevation: 6–8px content radii, 12px OS icon tiles, restrained two-layer neutral shadows for windows and elevated controls.
@@ -52,7 +53,7 @@
 - Existing components to reuse: DindbOS menubar, desktop icons, dock, window manager, host app registry, project media, and resume document.
 - New/changed components: overview action row, project highlights, project search, result count, mobile portfolio tabs, stronger icon palette, and local portrait fallback.
 - Variants and states: default/hover/focus/selected filters and projects, empty search result, mobile stacked detail, reduced motion, and image fallback.
-- Token/component ownership: OS chrome overrides and portfolio tokens live in `src/portfolio.css`; portfolio markup and behavior live in `src/main.js`.
+- Token/component ownership: Portfolio window placement and portfolio tokens live in `src/portfolio.css`; portfolio markup and behavior live in `src/main.js`.
 
 ## Accessibility
 
@@ -90,6 +91,13 @@
 - Performance constraints: keep the initial experience static and local; do not add a UI framework or runtime icon dependency.
 - Compatibility constraints: current evergreen Chromium/WebKit/Firefox behavior, keyboard and touch input, Korean and English datasets.
 - Test/screenshot expectations: Playwright smoke coverage plus desktop, tablet, and mobile screenshots of overview and projects; inspect at least one narrow state and empty search state.
+
+## Runtime revision
+
+- Source: `Dindb-dong/dindbos@61ee980f80491c14493228c96680282ffa8c72d6` (0.2.0).
+- Installed from a checked-in source-built tarball because npm still publishes 0.1.1. See `vendor/README.md`.
+- Keep the existing IndexedDB storage name so returning visitors retain their files.
+- Retain launcher placement beside the portfolio; use native SDK appearance for the shell.
 
 ## Open questions
 
