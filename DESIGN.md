@@ -41,9 +41,9 @@
 ## Visual language
 
 - Shell: DindbOS 0.2.0 native meadow wallpaper, icons, menus, Dock and window chrome; calm green accent through the public theme API.
-- Color: solid cool-gray portfolio app surfaces, near-black ink, cobalt primary action, amber project/folder role, coral document role, green system/success role; new palette tokens use OKLCH.
+- Color: white portfolio surfaces, near-black ink, solid violet active navigation matching the user reference, calm green primary actions, neutral separators; new palette tokens use OKLCH.
 - Typography: system sans stack with compact OS chrome and editorial but restrained portfolio headings; no viewport-sized text.
-- Spacing/layout rhythm: 4px base with 8/12/16/24/32px steps; dense navigation and spacious reading areas.
+- Spacing/layout rhythm: 4px base with 8/12/16/24/32px steps; generous icon-and-label navigation and spacious reading areas.
 - Shape/radius/elevation: 6–8px content radii, 12px OS icon tiles, restrained two-layer neutral shadows for windows and elevated controls.
 - Motion: short state transitions only; all non-essential motion disabled under reduced-motion.
 - Imagery/iconography: real project screenshots and a locally hosted profile portrait; outline system icons sit on high-contrast, role-colored tiles.
@@ -53,7 +53,7 @@
 - Existing components to reuse: DindbOS menubar, desktop icons, dock, window manager, host app registry, project media, and resume document.
 - New/changed components: overview action row, project highlights, project search, result count, mobile portfolio tabs, stronger icon palette, and local portrait fallback.
 - Variants and states: default/hover/focus/selected filters and projects, empty search result, mobile stacked detail, reduced motion, and image fallback.
-- Token/component ownership: Portfolio window placement and portfolio tokens live in `src/portfolio.css`; portfolio markup and behavior live in `src/main.js`.
+- Token/component ownership: Portfolio initial window bounds use the public window API in `src/main.js`; subsequent bounds belong to DindbOS. Portfolio styling lives in `src/portfolio.css`.
 
 ## Accessibility
 
@@ -122,3 +122,10 @@
 - Each app owns its selected tab/project. Minimize restores it; closing/reopening resets it. Language changes refresh open views without closing apps.
 - Verify desktop, tablet and mobile; all six registrations, timeline launch, singleton behavior, independent app state, project selection, image navigation/keyboard dismissal, language refresh and no page overflow.
 - Use inspected actual organization logos on the desktop, timeline cards and app sidebar, preserving colors and aspect ratios. Store original sources locally; see `assets/experience-icons/README.md`. Alus uses the red symbol from the user-supplied corporate logo; Leviosa uses the vector favicon from the company frontend source.
+
+## Portfolio opening screen refresh
+
+- User reference: single-line bold navigation labels, consistent outline icons, generous white sidebar, broad violet active row. Keep the seven portfolio destinations; omit redundant English subtitles.
+- Astra review: combine identity, introduction and actions; lead with real project screenshots; move numeric summary after featured work. Preserve green primary actions and SUIT.
+- Adapt navigation to app content width with container queries, including resized desktop windows. Narrow apps use horizontally scrolling labeled tabs with keyboard access.
+- Window position/size belong to the SDK window manager. Host sets initial bounds once via the window API; never pin window geometry with CSS !important. Verify real pointer dragging and resizing on host apps and SDK builtins.

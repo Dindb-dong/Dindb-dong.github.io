@@ -71,7 +71,7 @@ function portfolioApps(runtime) {
       width: 1180,
       height: 760,
       manifest: appManifest(),
-      render: ({ content }) => registerView(runtime, "portfolio", content, renderAbout),
+      render: ({ content, window }) => registerView(runtime, "portfolio", content, renderAbout, window),
     },
     {
       id: "projects-portfolio",
@@ -84,7 +84,7 @@ function portfolioApps(runtime) {
       width: 1220,
       height: 780,
       manifest: appManifest(),
-      render: ({ content }) => registerView(runtime, "projects", content, renderProjects),
+      render: ({ content, window }) => registerView(runtime, "projects", content, renderProjects, window),
     },
     {
       id: "resume",
@@ -97,7 +97,7 @@ function portfolioApps(runtime) {
       width: 1100,
       height: 780,
       manifest: appManifest(),
-      render: ({ content }) => registerView(runtime, "resume", content, renderResume),
+      render: ({ content, window }) => registerView(runtime, "resume", content, renderResume, window),
     },
     ...EXPERIENCE_APPS.map((app) => ({
       id: app.appId,
@@ -109,9 +109,9 @@ function portfolioApps(runtime) {
       width: 1180,
       height: 760,
       manifest: appManifest(),
-      render: ({ content }) => {
+      render: ({ content, window }) => {
         const state = { tab: "overview", projectId: app.projectIds[0] };
-        return registerView(runtime, app.appId, content, (element, currentRuntime) => renderExperienceApp(element, currentRuntime, app.id, state));
+        return registerView(runtime, app.appId, content, (element, currentRuntime) => renderExperienceApp(element, currentRuntime, app.id, state), window);
       },
     })),
   ];
@@ -124,7 +124,15 @@ function appManifest() {
   };
 }
 
-function registerView(runtime, id, content, render) {
+function registerView(runtime, id, content, render, windowApi) {
+  runtime.positionedApps ||= new Set();
+  if (windowApi && !runtime.positionedApps.has(id)) {
+    runtime.positionedApps.add(id);
+    if (globalThis.innerWidth > 760) {
+      const left = globalThis.innerWidth >= 1180 ? 228 : 124;
+      windowApi.setBounds({ left, top: 72, width: globalThis.innerWidth - left - 20, height: Math.min(760, globalThis.innerHeight - 170) });
+    }
+  }
   runtime.views.set(id, { content, render });
   render(content, runtime);
   return () => {
@@ -143,7 +151,6 @@ function renderAbout(content, runtime) {
   const profile = data.introduce?.profile || {};
   const featuredProjects = FEATURED_PROJECT_IDS.map((id) => data.projects.find((project) => project.id === id)).filter(Boolean);
   const copy = runtime.locale === "ko" ? {
-    eyebrow: "FULL-STACK AI ENGINEER",
     lead: "AI 모델부터 제품 경험까지 직접 설계하고 구현합니다.",
     projects: "프로젝트 보기",
     resume: "이력서 열기",
@@ -157,7 +164,6 @@ function renderAbout(content, runtime) {
     stackLabel: "기술 스택",
     systemLabel: "DindbOS에서 실행 중",
   } : {
-    eyebrow: "FULL-STACK AI ENGINEER",
     lead: "I design and build the whole path from AI models to product experiences.",
     projects: "View projects",
     resume: "Open resume",
@@ -177,32 +183,23 @@ function renderAbout(content, runtime) {
       <main class="portfolio-main-pane">
         <header class="portfolio-hero portfolio-hero--profile">
           <div class="portfolio-identity">
-            <img class="portfolio-avatar" src="/assets/images/kim-dong-wook.png" alt="${escapeAttr(profile.nameEn || "Kim Dong Wook")}">
-            <div>
-              <p class="portfolio-kicker">${copy.eyebrow}</p>
+            <div class="portfolio-profile-copy">
               <h1>${escapeHtml(profile.nameEn || "Kim Dong Wook")}</h1>
-              <p class="portfolio-name-ko">${escapeHtml(profile.nameKo || "김동욱")}</p>
+              <p class="portfolio-profile-role">${escapeHtml(profile.nameKo || "김동욱")} · Full-Stack AI Engineer</p>
               <p class="portfolio-subtitle">${escapeHtml(profile.subtitle || "")}</p>
+              <p class="portfolio-profile-lead">${escapeHtml(copy.lead)}</p>
+              <div class="portfolio-action-row">
+                <button class="portfolio-action portfolio-action--primary" type="button" data-sidebar-target="projects">${copy.projects} ↗</button>
+                <button class="portfolio-action" type="button" data-sidebar-target="resume">${copy.resume}</button>
+                <a class="portfolio-action" href="${escapeAttr(CONTACT_LINKS[0].href)}" target="_blank" rel="noreferrer">${copy.github} ↗</a>
+              </div>
             </div>
-          </div>
-          <div class="portfolio-hero-copy">
-            <p>${escapeHtml(copy.lead)}</p>
-            <div class="portfolio-action-row">
-              <button class="portfolio-action portfolio-action--primary" type="button" data-sidebar-target="projects">${copy.projects}</button>
-              <button class="portfolio-action" type="button" data-sidebar-target="resume">${copy.resume}</button>
-              <a class="portfolio-action" href="${escapeAttr(CONTACT_LINKS[0].href)}" target="_blank" rel="noreferrer">${copy.github}</a>
-            </div>
+            <img class="portfolio-avatar" src="/assets/images/kim-dong-wook.png" alt="${escapeAttr(profile.nameEn || "Kim Dong Wook")}">
           </div>
         </header>
-        <section class="portfolio-metric-row" aria-label="Portfolio summary">
-          <div><strong>${data.projects.length}</strong><span>${copy.projectLabel}</span></div>
-          <div><strong>${data.experiences.length}</strong><span>${copy.experienceLabel}</span></div>
-          <div><strong>${unique(data.projects.flatMap((project) => project.techStacks)).length}</strong><span>${copy.stackLabel}</span></div>
-        </section>
         <section class="portfolio-section portfolio-featured-section">
           <div class="portfolio-section-heading">
             <div>
-              <p class="portfolio-kicker">WORK / 2026</p>
               <h2>${copy.featured}</h2>
               <p>${copy.featuredDescription}</p>
             </div>
@@ -212,10 +209,14 @@ function renderAbout(content, runtime) {
             ${featuredProjects.map((project) => renderFeaturedProject(project)).join("")}
           </div>
         </section>
+        <section class="portfolio-metric-row" aria-label="Portfolio summary">
+          <div><strong>${data.projects.length}</strong><span>${copy.projectLabel}</span></div>
+          <div><strong>${data.experiences.length}</strong><span>${copy.experienceLabel}</span></div>
+          <div><strong>${unique(data.projects.flatMap((project) => project.techStacks)).length}</strong><span>${copy.stackLabel}</span></div>
+        </section>
         <section class="portfolio-section portfolio-story-section">
           <div class="portfolio-section-heading">
             <div>
-              <p class="portfolio-kicker">PROFILE</p>
               <h2>${escapeHtml(copy.story)}</h2>
             </div>
           </div>
@@ -478,23 +479,36 @@ function renderResume(content, runtime) {
   wireSidebar(content, runtime);
 }
 
+function sidebarIcon(id) {
+  const paths = {
+    about: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/>',
+    projects: '<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12a24 24 0 0 0 18 0M10 13v2h4v-2"/>',
+    experience: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18m-13 5 3 3 5-5"/>',
+    skills: '<path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-15-2 18"/>',
+    resume: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Zm0 0v6h6M8 13h8m-8 4h8"/>',
+    settings: '<path d="m9 3-1 3-3 1-2 4 2 2v4l3 1 2 3h4l2-3 3-1v-4l2-2-2-4-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/>',
+    contact: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/>',
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[id]}</svg>`;
+}
+
 function renderAppSidebar(active, runtime) {
   const items = runtime.locale === "ko" ? [
-    ["about", "개요", "Profile"],
-    ["projects", "프로젝트", `${currentData(runtime).projects.length} works`],
-    ["experience", "경험", "Timeline"],
-    ["skills", "기술", "Capabilities"],
-    ["resume", "이력서", "resume.pdf"],
-    ["settings", "설정", "Language"],
-    ["contact", "연락하기", "GitHub"],
+    ["about", "개요"],
+    ["projects", "프로젝트"],
+    ["experience", "경험"],
+    ["skills", "기술"],
+    ["resume", "이력서"],
+    ["settings", "설정"],
+    ["contact", "연락하기"],
   ] : [
-    ["about", "Overview", "Profile"],
-    ["projects", "Projects", `${currentData(runtime).projects.length} works`],
-    ["experience", "Experience", "Timeline"],
-    ["skills", "Skills", "Capabilities"],
-    ["resume", "Resume", "resume.pdf"],
-    ["settings", "Settings", "Language"],
-    ["contact", "Contact", "GitHub"],
+    ["about", "Overview"],
+    ["projects", "Projects"],
+    ["experience", "Experience"],
+    ["skills", "Skills"],
+    ["resume", "Resume"],
+    ["settings", "Settings"],
+    ["contact", "Contact"],
   ];
   return `
     <aside class="portfolio-sidebar">
@@ -504,10 +518,9 @@ function renderAppSidebar(active, runtime) {
         <span>${escapeHtml(runtime.locale.toUpperCase())}</span>
       </div>
       <nav class="portfolio-sidebar-nav" aria-label="Portfolio sections">
-        ${items.map(([id, label, meta]) => `
+        ${items.map(([id, label]) => `
           <button type="button" class="${active === id ? "is-active" : ""}" data-sidebar-target="${escapeAttr(id)}" ${active === id ? 'aria-current="page"' : ""}>
-            <span>${escapeHtml(label)}</span>
-            <small>${escapeHtml(meta)}</small>
+            ${sidebarIcon(id)}<span>${escapeHtml(label)}</span>
           </button>
         `).join("")}
       </nav>
