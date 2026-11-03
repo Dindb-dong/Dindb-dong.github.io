@@ -4,12 +4,14 @@ test("overview shows verified profile panels and launches career and research de
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
   await expect(page.locator(".profile-panel")).toHaveCount(5);
-  await expect(page.locator(".profile-panel h2")).toHaveText(["학력·언어", "스테이터스", "커리어", "연구·리더십", "개발 도구"]);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["학력·언어", "스테이터스", "커리어", "AI", "개발 도구"]);
   await expect(page.locator(".profile-education")).toContainText("과천외국어고등학교");
   await expect(page.locator(".profile-education")).toContainText("응용통계학 · 컴퓨터과학");
   await expect(page.locator(".profile-education")).toContainText("4.00");
   await expect(page.locator(".profile-languages dd")).toHaveText(["원어민", "상", "상"]);
   await expect(page.locator(".profile-grade-grid dd")).toHaveText(["SS", "A+", "A", "A-", "A", "B+"]);
+  await expect(page.locator(".profile-research")).toContainText("YAI 18기 부학회장");
+  await expect(page.locator(".profile-ai-interests dt")).toHaveText(["CV", "RL"]);
   await expect(page.locator(".profile-career")).toContainText("2024.07–2024.11");
   await expect(page.locator(".profile-tools")).toContainText("Kubernetes");
   await expect(page.locator(".profile-overview")).not.toContainText("작업 방식");
@@ -112,7 +114,7 @@ test("Leviosa experience includes representative work and maintenance in both la
   await nav.locator('[data-sidebar-target="settings"]').click();
   await page.getByRole("button", { name: "English", exact: true }).click();
   await nav.locator('[data-sidebar-target="about"]').click();
-  await expect(page.locator(".profile-panel h2")).toHaveText(["Education & languages", "Skills", "Experience", "Research & leadership", "Development tools"]);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["Education & languages", "Skills", "Experience", "AI", "Development tools"]);
   await expect(page.locator(".profile-languages dd")).toHaveText(["Native", "Advanced", "Advanced"]);
   await nav.locator('[data-sidebar-target="experience"]').click();
   for (const text of ["AI Detail Page", "Agency", "Yomates", "Naver Smart Store", "Web & Admin", "Telegram & Notion"]) {

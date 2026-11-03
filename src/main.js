@@ -153,17 +153,17 @@ function renderAbout(content, runtime) {
   const copy = ko ? {
     education: "학력·언어", university: "연세대학교", major: "응용통계학 · 컴퓨터과학",
     school: "과천외국어고등학교", track: "일본어과", stats: "스테이터스", assessment: "자기평가",
-    career: "커리어", research: "연구·리더십", tools: "개발 도구", resume: "이력서 열기",
-    leadership: "YAI 부학회장 · 연구부원", hub: "60명 넘는 학회원이 매일 사용하는 웹·앱",
-    rl: "강화학습", vision: "영상 검색",
+    career: "커리어", research: "AI", tools: "개발 도구", resume: "이력서 열기",
+    leadership: "YAI 18기 부학회장", hub: "60명 넘는 학회원이 매일 사용하는 웹·앱",
+    interests: "관심 분야", rl: "강화학습", vision: "컴퓨터 비전",
   } : {
     education: "Education & languages", university: "Yonsei University", major: "Applied Statistics · Computer Science",
     school: "Gwacheon Foreign Language High School", track: "Japanese", stats: "Skills", assessment: "Self-assessed",
-    career: "Experience", research: "Research & leadership", tools: "Development tools", resume: "Open resume",
-    leadership: "YAI Vice President · Research Member", hub: "Web & mobile platform used daily by 60+ members",
-    rl: "Reinforcement learning", vision: "Video retrieval",
+    career: "Experience", research: "AI", tools: "Development tools", resume: "Open resume",
+    leadership: "YAI 18th-cohort Vice President", hub: "Web & mobile platform used daily by 60+ members",
+    interests: "Research interests", rl: "Reinforcement learning", vision: "Computer vision",
   };
-  const grades = [[ko ? "잠재력" : "Potential", "SS"], [ko ? "백엔드" : "Backend", "A+"], [ko ? "인프라" : "Infra", "A"], ["DB", "A-"], ["AI", "A"], [ko ? "프론트" : "Frontend", "B+"]];
+  const grades = [[ko ? "잠재력" : "Potential", "SS", "potential", 0], [ko ? "백엔드" : "Backend", "A+", "backend", 4], [ko ? "인프라" : "Infra", "A", "infra", 4], ["DB", "A-", "database", 3], ["AI", "A", "ai", 4], [ko ? "프론트" : "Frontend", "B+", "skills", 3]];
   const languages = ko ? [["한국어", "원어민"], ["영어", "상"], ["일본어", "상"]] : [["Korean", "Native"], ["English", "Advanced"], ["Japanese", "Advanced"]];
   const tools = [
     [ko ? "언어" : "Languages", SKILLS.languages],
@@ -197,7 +197,7 @@ function renderAbout(content, runtime) {
           </section>
           <section class="profile-panel profile-stats" aria-label="${copy.stats}">
             <header><h2>${copy.stats}</h2><span>${copy.assessment}</span></header>
-            <dl class="profile-grade-grid">${grades.map(([name, grade]) => `<div ${grade === "SS" ? 'class="profile-potential"' : ""}><dt>${name}</dt><dd>${grade}</dd></div>`).join("")}</dl>
+            <dl class="profile-grade-grid">${grades.map(([name, grade, icon, segments]) => `<div ${grade === "SS" ? 'class="profile-potential"' : ""}><dt>${sidebarIcon(icon)}<span>${name}</span></dt>${segments ? `<span class="profile-grade-meter" aria-hidden="true">${Array.from({length: 5}, (_, index) => `<i${index < segments ? ' class="is-filled"' : ""}></i>`).join("")}</span>` : ""}<dd>${grade}</dd></div>`).join("")}</dl>
           </section>
           <section class="profile-panel profile-career" aria-label="${copy.career}">
             <h2>${copy.career}</h2>
@@ -206,7 +206,8 @@ function renderAbout(content, runtime) {
           <section class="profile-panel profile-research" aria-label="${copy.research}">
             <h2>${copy.research}</h2>
             <button type="button" class="profile-research-row" data-experience-open="3"><strong>${copy.leadership}</strong><span>2025.01–${ko ? "현재" : "present"}</span></button>
-            ${[[20, "YAI-HUB", copy.hub], [7, "Dueling DDQN", copy.rl], [6, "CLIP + BLIP2", copy.vision]].map(([id, title, summary]) => `<button type="button" class="profile-research-row" data-profile-project="${id}"><strong>${title}<span aria-hidden="true">↗</span></strong><span>${summary}</span></button>`).join("")}
+            <div class="profile-ai-interests"><h3>${copy.interests}</h3><dl><div><dt>CV</dt><dd>${copy.vision}</dd></div><div><dt>RL</dt><dd>${copy.rl}</dd></div></dl></div>
+            <button type="button" class="profile-research-row" data-profile-project="20"><strong>YAI-HUB<span aria-hidden="true">↗</span></strong><span>${copy.hub}</span></button>
           </section>
           <section class="profile-panel profile-tools" aria-label="${copy.tools}">
             <h2>${copy.tools}</h2>

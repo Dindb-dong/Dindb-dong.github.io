@@ -48,3 +48,9 @@ Status: implemented final C direction, removing panel numbers and decorative/rep
 - Replace with five semantic panels, no numbers, eyebrow headings, decorative icons, fake progress bars, gradients or repetitive badges. Real logos identify clickable organizations; status remains explicit user-defined grades.
 - No new fallback path is needed. Existing legacy-data defaults outside this overview change remain untouched.
 - Verify English/Korean, panel facts and grades, career/research launching, no horizontal overflow at desktop/tablet/mobile, narrow-window navigation and existing regressions.
+
+## Follow-up: status rows and AI panel (2026-11-04)
+
+- Replace large grade tiles with the user's supplied compact row reference: outline domain icons, decorative five-segment indicators and letter-grade badges. Keep potential SS with a main-blue filled surface and white label. No percentages or invented measurements.
+- Rename research/leadership to AI. First show YAI 18기 부학회장 (18th-cohort Vice President), then CV/컴퓨터 비전 and RL/강화학습 under interests, then YAI-HUB. Existing research projects remain in the archive.
+- Development tools span the first two desktop columns below education/status to accommodate the shorter status treatment. Preserve the two-column and mobile arrangements.
