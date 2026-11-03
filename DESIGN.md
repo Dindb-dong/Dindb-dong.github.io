@@ -94,9 +94,9 @@
 
 ## Featured work
 
-- Featured order: AI Detail Page Generation & Editing (17), Agency (18), Yomates (19), explicitly selected independently of archive order.
-- All three also appear under Leviosa AI experience, alongside Naver integration and frontend maintenance.
-- New company projects use calm green typographic covers until approved product screenshots are available. Private PR links and operational metrics stay outside site content.
+- Featured order: AI Detail Page Generation & Editing (17), Yomates (19), explicitly selected independently of archive order. Agency remains in company experience only.
+- Both also appear under Leviosa AI experience, alongside Agency backend leadership, web/admin feature development and mostly independent maintenance, Naver integrations, and internal Telegram/Notion agent automation.
+- Company project covers are real public service landing-page screenshots captured on 2026-11-03. Private PR links and operational metrics stay outside site content.
 - Korean and English content share project IDs and featured order.
 
 ## Runtime revision

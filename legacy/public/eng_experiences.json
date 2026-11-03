@@ -5,19 +5,21 @@
     "period": "2026.03 ~",
     "position": "AI Engineer & Founding Member",
     "description": [
-      "Developed AI detail-page generation workflows, backend services, editor integration, and operational infrastructure",
+      "Owned the AI detail-page product end to end: custom editor/canvas engine, AI generation workflows, system architecture, infrastructure, deployment, and operations",
       "Led Agency backend development across asynchronous generation jobs, credit settlement, per-job cost tracking, access control, and observability",
-      "Contributed to Yomates desktop and mobile apps: browser connection/authentication recovery, meeting recording/transcription, live previews, and agent API reliability",
+      "Contributed to Yomates backend architecture design; implemented error handling and shared modules for every server task type and integrated monitoring",
+      "Contributed to most Leviosa web features, handled most maintenance independently, and built most of the admin interface",
       "Maintained Naver Smart Store and TalkTalk integrations across product uploads, automated inspections, price updates, and product-context-aware replies",
-      "Maintained the Leviosa web frontend across sourcing, product management, customer support, operational notifications, and backend integrations",
+      "Built and operated internal agent workflows with Telegram and Notion; this experience informed the evolution of the Yomates product idea",
       "Developed Cafe24 commerce automation flows including CS, app installation/OAuth, product sourcing/uploads, and storefront chat widgets"
     ],
     "projects": [
-      "AI Detail Page Generation & Editing",
+      "AI Detail Page Generation & Editing — End-to-End Development & Operations",
       "Agency — Backend Lead",
-      "Yomates — Desktop & Mobile App Contributor",
-      "Naver Smart Store & TalkTalk Integration Maintenance",
-      "Leviosa Web Frontend Maintenance",
+      "Yomates — Backend Architecture, Error Handling & Monitoring",
+      "Leviosa Web & Admin Development and Maintenance",
+      "Naver Smart Store & TalkTalk Integrations",
+      "Internal Automation with Telegram & Notion",
       "Cafe24 Commerce Automation"
     ]
   },

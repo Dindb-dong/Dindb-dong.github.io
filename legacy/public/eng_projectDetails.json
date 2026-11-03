@@ -332,7 +332,7 @@
   },
   "17": {
     "title": "AI Detail Page Generation & Editing",
-    "role": "Backend & AI Workflow Engineer",
+    "role": "Full-Stack Developer & System Architect",
     "languages": [
       "Python",
       "TypeScript"
@@ -340,33 +340,6 @@
     "techStacks": [
       "FastAPI",
       "React",
-      "AWS",
-      "Docker"
-    ],
-    "categories": [
-      "Web",
-      "AI"
-    ],
-    "description": [
-      "An AI commerce service that generates editable product detail pages from product information and brand guidelines.",
-      "Developed generation workflows, backend services, editor integration, and operational infrastructure."
-    ],
-    "extraDescription": [
-      "Connected brand palettes, guidelines, and uploaded fonts to generation inputs and editable documents.",
-      "Improved queue and worker shutdown/protection flows to address long-running generation jobs interrupted by deployments.",
-      "Used document tokens and row locking to prevent stale concurrent saves from overwriting newer documents.",
-      "Contributed to a custom editor with AI editing, document round trips, and mobile touch interactions."
-    ],
-    "links": []
-  },
-  "18": {
-    "title": "Agency",
-    "role": "Backend Lead",
-    "languages": [
-      "Python"
-    ],
-    "techStacks": [
-      "FastAPI",
       "PostgreSQL",
       "AWS",
       "Docker"
@@ -376,44 +349,51 @@
       "AI"
     ],
     "description": [
-      "Led backend development for Agency, an AI content generation service.",
-      "Owned asynchronous generation jobs, credit settlement, per-job cost tracking, and operational reliability."
+      "An AI commerce service that generates editable product detail pages from product information and brand guidelines.",
+      "Built and managed the product end to end: the custom editor, AI generation workflows, system architecture, deployment, and operations."
     ],
     "extraDescription": [
-      "Managed asynchronous generation jobs and improved ECS worker recovery and scaling flows.",
-      "Implemented an audit structure that tracks per-job token usage and internal costs from credit settlement records.",
-      "Restricted worker-job RPC access and strengthened data access boundaries.",
-      "Standardized API and worker error codes and structured logging for operational diagnostics."
+      "Built the custom editor and canvas engine, including AI editing, document persistence, HTML/shape conversion, and mobile touch UI.",
+      "Designed and implemented the entire workflow from product and brand inputs through AI generation, editing, and saving.",
+      "Designed the system architecture, job queues, and workers, and owned infrastructure, deployment, and operations.",
+      "Resolved reliability issues including deployment interruptions during long-running generation and concurrent document save conflicts."
     ],
-    "links": []
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://leviosa.ai.kr/agency/detail-page/new-landing"
+      }
+    ]
   },
   "19": {
     "title": "Yomates",
-    "role": "Desktop & Mobile App Contributor",
+    "role": "Backend Architecture & Reliability",
     "languages": [
       "TypeScript"
     ],
     "techStacks": [
-      "Electron",
-      "React Native",
-      "Expo",
-      "Node.js"
+      "Node.js",
+      "TypeScript",
+      "AWS"
     ],
     "categories": [
       "AI",
-      "Mobile",
-      "Computer Science"
+      "Web"
     ],
     "description": [
-      "Contributed to the Yomates desktop and mobile apps for working with AI agents.",
-      "Implemented browser connection and authentication recovery, meeting recording and transcription, and agent API reliability improvements."
+      "Contributed to backend architecture design for Yomates, an AI agent service for business workflows.",
+      "Implemented error handling and shared modules for every type of server task and connected them to the monitoring system."
     ],
     "extraDescription": [
-      "Desktop: refreshed browser connection state after access changes and made authentication retries survive app restarts.",
-      "Mobile: implemented meeting recording, chunked transcription, and live previews within chat.",
-      "Connected agent-controlled recording start/stop to meeting notes, decisions, and action items.",
-      "Managed API: drained in-flight requests and sessions during shutdown and improved settlement recovery and operational logging."
+      "Contributed to backend architecture design and implemented error-handling structures across server tasks.",
+      "Consolidated task-specific error handling into shared modules for consistent failure handling and diagnostics.",
+      "Connected task errors and execution status to monitoring so operational issues could be traced."
     ],
-    "links": []
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://yomates.ai/"
+      }
+    ]
   }
 }

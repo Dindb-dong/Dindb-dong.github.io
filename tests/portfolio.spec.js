@@ -7,7 +7,7 @@ test("overview leads with identity, work, and primary actions", async ({ page })
   await expect(page.getByRole("button", { name: "프로젝트 보기" })).toBeVisible();
   await expect(page.getByRole("button", { name: "이력서 열기" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "대표 프로젝트" })).toBeVisible();
-  await expect(page.locator(".portfolio-featured-project")).toHaveCount(3);
+  await expect(page.locator(".portfolio-featured-project")).toHaveCount(2);
   await expect(page.locator(".portfolio-avatar")).toHaveJSProperty("complete", true);
   expect(await page.locator(".portfolio-avatar").evaluate((image) => image.naturalWidth)).toBeGreaterThan(0);
   expect(await page.evaluate(() => document.body.scrollWidth)).toBe(await page.evaluate(() => document.body.clientWidth));
@@ -43,8 +43,8 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
   await search.fill("does-not-exist");
   await expect(page.getByText("검색 결과 없음")).toBeVisible();
   await page.getByRole("button", { name: "검색 초기화" }).click();
-  await expect(page.locator("[data-project-id]")).toHaveCount(19);
-  await expect(page.getByRole("status")).toContainText("19개 프로젝트");
+  await expect(page.locator("[data-project-id]")).toHaveCount(18);
+  await expect(page.getByRole("status")).toContainText("18개 프로젝트");
 });
 
 test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
@@ -67,14 +67,21 @@ test("mobile layout exposes every portfolio destination without page overflow", 
 });
 
 test("featured company work opens matching details in the requested order", async ({ page }) => {
-  const names = ["AI 상세페이지 생성·편집", "Agency", "Yomates"];
+  const names = ["AI 상세페이지 생성·편집", "Yomates"];
+  const ids = [17, 19];
+  const urls = ["https://leviosa.ai.kr/agency/detail-page/new-landing", "https://yomates.ai/"];
   for (const [index, name] of names.entries()) {
     await page.goto("/");
     await expect(page.locator(".portfolio-featured-copy strong")).toHaveText(names);
-    await page.locator(`[data-featured-project="${17 + index}"]`).click();
-    await expect(page.locator(`[data-project-id="${17 + index}"]`)).toHaveAttribute("aria-selected", "true");
+    await page.locator(`[data-featured-project="${ids[index]}"]`).click();
+    await expect(page.locator(`[data-project-id="${ids[index]}"]`)).toHaveAttribute("aria-selected", "true");
     await expect(page.locator(".portfolio-detail-pane").getByRole("heading", { name, exact: true })).toBeVisible();
-    await expect(page.locator(".portfolio-detail-pane").getByRole("heading", { name: "관련 링크", exact: true })).toHaveCount(0);
+    await expect(page.locator(".portfolio-detail-pane").getByRole("link", { name: "Website", exact: true })).toHaveAttribute("href", urls[index]);
+    const image = page.locator(".portfolio-detail-pane img").first();
+    await expect(image).toBeVisible();
+    await expect(image).toHaveJSProperty("complete", true);
+    expect(await image.evaluate((element) => element.naturalWidth)).toBeGreaterThan(1000);
+    await expect(page.locator('[data-project-id="18"]')).toHaveCount(0);
   }
 });
 
@@ -83,16 +90,16 @@ test("Leviosa experience includes representative work and maintenance in both la
   const nav = page.getByRole("navigation", { name: "Portfolio sections" });
   await nav.locator('[data-sidebar-target="experience"]').click();
   const company = page.locator(".portfolio-timeline-card").filter({ hasText: "Leviosa AI" });
-  for (const text of ["AI 상세페이지 생성·편집", "Agency", "Yomates", "네이버 스마트스토어·톡톡", "프론트엔드 유지보수"]) {
+  for (const text of ["AI 상세페이지 생성·편집", "Agency", "Yomates", "네이버 스마트스토어·톡톡", "대부분 단독", "어드민", "Telegram·Notion"]) {
     await expect(company).toContainText(text);
   }
   await page.screenshot({ path: testInfo.outputPath("leviosa-experience.png") });
   await nav.locator('[data-sidebar-target="settings"]').click();
   await page.getByRole("button", { name: "English", exact: true }).click();
   await nav.locator('[data-sidebar-target="about"]').click();
-  await expect(page.locator(".portfolio-featured-copy strong")).toHaveText(["AI Detail Page Generation & Editing", "Agency", "Yomates"]);
+  await expect(page.locator(".portfolio-featured-copy strong")).toHaveText(["AI Detail Page Generation & Editing", "Yomates"]);
   await nav.locator('[data-sidebar-target="experience"]').click();
-  for (const text of ["AI Detail Page", "Agency", "Yomates", "Naver Smart Store", "Web Frontend Maintenance"]) {
+  for (const text of ["AI Detail Page", "Agency", "Yomates", "Naver Smart Store", "Web & Admin", "Telegram & Notion"]) {
     await expect(company).toContainText(text);
   }
 });
