@@ -1221,14 +1221,15 @@ input {
 .profile-links a, .profile-links button { color: var(--brand-ink); font-size: 12px; text-decoration: none; }
 .profile-links a:hover { color: var(--brand-secondary); }
 .profile-links button { min-height: 36px; padding: 8px 12px; border: 1px solid var(--brand-border); border-radius: 6px; background: var(--brand-paper); cursor: pointer; }
-.profile-panels { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.8fr) minmax(0, 1.15fr); grid-template-areas: "education stats career" "tools tools research"; gap: 16px; align-items: stretch; }
+.profile-panels { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.8fr) minmax(0, 1.15fr); gap: 16px; align-items: start; }
 .profile-panel { min-width: 0; padding: 12px 16px; border: 1px solid var(--brand-border); border-radius: 8px; color: var(--brand-ink); background: var(--brand-paper); word-break: keep-all; overflow-wrap: anywhere; }
 .profile-panel h2 { color: var(--brand-ink); margin: 0 0 10px; font-size: 16px; line-height: 1.4; font-weight: 700; }
-.profile-education { grid-area: education; }
-.profile-stats { grid-area: stats; display: flex; flex-direction: column; gap: 10px; }
-.profile-career { grid-area: career; }
-.profile-research { grid-area: research; }
-.profile-tools { grid-area: tools; }
+.profile-column { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.profile-education { order: 1; }
+.profile-stats { order: 2; display: flex; flex-direction: column; gap: 10px; }
+.profile-career { order: 3; }
+.profile-research { order: 4; }
+.profile-tools { order: 5; }
 .profile-school + .profile-school { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--brand-border); }
 .profile-school h3 { color: var(--brand-ink); margin: 0 0 4px; font-size: 14px; line-height: 1.5; }
 .profile-school p { margin: 0; font-size: 14px; line-height: 1.6; }
@@ -1278,13 +1279,23 @@ input {
 .profile-tools dt { margin: 0; color: var(--brand-muted); font-size: 12px; line-height: 1.5; }
 .profile-tools dd { margin: 0; font-size: 13px; line-height: 1.65; }
 @container portfolio-window (max-width: 1000px) {
-  .profile-panels { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "education stats" "tools stats" "career research"; }
+  .profile-panels { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@container portfolio-window (min-width: 761px) and (max-width: 1000px) {
+  .profile-panels { grid-template-areas: "education stats" "tools career" "research research"; }
+  .profile-column { display: contents; }
+  .profile-education { grid-area: education; }
+  .profile-stats { grid-area: stats; }
+  .profile-tools { grid-area: tools; }
+  .profile-career { grid-area: career; }
+  .profile-research { grid-area: research; }
 }
 @container portfolio-window (max-width: 760px) {
   .portfolio-about .profile-overview { padding: 20px; gap: 20px; }
   .profile-header { align-items: start; flex-direction: column; gap: 14px; }
   .profile-header h1 { font-size: 25px; }
-  .profile-panels { grid-template-columns: minmax(0, 1fr); grid-template-areas: "education" "stats" "career" "research" "tools"; }
+  .profile-panels { grid-template-columns: minmax(0, 1fr); }
+  .profile-column { display: contents; }
   .profile-panel { padding: 18px; }
 }
 

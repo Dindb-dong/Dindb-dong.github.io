@@ -4,7 +4,7 @@ test("overview shows verified profile panels and launches career and research de
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
   await expect(page.locator(".profile-panel")).toHaveCount(5);
-  await expect(page.locator(".profile-panel h2")).toHaveText(["학력·언어", "스테이터스", "커리어", "AI", "개발 도구"]);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["학력·언어", "개발 도구", "스테이터스", "커리어", "AI"]);
   await expect(page.locator(".profile-education")).toContainText("과천외국어고등학교");
   await expect(page.locator(".profile-education")).toContainText("응용통계학 · 컴퓨터과학");
   await expect(page.locator(".profile-education")).toContainText("4.00");
@@ -114,7 +114,7 @@ test("Leviosa experience includes representative work and maintenance in both la
   await nav.locator('[data-sidebar-target="settings"]').click();
   await page.getByRole("button", { name: "English", exact: true }).click();
   await nav.locator('[data-sidebar-target="about"]').click();
-  await expect(page.locator(".profile-panel h2")).toHaveText(["Education & languages", "Skills", "Experience", "AI", "Development tools"]);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["Education & languages", "Development tools", "Skills", "Experience", "AI"]);
   await expect(page.locator(".profile-languages dd")).toHaveText(["Native", "Advanced", "Advanced"]);
   await nav.locator('[data-sidebar-target="experience"]').click();
   for (const text of ["AI Detail Page", "Agency", "Yomates", "Naver Smart Store", "Web & Admin", "Telegram & Notion"]) {
@@ -179,6 +179,12 @@ for (const width of [1440, 1024, 390]) {
       expect(await panel.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
     }
     if (width === 1440) {
+      for (const selector of [".profile-education", ".profile-career"]) {
+        expect(await page.locator(selector).evaluate(el => {
+          const last = el.lastElementChild.getBoundingClientRect();
+          return el.getBoundingClientRect().bottom - last.bottom;
+        })).toBeLessThan(20);
+      }
       expect(await pane.evaluate(el => el.scrollHeight - el.clientHeight)).toBeLessThan(2);
     }
     await page.screenshot({ path: testInfo.outputPath(`profile-${width}.png`), animations: "disabled" });

@@ -54,3 +54,9 @@ Status: implemented final C direction, removing panel numbers and decorative/rep
 - Replace large grade tiles with the user's supplied compact row reference: outline domain icons, decorative five-segment indicators and letter-grade badges. Keep potential SS with a main-blue filled surface and white label. No percentages or invented measurements.
 - Rename research/leadership to AI. First show YAI 18기 부학회장 (18th-cohort Vice President), then CV/컴퓨터 비전 and RL/강화학습 under interests, then YAI-HUB. Existing research projects remain in the archive.
 - Development tools span the first two desktop columns below education/status to accommodate the shorter status treatment. Preserve the two-column and mobile arrangements.
+
+## Follow-up: content-height panels and YAI-HUB detail (2026-11-04)
+
+- Replace shared-height grid rows with three independent desktop stacks. Academic and career panels end after their content; mobile retains education/status/career/AI/tools order.
+- YAI-HUB already existed as project 20 under YAI. Replace its screenshots with the newly supplied originals (operations dashboard and public website), keeping the existing captions and single-project attribution.
+- Lead both locale descriptions with the transition from fragmented Notion/Google Forms/Google Sheets to one web/mobile platform and the user-confirmed 60+ daily members. List attendance, reports, announcements and the other existing operations. No invented metrics or promotional “legend” claim.

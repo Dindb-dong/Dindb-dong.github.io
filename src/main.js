@@ -189,30 +189,36 @@ function renderAbout(content, runtime) {
           </nav>
         </header>
         <div class="profile-panels">
-          <section class="profile-panel profile-education" aria-label="${copy.education}">
-            <h2>${copy.education}</h2>
-            <div class="profile-school"><h3>${copy.university}</h3><p>${copy.major}</p><div class="profile-school-meta"><time>2023.03–2028.02</time><span>GPA <strong>4.00</strong> / 4.3</span></div></div>
-            <div class="profile-school"><h3>${copy.school}</h3><p>${copy.track} <span class="profile-date">· 2020.03–2023.01</span></p></div>
-            <dl class="profile-languages">${languages.map(([name, level]) => `<div><dt>${name}</dt><dd>${level}</dd></div>`).join("")}</dl>
-          </section>
-          <section class="profile-panel profile-stats" aria-label="${copy.stats}">
-            <header><h2>${copy.stats}</h2><span>${copy.assessment}</span></header>
-            <dl class="profile-grade-grid">${grades.map(([name, grade, icon, segments]) => `<div ${grade === "SS" ? 'class="profile-potential"' : ""}><dt>${sidebarIcon(icon)}<span>${name}</span></dt>${segments ? `<span class="profile-grade-meter" aria-hidden="true">${Array.from({length: 5}, (_, index) => `<i${index < segments ? ' class="is-filled"' : ""}></i>`).join("")}</span>` : ""}<dd>${grade}</dd></div>`).join("")}</dl>
-          </section>
-          <section class="profile-panel profile-career" aria-label="${copy.career}">
-            <h2>${copy.career}</h2>
-            <div class="profile-career-list">${careers.map(({app, experience}) => `<button type="button" data-experience-open="${app.id}"><img src="${escapeAttr(app.icon || `/assets/experience-icons/${app.name}-official.svg`)}" alt=""><span><span class="profile-career-title"><strong>${escapeHtml(app.name)}</strong><time>${escapeHtml(experience.period.replace(/\s*[~-]\s*/g, "–"))}</time></span><span>${escapeHtml(experience.position)}</span></span><span aria-hidden="true">↗</span></button>`).join("")}</div>
-          </section>
-          <section class="profile-panel profile-research" aria-label="${copy.research}">
-            <h2>${copy.research}</h2>
-            <button type="button" class="profile-research-row" data-experience-open="3"><strong>${copy.leadership}</strong><span>2025.01–${ko ? "현재" : "present"}</span></button>
-            <div class="profile-ai-interests"><h3>${copy.interests}</h3><dl><div><dt>CV</dt><dd>${copy.vision}</dd></div><div><dt>RL</dt><dd>${copy.rl}</dd></div></dl></div>
-            <button type="button" class="profile-research-row" data-profile-project="20"><strong>YAI-HUB<span aria-hidden="true">↗</span></strong><span>${copy.hub}</span></button>
-          </section>
-          <section class="profile-panel profile-tools" aria-label="${copy.tools}">
-            <h2>${copy.tools}</h2>
-            <dl>${tools.map(([category, names]) => `<div><dt>${category}</dt><dd>${names.map(escapeHtml).join(" · ")}</dd></div>`).join("")}</dl>
-          </section>
+          <div class="profile-column">
+            <section class="profile-panel profile-education" aria-label="${copy.education}">
+              <h2>${copy.education}</h2>
+              <div class="profile-school"><h3>${copy.university}</h3><p>${copy.major}</p><div class="profile-school-meta"><time>2023.03–2028.02</time><span>GPA <strong>4.00</strong> / 4.3</span></div></div>
+              <div class="profile-school"><h3>${copy.school}</h3><p>${copy.track} <span class="profile-date">· 2020.03–2023.01</span></p></div>
+              <dl class="profile-languages">${languages.map(([name, level]) => `<div><dt>${name}</dt><dd>${level}</dd></div>`).join("")}</dl>
+            </section>
+            <section class="profile-panel profile-tools" aria-label="${copy.tools}">
+              <h2>${copy.tools}</h2>
+              <dl>${tools.map(([category, names]) => `<div><dt>${category}</dt><dd>${names.map(escapeHtml).join(" · ")}</dd></div>`).join("")}</dl>
+            </section>
+          </div>
+          <div class="profile-column">
+            <section class="profile-panel profile-stats" aria-label="${copy.stats}">
+              <header><h2>${copy.stats}</h2><span>${copy.assessment}</span></header>
+              <dl class="profile-grade-grid">${grades.map(([name, grade, icon, segments]) => `<div ${grade === "SS" ? 'class="profile-potential"' : ""}><dt>${sidebarIcon(icon)}<span>${name}</span></dt>${segments ? `<span class="profile-grade-meter" aria-hidden="true">${Array.from({length: 5}, (_, index) => `<i${index < segments ? ' class="is-filled"' : ""}></i>`).join("")}</span>` : ""}<dd>${grade}</dd></div>`).join("")}</dl>
+            </section>
+          </div>
+          <div class="profile-column">
+            <section class="profile-panel profile-career" aria-label="${copy.career}">
+              <h2>${copy.career}</h2>
+              <div class="profile-career-list">${careers.map(({app, experience}) => `<button type="button" data-experience-open="${app.id}"><img src="${escapeAttr(app.icon || `/assets/experience-icons/${app.name}-official.svg`)}" alt=""><span><span class="profile-career-title"><strong>${escapeHtml(app.name)}</strong><time>${escapeHtml(experience.period.replace(/\s*[~-]\s*/g, "–"))}</time></span><span>${escapeHtml(experience.position)}</span></span><span aria-hidden="true">↗</span></button>`).join("")}</div>
+            </section>
+            <section class="profile-panel profile-research" aria-label="${copy.research}">
+              <h2>${copy.research}</h2>
+              <button type="button" class="profile-research-row" data-experience-open="3"><strong>${copy.leadership}</strong><span>2025.01–${ko ? "현재" : "present"}</span></button>
+              <div class="profile-ai-interests"><h3>${copy.interests}</h3><dl><div><dt>CV</dt><dd>${copy.vision}</dd></div><div><dt>RL</dt><dd>${copy.rl}</dd></div></dl></div>
+              <button type="button" class="profile-research-row" data-profile-project="20"><strong>YAI-HUB<span aria-hidden="true">↗</span></strong><span>${copy.hub}</span></button>
+            </section>
+          </div>
         </div>
       </main>
     </section>`;

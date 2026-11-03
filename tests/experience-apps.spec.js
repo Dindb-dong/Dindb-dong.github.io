@@ -195,6 +195,7 @@ test("YAI-HUB and Yakemon belong to YAI, with verified media and no duplicate hu
   await expect(app.locator('[data-experience-project="9"]')).toHaveCount(1);
   await expect(app.locator('[data-experience-project="7"]')).toHaveCount(1);
   await expect(app.locator('[data-experience-case="20"]')).toBeVisible();
+  await expect(app).toContainText("노션·구글 폼·구글 시트");
   await expect(app.getByRole("link", { name: "Website", exact: false })).toHaveAttribute("href", "https://y-yai.com/");
   await app.locator('nav [data-experience-tab="gallery"]').click();
   await expect(app.locator(".experience-gallery figure")).toHaveCount(7);

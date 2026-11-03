@@ -419,10 +419,10 @@
       "Computer Science"
     ],
     "description": [
-      "Designed, built, and operate a web and mobile platform used daily by more than 60 YAI members."
+      "Replaced fragmented Notion, Google Forms and Google Sheets workflows with one web and mobile platform, used daily by more than 60 YAI members."
     ],
     "extraDescription": [
-      "Unified member and team management, attendance, activity points, personal and team reports, live Q&A, notices, calendars, archives, and finance workflows.",
+      "Brought attendance, individual and team reports, announcements, member and team management, activity points, live Q&A, calendars, archives and finance into one place.",
       "Built Yjs/Hocuspocus-based real-time collaborative documents and recruitment tools for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.",
       "Developed the public society website covering research, programs, achievements, alumni, and recruitment.",
       "Implemented role-based access, operational monitoring, audit logs, backups, and Capacitor-based mobile integration."

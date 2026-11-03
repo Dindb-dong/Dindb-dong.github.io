@@ -150,7 +150,7 @@
 ## Profile overview (2026-11-04)
 
 - Implement the final C direction from the image-generated proposals. The user explicitly removed panel numbers and requested less AI-generated scaffolding. [Panel brief](docs/design/overview-panel-concepts/brief.md) records verified sources and decisions.
-- Five semantic panels: academic/language, self-assessed status, career, research/leadership and detailed development tools. Desktop uses three columns, with development tools spanning two columns on the lower row; smaller windows use two columns then one column.
+- Five semantic panels: academic/language, self-assessed status, career, research/leadership and detailed development tools. Desktop uses three independent columns with content-height panels: education/tools, status, career/AI. Panels never stretch to a sibling’s height. Tablet pairs education/status and tools/career, with AI below; mobile restores education, status, career, AI, tools reading order.
 - Remove the promotional hero, product showcase, generic numeric summary and long opening biography from this view. Keep the underlying project archive and biography data.
 - No panel numbering, eyebrow headings, gradients, decorative badges, fake progress bars, repeated explanatory paragraphs or card shadows. The user revised the status treatment on 2026-11-04: compact icon rows, letter-grade badges and five decorative segments matching the supplied reference, with potential SS on a filled main-blue row. Segments are hidden from assistive technology; they do not assert measured scores or percentages.
 - User-defined grades: potential SS, backend A+, infrastructure A, DB A-, AI A, frontend B+. Natural languages: 한국어 원어민 · 영어 상 · 일본어 상.
