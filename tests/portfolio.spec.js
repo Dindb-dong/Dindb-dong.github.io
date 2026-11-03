@@ -1,25 +1,26 @@
 import { expect, test } from "@playwright/test";
 
-test("overview leads with identity, work, and primary actions", async ({ page }) => {
+test("overview shows verified profile panels and launches career and research details", async ({ page }) => {
   await page.goto("/");
-
-  await expect(page.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "프로젝트 보기" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "이력서 열기" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "만든 제품" })).toBeVisible();
-  await expect(page.locator(".portfolio-featured-project")).toHaveCount(2);
-  await expect(page.locator(".portfolio-avatar")).toHaveJSProperty("complete", true);
-  expect(await page.locator(".portfolio-avatar").evaluate((image) => image.naturalWidth)).toBeGreaterThan(0);
-  expect(await page.locator(".portfolio-about h1").evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeLessThan(34);
-  await expect(page.locator(".portfolio-sidebar .portfolio-avatar")).toBeVisible();
-  const hero = page.locator("[data-hero-project]");
-  await expect(hero.locator("img")).toHaveJSProperty("complete", true);
-  expect(await hero.locator("img").evaluate(image => image.naturalWidth)).toBeGreaterThan(1000);
-  expect((await page.locator(".portfolio-sidebar").boundingBox()).width).toBeLessThan(210);
-  await hero.click();
-  await expect(page.locator('[data-project-id="19"]')).toHaveAttribute("aria-selected", "true");
-
-  expect(await page.evaluate(() => document.body.scrollWidth)).toBe(await page.evaluate(() => document.body.clientWidth));
+  await expect(page.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
+  await expect(page.locator(".profile-panel")).toHaveCount(5);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["학력·언어", "스테이터스", "커리어", "연구·리더십", "개발 도구"]);
+  await expect(page.locator(".profile-education")).toContainText("과천외국어고등학교");
+  await expect(page.locator(".profile-education")).toContainText("응용통계학 · 컴퓨터과학");
+  await expect(page.locator(".profile-education")).toContainText("4.00");
+  await expect(page.locator(".profile-languages dd")).toHaveText(["원어민", "상", "상"]);
+  await expect(page.locator(".profile-grade-grid dd")).toHaveText(["SS", "A+", "A", "A-", "A", "B+"]);
+  await expect(page.locator(".profile-career")).toContainText("2024.07–2024.11");
+  await expect(page.locator(".profile-tools")).toContainText("Kubernetes");
+  await expect(page.locator(".profile-overview")).not.toContainText("작업 방식");
+  await expect(page.locator(".portfolio-featured-project, .portfolio-product-preview")).toHaveCount(0);
+  await expect(page.locator(".portfolio-sidebar .portfolio-avatar")).toHaveJSProperty("complete", true);
+  expect(await page.locator(".portfolio-avatar").evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
+  await page.locator('.profile-career [data-experience-open="4"]').click();
+  await expect(page.locator('.experience-app[data-experience-app="4"]')).toBeVisible();
+  await page.getByRole("button", { name: "Focus Kim Dong Wook.app", exact: true }).click();
+  await page.locator('[data-profile-project="20"]').click();
+  await expect(page.locator('[data-project-id="20"]')).toHaveAttribute("aria-selected", "true");
 });
 
 test("desktop app shortcuts remain visible beside the default portfolio window", async ({ page }, testInfo) => {
@@ -80,14 +81,14 @@ test("mobile layout exposes every portfolio destination without page overflow", 
   await page.screenshot({ path: testInfo.outputPath("mobile.png") });
 });
 
-test("featured company work opens matching details in the requested order", async ({ page }) => {
+test("company projects remain accessible after removing the overview showcase", async ({ page }) => {
   const names = ["AI 상세페이지 생성·편집", "Yomates"];
   const ids = [17, 19];
   const urls = ["https://leviosa.ai.kr/agency/detail-page/new-landing", "https://yomates.ai/"];
   for (const [index, name] of names.entries()) {
     await page.goto("/");
-    await expect(page.locator(".portfolio-featured-copy strong")).toHaveText(names);
-    await page.locator(`[data-featured-project="${ids[index]}"]`).click();
+    await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
+    await page.locator(`[data-project-id="${ids[index]}"]`).click();
     await expect(page.locator(`[data-project-id="${ids[index]}"]`)).toHaveAttribute("aria-selected", "true");
     await expect(page.locator(".portfolio-detail-pane").getByRole("heading", { name, exact: true })).toBeVisible();
     await expect(page.locator(".portfolio-detail-pane").getByRole("link", { name: "Website", exact: true })).toHaveAttribute("href", urls[index]);
@@ -111,7 +112,8 @@ test("Leviosa experience includes representative work and maintenance in both la
   await nav.locator('[data-sidebar-target="settings"]').click();
   await page.getByRole("button", { name: "English", exact: true }).click();
   await nav.locator('[data-sidebar-target="about"]').click();
-  await expect(page.locator(".portfolio-featured-copy strong")).toHaveText(["AI Detail Page Generation & Editing", "Yomates"]);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["Education & languages", "Skills", "Experience", "Research & leadership", "Development tools"]);
+  await expect(page.locator(".profile-languages dd")).toHaveText(["Native", "Advanced", "Advanced"]);
   await nav.locator('[data-sidebar-target="experience"]').click();
   for (const text of ["AI Detail Page", "Agency", "Yomates", "Naver Smart Store", "Web & Admin", "Telegram & Notion"]) {
     await expect(company).toContainText(text);
@@ -134,14 +136,14 @@ test("language and resume controls work inside the portfolio window", async ({ p
 test("portfolio minimizes, restores, closes, and reopens on the new runtime", async ({ page }) => {
   await page.goto("/");
   const window = page.locator(".dos-window").filter({ has: page.locator(".portfolio-os-app") });
-  await expect(window.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
+  await expect(window.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
   await window.getByRole("button", { name: "Minimize", exact: true }).click();
   await page.getByRole("button", { name: "Restore Kim Dong Wook.app", exact: true }).click();
-  await expect(window.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
+  await expect(window.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
   await window.getByRole("button", { name: "Close", exact: true }).click();
   await expect(window).toHaveCount(0);
   await page.getByRole("button", { name: "Launch Portfolio", exact: true }).click();
-  await expect(window.getByRole("heading", { name: "AI를 설계하고, 서비스로 완성합니다.", exact: true })).toBeVisible();
+  await expect(window.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
 });
 
 
@@ -152,7 +154,7 @@ test("design board and portfolio share the main/sub palette", async ({ page }, t
   await expect(navigation.locator("button span").first()).toHaveCSS("font-size", "14px");
   await expect(navigation.locator('[aria-current="page"]')).toHaveCSS("background-color", "rgb(124, 159, 229)");
   await expect(navigation.locator('[aria-current="page"]')).toHaveCSS("color", "rgb(255, 255, 255)");
-  await expect(page.locator(".portfolio-about .portfolio-action--primary")).toHaveCSS("color", "rgb(255, 255, 255)");
+  await expect(page.locator(".profile-grade-grid dd").first()).toHaveCSS("color", "rgb(37, 99, 235)");
   await page.screenshot({ path: testInfo.outputPath("shared-palette-portfolio.png") });
   await page.goto("/design-board.html");
   await expect(page.getByRole("heading", { name: "Kim Dong Wook · Design Board" })).toBeVisible();
@@ -163,3 +165,20 @@ test("design board and portfolio share the main/sub palette", async ({ page }, t
   await expect(page.getByRole("navigation").getByRole("button", { name: "프로젝트" })).toHaveAttribute("aria-current", "page");
   await page.screenshot({ path: testInfo.outputPath("design-board.png"), fullPage: true });
 });
+
+for (const width of [1440, 1024, 390]) {
+  test(`profile panels fit the reading pane at ${width}px`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: width === 1440 ? 900 : 1000 });
+    await page.goto("/");
+    const pane = page.locator(".profile-overview");
+    await expect(pane).toBeVisible();
+    expect(await pane.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
+    for (const panel of await pane.locator(".profile-panel").all()) {
+      expect(await panel.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
+    }
+    if (width === 1440) {
+      expect(await pane.evaluate(el => el.scrollHeight - el.clientHeight)).toBeLessThan(2);
+    }
+    await page.screenshot({ path: testInfo.outputPath(`profile-${width}.png`), animations: "disabled" });
+  });
+}

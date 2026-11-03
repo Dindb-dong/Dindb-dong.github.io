@@ -3,7 +3,7 @@
 ## Source of truth
 
 - Status: Active
-- Last refreshed: 2026-11-03
+- Last refreshed: 2026-11-04
 - Primary product surfaces: DindbOS desktop, Portfolio app, Projects app, Resume app, six independent experience apps
 - Evidence reviewed: `src/main.js`, `src/portfolio.css`, `src/portfolio-data.js`, the installed `dindbos` runtime styles and APIs, legacy Korean/English portfolio data, and live screenshots at 1440×900 and 390×844
 
@@ -29,7 +29,7 @@
 
 - Primary navigation: persistent Portfolio app navigation with Overview, Projects, Experience, Skills, Resume, and Settings; persistent DindbOS dock for broader OS apps.
 - Core routes/screens: Overview as the default orientation surface; Projects as a searchable/filterable master-detail view; Experience and Skills as supporting evidence; Resume as a direct document view.
-- Content hierarchy: identity and role → primary actions → featured work → capability summary → personal background → runtime/system details.
+- Content hierarchy: compact identity and profile links → education/languages, self-assessed status, career, research/leadership and detailed tools. Projects remain in their dedicated app/view.
 
 ## Design principles
 
@@ -51,7 +51,7 @@
 ## Components
 
 - Existing components to reuse: DindbOS menubar, desktop icons, dock, window manager, host app registry, project media, and resume document.
-- New/changed components: overview action row, project highlights, project search, result count, mobile portfolio tabs, stronger icon palette, and local portrait fallback.
+- New/changed components: five profile panels, compact profile links, career-app and research-project launch rows, project search, result count, mobile portfolio tabs, and local portrait.
 - Variants and states: default/hover/focus/selected filters and projects, empty search result, mobile stacked detail, reduced motion, and image fallback.
 - Token/component ownership: Portfolio initial window bounds use the public window API in `src/main.js`; subsequent bounds belong to DindbOS. Portfolio styling lives in `src/portfolio.css`.
 
@@ -135,7 +135,7 @@
 - Current visual board: `/design-board.html` (source: `public/design-board.html`), following the user-supplied Oh My Canvas design-system reference. This is a local review surface, not a new desktop app.
 - Color source of truth: `assets/design-tokens.css`, imported by app CSS and linked by the board. Main #7c9fe5; sub #2563eb. Sky #7dd3fc and lavender #c4b5fd are supporting swatches, not competing primary UI colors. Brand logos retain their original colors.
 - Shared desktop navigation: 14px labels (down from 18px), 22px outline icons, 44px row targets, 12px row radius, white sidebar, main-color selected row. Narrow windows use 13px labels and 44px targets.
-- Portfolio and all six experience apps reuse `portfolio-sidebar-nav` and `src/navigation-icons.js`. Experience navigation retains its project/media counts and four destinations.
+- Portfolio and all six experience apps reuse `portfolio-sidebar-nav` and `src/navigation-icons.js`. Experience navigation retains project/media counts and omits empty project/media destinations (YCC).
 - Main-colored actions and selected navigation use white text; secondary-colored hover actions also use white. Links and focus use the secondary blue.
 
 - Experience app names and overview headlines use ink #202124, not accent blue. Reserve blue for interactive controls and links.
@@ -147,20 +147,14 @@
 - Use the native popover top layer so menus escape window/sidebar clipping; place above or below according to available space. Arrow/Home/End navigation, Enter selection, Escape/Tab dismissal and native outside dismissal remain available. Dispose listeners/popovers when apps rerender or close.
 - User explicitly requests no focus border/ring on portfolio controls. Suppress SDK focus shadows and app outlines within host apps; keep keyboard focus visible via background fill. Do not patch the SDK package for a host-specific presentation preference.
 
-## Product-first overview (2026-11-03)
+## Profile overview (2026-11-04)
 
-Status: implemented previous direction, superseded for the next redesign by the pending panel proposals below. Do not continue expanding the product showcase.
-
-- Lead with “AI를 설계하고, 서비스로 완성합니다.” at 30px maximum, smaller than the previous 34px name. Use 28px/26px in narrower windows; retain neutral ink and SUIT.
-- Move the portrait and identity into the sidebar. Narrow desktop sidebars from 240px to 196px with 44px navigation rows and reduced padding, shared with experience apps.
-- Hero uses the supplied actual Yomates desktop screenshot, with a caption and a working project-detail action, on the existing soft-blue surface. Do not present a reconstructed editor or landing-page artwork as a real editor capture.
-- Call the featured section “만든 제품” / “Products I build”. Give detail-page development more width, and replace long role labels with concrete product contributions. Stack hero/media and products in narrow windows.
-
-## Pending profile panel redesign (2026-11-03)
-
-- Await the user's selection from image-generated alternatives before replacing the running overview. [Panel brief](docs/design/overview-panel-concepts/brief.md) records verified facts, sources and the five-panel inventory.
-- Replace the product showcase and promotional hero with at-a-glance academic/language, self-assessed status, career, research/leadership and detailed development-tools panels.
-- Current user-defined grades: potential SS, backend A+, infrastructure A, DB A-, AI A, frontend B+. Use visible grades; do not invent numerical performance scores.
-- Natural languages: Korean native, English advanced, Japanese advanced, directly confirmed by the user. Preserve the Korean copy “한국어 원어민 · 영어 상 · 일본어 상”.
-- Panel 05 is development tools only, grouped by language, web/app, backend/database, AI/research and infrastructure. Remove workflow/process filler and all “작업 방식” content.
-- Preserve main #7c9fe5, secondary #2563eb and compact typography. Compare A dashboard, B character-status sheet and C compact dossier; individual panel treatments may be mixed after selection.
+- Implement the final C direction from the image-generated proposals. The user explicitly removed panel numbers and requested less AI-generated scaffolding. [Panel brief](docs/design/overview-panel-concepts/brief.md) records verified sources and decisions.
+- Five semantic panels: academic/language, self-assessed status, career, research/leadership and detailed development tools. Desktop uses three columns, with status spanning the two content rows; smaller windows use two columns then one column.
+- Remove the promotional hero, product showcase, generic numeric summary and long opening biography from this view. Keep the underlying project archive and biography data.
+- No panel numbering, eyebrow headings, gradients, decorative badges, fake progress bars, repeated explanatory paragraphs or card shadows. Six grade tiles are intentional, matching the user-selected character/status direction, rather than measured performance metrics.
+- User-defined grades: potential SS, backend A+, infrastructure A, DB A-, AI A, frontend B+. Natural languages: 한국어 원어민 · 영어 상 · 일본어 상.
+- School facts: Yonsei Applied Statistics/Computer Science, GPA 4.00/4.3, 2023.03–2028.02; Gwacheon Foreign Language High School/Japanese, 2020.03–2023.01. Do not claim an already completed university graduation or invent a primary/double-major distinction.
+- Career buttons launch the corresponding existing apps. Synchronize the verified Leviosa period 2026.02–2026.10 across languages; NOI-LAB ends 2024.11. Research links open YAI-HUB, DDQN and CLIP/BLIP2 in the project browser.
+- Development tools are plain categorized text, not decorative pills: languages, web/mobile, backend/database, AI/research and infrastructure. No workflow/process filler.
+- Reuse main #7c9fe5, secondary #2563eb, neutral ink, real organization logos and the existing compact sidebar. Primary heading is 25px, smaller than the earlier 34px name.

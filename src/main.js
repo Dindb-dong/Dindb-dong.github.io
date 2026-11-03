@@ -8,7 +8,6 @@ import {
   buildPortfolioFileSystem,
   CONTACT_LINKS,
   currentData,
-  FEATURED_PROJECT_IDS,
   loadPortfolioRuntime,
   persistLocale,
   portfolioDataForBuiltin,
@@ -150,92 +149,72 @@ function refreshViews(runtime) {
 
 function renderAbout(content, runtime) {
   const data = currentData(runtime);
-  const profile = data.introduce?.profile || {};
-  const featuredProjects = FEATURED_PROJECT_IDS.map((id) => data.projects.find((project) => project.id === id)).filter(Boolean);
-  const copy = runtime.locale === "ko" ? {
-    headline: "AI를 설계하고, 서비스로 완성합니다.",
-    lead: "편집기와 AI 생성 워크플로우부터 백엔드 아키텍처, 배포와 운영까지 직접 만듭니다.",
-    screen: "Yomates 데스크톱 · 실제 에이전트 대화 화면",
-    screenAction: "Yomates 개발 내용 보기",
-    projects: "프로젝트 보기",
-    resume: "이력서 열기",
-    github: "GitHub",
-    featured: "만든 제품",
-    featuredDescription: "제품별로 직접 설계하고 구현한 핵심 기능입니다.",
-    viewAll: "전체 프로젝트",
-    story: data.introduce?.sectionTitle || "소개",
-    projectLabel: "프로젝트",
-    experienceLabel: "경험 그룹",
-    stackLabel: "기술 스택",
-    systemLabel: "DindbOS에서 실행 중",
+  const ko = runtime.locale === "ko";
+  const copy = ko ? {
+    education: "학력·언어", university: "연세대학교", major: "응용통계학 · 컴퓨터과학",
+    school: "과천외국어고등학교", track: "일본어과", stats: "스테이터스", assessment: "자기평가",
+    career: "커리어", research: "연구·리더십", tools: "개발 도구", resume: "이력서 열기",
+    leadership: "YAI 부학회장 · 연구부원", hub: "60명 넘는 학회원이 매일 사용하는 웹·앱",
+    rl: "강화학습", vision: "영상 검색",
   } : {
-    headline: "Designing AI. Building products.",
-    lead: "From editors and AI generation workflows to backend architecture, deployment, and operations.",
-    screen: "Yomates desktop · An actual agent conversation",
-    screenAction: "Explore my work on Yomates",
-    projects: "View projects",
-    resume: "Open resume",
-    github: "GitHub",
-    featured: "Products I build",
-    featuredDescription: "The core systems and features I designed and built for each product.",
-    viewAll: "View all projects",
-    story: data.introduce?.sectionTitle || "About",
-    projectLabel: "Projects",
-    experienceLabel: "Experience groups",
-    stackLabel: "Tech stacks",
-    systemLabel: "Running on DindbOS",
+    education: "Education & languages", university: "Yonsei University", major: "Applied Statistics · Computer Science",
+    school: "Gwacheon Foreign Language High School", track: "Japanese", stats: "Skills", assessment: "Self-assessed",
+    career: "Experience", research: "Research & leadership", tools: "Development tools", resume: "Open resume",
+    leadership: "YAI Vice President · Research Member", hub: "Web & mobile platform used daily by 60+ members",
+    rl: "Reinforcement learning", vision: "Video retrieval",
   };
+  const grades = [[ko ? "잠재력" : "Potential", "SS"], [ko ? "백엔드" : "Backend", "A+"], [ko ? "인프라" : "Infra", "A"], ["DB", "A-"], ["AI", "A"], [ko ? "프론트" : "Frontend", "B+"]];
+  const languages = ko ? [["한국어", "원어민"], ["영어", "상"], ["일본어", "상"]] : [["Korean", "Native"], ["English", "Advanced"], ["Japanese", "Advanced"]];
+  const tools = [
+    [ko ? "언어" : "Languages", SKILLS.languages],
+    [ko ? "웹·앱" : "Web & mobile", ["React", "React Native", "Flutter"]],
+    [ko ? "백엔드·DB" : "Backend & DB", ["Node.js", "Supabase", "MongoDB"]],
+    [ko ? "AI·연구" : "AI & research", ["PyTorch", "TensorFlow", "Qiskit"]],
+    [ko ? "인프라" : "Infrastructure", ["AWS", "Docker", "Kubernetes"]],
+  ];
+  const careers = [1, 2, 4].map(id => ({
+    app: EXPERIENCE_APPS.find(app => app.id === id),
+    experience: data.experiences.find(experience => experience.id === id),
+  }));
   content.innerHTML = `
-    <section class="portfolio-os-app portfolio-about" data-locale="${escapeAttr(runtime.locale)}">
+    <section class="portfolio-os-app portfolio-about" data-locale="${runtime.locale}">
       ${renderAppSidebar("about", runtime)}
-      <main class="portfolio-main-pane">
-        <header class="portfolio-hero portfolio-hero--profile">
-          <div class="portfolio-profile-copy">
-            <h1>${escapeHtml(copy.headline)}</h1>
-            <p class="portfolio-profile-lead">${escapeHtml(copy.lead)}</p>
-            <div class="portfolio-action-row">
-              <button class="portfolio-action portfolio-action--primary" type="button" data-sidebar-target="projects">${copy.projects} ↗</button>
-              <button class="portfolio-action" type="button" data-sidebar-target="resume">${copy.resume}</button>
-              <a class="portfolio-action" href="${escapeAttr(CONTACT_LINKS[0].href)}" target="_blank" rel="noreferrer">${copy.github} ↗</a>
-            </div>
-            <p class="portfolio-profile-education">${escapeHtml(profile.subtitle || "")}</p>
-          </div>
-          <button class="portfolio-product-preview" type="button" data-hero-project="19" aria-label="${escapeAttr(copy.screenAction)}">
-            <img src="/legacy/public/thumbnails/proj_19_2.png" alt="${escapeAttr(copy.screen)}" width="1275" height="818">
-            <span>${escapeHtml(copy.screen)}<span aria-hidden="true">↗</span></span>
-          </button>
+      <main class="portfolio-main-pane profile-overview">
+        <header class="profile-header">
+          <div><h1>${ko ? "김동욱" : "Kim Dong Wook"}</h1><p>Full-Stack AI & SW Engineer</p></div>
+          <nav class="profile-links" aria-label="${ko ? "프로필 링크" : "Profile links"}">
+            <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">GitHub ↗</a>
+            <a href="https://www.linkedin.com/in/dindb-dong/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            <button type="button" data-sidebar-target="resume">${copy.resume}</button>
+          </nav>
         </header>
-        <section class="portfolio-section portfolio-featured-section">
-          <div class="portfolio-section-heading">
-            <div>
-              <h2>${copy.featured}</h2>
-              <p>${copy.featuredDescription}</p>
-            </div>
-            <button class="portfolio-text-action" type="button" data-sidebar-target="projects">${copy.viewAll} →</button>
-          </div>
-          <div class="portfolio-featured-grid">
-            ${featuredProjects.map((project) => renderFeaturedProject(project, runtime.locale)).join("")}
-          </div>
-        </section>
-        <section class="portfolio-metric-row" aria-label="Portfolio summary">
-          <div><strong>${data.projects.length}</strong><span>${copy.projectLabel}</span></div>
-          <div><strong>${data.experiences.length}</strong><span>${copy.experienceLabel}</span></div>
-          <div><strong>${unique(data.projects.flatMap((project) => project.techStacks)).length}</strong><span>${copy.stackLabel}</span></div>
-        </section>
-        <section class="portfolio-section portfolio-story-section">
-          <div class="portfolio-section-heading">
-            <div>
-              <h2>${escapeHtml(copy.story)}</h2>
-            </div>
-          </div>
-          <div class="portfolio-rich-text">
-            ${(data.introduce?.details || []).map((paragraph) => `<p>${sanitizeTrustedLegacyHtml(paragraph)}</p>`).join("")}
-          </div>
-        </section>
-        <footer class="portfolio-runtime-note"><span aria-hidden="true"></span>${copy.systemLabel} · v0.2.0</footer>
+        <div class="profile-panels">
+          <section class="profile-panel profile-education" aria-label="${copy.education}">
+            <h2>${copy.education}</h2>
+            <div class="profile-school"><h3>${copy.university}</h3><p>${copy.major}</p><div class="profile-school-meta"><time>2023.03–2028.02</time><span>GPA <strong>4.00</strong> / 4.3</span></div></div>
+            <div class="profile-school"><h3>${copy.school}</h3><p>${copy.track} <span class="profile-date">· 2020.03–2023.01</span></p></div>
+            <dl class="profile-languages">${languages.map(([name, level]) => `<div><dt>${name}</dt><dd>${level}</dd></div>`).join("")}</dl>
+          </section>
+          <section class="profile-panel profile-stats" aria-label="${copy.stats}">
+            <header><h2>${copy.stats}</h2><span>${copy.assessment}</span></header>
+            <dl class="profile-grade-grid">${grades.map(([name, grade]) => `<div ${grade === "SS" ? 'class="profile-potential"' : ""}><dt>${name}</dt><dd>${grade}</dd></div>`).join("")}</dl>
+          </section>
+          <section class="profile-panel profile-career" aria-label="${copy.career}">
+            <h2>${copy.career}</h2>
+            <div class="profile-career-list">${careers.map(({app, experience}) => `<button type="button" data-experience-open="${app.id}"><img src="${escapeAttr(app.icon || `/assets/experience-icons/${app.name}-official.svg`)}" alt=""><span><span class="profile-career-title"><strong>${escapeHtml(app.name)}</strong><time>${escapeHtml(experience.period.replace(/\s*[~-]\s*/g, "–"))}</time></span><span>${escapeHtml(experience.position)}</span></span><span aria-hidden="true">↗</span></button>`).join("")}</div>
+          </section>
+          <section class="profile-panel profile-research" aria-label="${copy.research}">
+            <h2>${copy.research}</h2>
+            <button type="button" class="profile-research-row" data-experience-open="3"><strong>${copy.leadership}</strong><span>2025.01–${ko ? "현재" : "present"}</span></button>
+            ${[[20, "YAI-HUB", copy.hub], [7, "Dueling DDQN", copy.rl], [6, "CLIP + BLIP2", copy.vision]].map(([id, title, summary]) => `<button type="button" class="profile-research-row" data-profile-project="${id}"><strong>${title}<span aria-hidden="true">↗</span></strong><span>${summary}</span></button>`).join("")}
+          </section>
+          <section class="profile-panel profile-tools" aria-label="${copy.tools}">
+            <h2>${copy.tools}</h2>
+            <dl>${tools.map(([category, names]) => `<div><dt>${category}</dt><dd>${names.map(escapeHtml).join(" · ")}</dd></div>`).join("")}</dl>
+          </section>
+        </div>
       </main>
-    </section>
-  `;
+    </section>`;
   wireSidebar(content, runtime);
 }
 
@@ -546,9 +525,9 @@ function wireSidebar(content, runtime) {
       renderInlineView(target, content, runtime);
     });
   });
-  content.querySelectorAll("[data-featured-project], [data-hero-project]").forEach((button) => {
+  content.querySelectorAll("[data-profile-project]").forEach((button) => {
     button.addEventListener("click", () => {
-      runtime.selectedProjectId = Number(button.dataset.featuredProject || button.dataset.heroProject);
+      runtime.selectedProjectId = Number(button.dataset.profileProject);
       runtime.projectFilter = { type: "all", value: "All" };
       runtime.projectQuery = "";
       renderInlineView("projects", content, runtime);
@@ -598,28 +577,6 @@ function renderProjectRow(project, selectedId) {
         <span>${escapeHtml(firstText(project.description))}</span>
       </span>
       <span class="portfolio-project-count" aria-label="${project.media.length} media">${project.media.length}</span>
-    </button>
-  `;
-}
-
-function renderFeaturedProject(project, locale) {
-  const contributions = locale === "ko" ? {
-    17: "자체 편집기 · AI 생성 워크플로우 · 설계부터 운영까지",
-    19: "백엔드 아키텍처 · 공통 에러 처리 · 모니터링 연결",
-  } : {
-    17: "Custom editor · AI workflows · Architecture to operations",
-    19: "Backend architecture · Shared error handling · Monitoring",
-  };
-  const cover = project.media.find((item) => item.type === "image") || project.media[0];
-  return `
-    <button class="portfolio-featured-project" type="button" data-featured-project="${project.id}">
-      <span class="portfolio-featured-media">${cover ? renderMedia(cover, project.title, true) : `<span class="portfolio-project-placeholder">${escapeHtml(project.title)}</span>`}</span>
-      <span class="portfolio-featured-copy">
-        <small>${escapeHtml(project.id === 17 ? "Leviosa AI" : "Yomates")}</small>
-        <strong>${escapeHtml(project.title)}</strong>
-        <span>${escapeHtml(contributions[project.id] || firstText(project.description))}</span>
-      </span>
-      <span class="portfolio-featured-arrow" aria-hidden="true">↗</span>
     </button>
   `;
 }
@@ -771,15 +728,6 @@ function unique(values) {
 function firstText(value) {
   if (Array.isArray(value)) return String(value.find(Boolean) || "");
   return String(value || "");
-}
-
-function sanitizeTrustedLegacyHtml(value) {
-  return escapeHtml(value)
-    .replaceAll("&lt;br&gt;", "<br>")
-    .replaceAll("&lt;br/&gt;", "<br>")
-    .replaceAll("&lt;br /&gt;", "<br>")
-    .replaceAll("&lt;b&gt;", "<strong>")
-    .replaceAll("&lt;/b&gt;", "</strong>");
 }
 
 function escapeHtml(value) {
