@@ -307,7 +307,7 @@ function normalizeProjects(projectsJson) {
         type: /\.(mp4|mov)$/i.test(file) ? "video" : "image",
       })),
     };
-  });
+  }).sort((left, right) => right.id - left.id);
 }
 
 async function fetchJson(path) {

@@ -60,6 +60,41 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
   await expect(page.getByRole("status")).toContainText("19개 프로젝트");
 });
 
+test("project controls combine search and filters, keep newest registration first, and omit redundant tab headers", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Portfolio sections" });
+  await nav.locator('[data-sidebar-target="projects"]').click();
+  const controls = page.getByRole("search", { name: "프로젝트 검색", exact: true });
+  const search = controls.getByRole("searchbox", { name: "프로젝트 검색" });
+  const rows = page.locator("[data-project-id]");
+  const ids = () => rows.evaluateAll(items => items.map(item => Number(item.dataset.projectId)));
+  expect(await ids()).toEqual([20, 19, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+  await expect(rows.first()).toHaveAttribute("aria-selected", "true");
+  const filters = controls.getByRole("group", { name: "Project filters" });
+  expect(Math.abs((await search.boundingBox()).y - (await filters.boundingBox()).y)).toBeLessThan(8);
+  await filters.getByRole("button", { name: "Web", exact: true }).click();
+  await search.fill("YAI-HUB");
+  await expect(rows).toHaveCount(1);
+  await expect(rows).toHaveAttribute("data-project-id", "20");
+  await search.fill("");
+  await filters.getByRole("button", { name: "All", exact: true }).click();
+  await expect(rows).toHaveCount(19);
+  await expect(rows.first()).toHaveAttribute("data-project-id", "20");
+  await expect(page.locator(".portfolio-kicker, .portfolio-hero, .portfolio-toolbar")).toHaveCount(0);
+  await expect(page.locator(".portfolio-finder h1")).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath("project-controls.png"), animations: "disabled" });
+  for (const target of ["experience", "skills", "settings", "resume"]) {
+    await nav.locator(`[data-sidebar-target="${target}"]`).click();
+    await expect(page.locator(".portfolio-main-pane > header, .portfolio-main-pane > h1")).toHaveCount(0);
+  }
+  await nav.locator('[data-sidebar-target="settings"]').click();
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await nav.locator('[data-sidebar-target="projects"]').click();
+  await expect(page.getByRole("searchbox", { name: "Search projects" })).toBeVisible();
+  await expect(rows.first()).toHaveAttribute("data-project-id", "20");
+});
+
 test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");

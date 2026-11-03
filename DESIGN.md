@@ -158,3 +158,10 @@
 - Career buttons launch the corresponding existing apps. Synchronize the verified Leviosa period 2026.02–2026.10 across languages; NOI-LAB ends 2024.11. The AI panel starts with YAI 18th-cohort Vice President, then lists CV and RL interests and opens YAI-HUB in the project browser. DDQN and CLIP/BLIP2 remain in the project archive.
 - Development tools are plain categorized text, not decorative pills: languages, web/mobile, backend/database, AI/research and infrastructure. No workflow/process filler.
 - Reuse main #7c9fe5, secondary #2563eb, neutral ink, real organization logos and the existing compact sidebar. Primary heading is 25px, smaller than the earlier 34px name.
+
+## Tab chrome cleanup (2026-11-04)
+
+- No repeated tab title/overline/instruction stacks in project archive, experience launcher, skills, settings or resume. Keep personal identity and actual company/project names. Remove PROJECT DETAIL overline.
+- Project search, category filters and result count share one compact responsive control strip. The search input retains an accessible localized label; mobile wraps the strip without page overflow.
+- Legacy project records lack consistent dates. Default order is newest registration first (descending project ID), shared across locales and retained through filtering/reset; do not fabricate project dates.
+- Settings present language selection; runtime mounting/storage implementation details are not portfolio content.

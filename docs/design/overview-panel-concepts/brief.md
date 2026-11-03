@@ -60,3 +60,11 @@ Status: implemented final C direction, removing panel numbers and decorative/rep
 - Replace shared-height grid rows with three independent desktop stacks. Academic and career panels end after their content; mobile retains education/status/career/AI/tools order.
 - YAI-HUB already existed as project 20 under YAI. Replace its screenshots with the newly supplied originals (operations dashboard and public website), keeping the existing captions and single-project attribution.
 - Lead both locale descriptions with the transition from fragmented Notion/Google Forms/Google Sheets to one web/mobile platform and the user-confirmed 60+ daily members. List attendance, reports, announcements and the other existing operations. No invented metrics or promotional “legend” claim.
+
+## Project browser and repeated header cleanup (2026-11-04)
+
+- Scope: main app renderers, project normalization, related styles and portfolio regression checks. Remove repeated label/title/instruction stacks from Projects, Experience, Skills, Settings and Resume, plus the PROJECT DETAIL overline. Preserve profile identity, actual project titles, company roles, search/filter behavior and resume actions.
+- Baseline before edits: project search/reset and language/resume tests passed (2).
+- Combine search/filter/count into one responsive control strip; newest registered IDs first in both datasets, including default selection and filter/reset results. Legacy project records have no consistent dates; do not fabricate dates or claim an exact completion-date chronology.
+- Remove user-facing runtime/debug settings rows and unused header copy/styles. Keep language selection.
+- Fallback inventory: existing legacy field defaults, locale fallback and selection/empty-state handling are outside this presentation cleanup; preserve their behavior. No new alternate path or fallback is introduced.

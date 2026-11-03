@@ -231,16 +231,10 @@ function renderProjects(content, runtime) {
   const selected = data.projects.find((project) => project.id === runtime.selectedProjectId) || projects[0] || data.projects[0];
   if (selected && projects.some((project) => project.id === selected.id)) runtime.selectedProjectId = selected.id;
   const copy = runtime.locale === "ko" ? {
-    eyebrow: "PROJECT ARCHIVE",
-    title: "프로젝트",
-    description: "역할, 기술, 결과를 기준으로 작업을 탐색하세요.",
     search: "프로젝트 검색",
     placeholder: "제목, 역할, 기술 검색",
     count: `${projects.length}개 프로젝트`,
   } : {
-    eyebrow: "PROJECT ARCHIVE",
-    title: "Projects",
-    description: "Explore work by role, technology, and outcome.",
     search: "Search projects",
     placeholder: "Search title, role, or technology",
     count: `${projects.length} projects`,
@@ -250,18 +244,11 @@ function renderProjects(content, runtime) {
     <section class="portfolio-os-app portfolio-projects" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("projects", runtime)}
       <main class="portfolio-main-pane portfolio-finder">
-        <header class="portfolio-toolbar">
-          <div>
-            <p class="portfolio-kicker">${copy.eyebrow}</p>
-            <h1>${copy.title}</h1>
-            <p class="portfolio-subtitle">${copy.description}</p>
-          </div>
+        <div class="portfolio-project-controls" role="search" aria-label="${copy.search}">
           <label class="portfolio-search-field">
-            <span>${copy.search}</span>
-            <input type="search" value="${escapeAttr(runtime.projectQuery || "")}" placeholder="${escapeAttr(copy.placeholder)}" data-project-search>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+            <input type="search" aria-label="${copy.search}" value="${escapeAttr(runtime.projectQuery || "")}" placeholder="${escapeAttr(copy.placeholder)}" data-project-search>
           </label>
-        </header>
-        <div class="portfolio-filter-bar">
           <div class="portfolio-filter-group" role="group" aria-label="Project filters">
             ${renderFilterButton("all", "All", runtime.projectFilter)}
             ${renderFilterButton("category", "AI", runtime.projectFilter)}
@@ -323,12 +310,6 @@ function renderExperience(content, runtime) {
     <section class="portfolio-os-app portfolio-experience" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("experience", runtime)}
       <main class="portfolio-main-pane">
-        <header class="portfolio-hero">
-          <div>
-            <h1>${runtime.locale === "ko" ? "경력 앱" : "Experience apps"}</h1>
-            <p class="portfolio-subtitle">${runtime.locale === "ko" ? "각 앱을 열어 역할과 프로젝트, 실제 화면을 살펴보세요." : "Open an app to explore my role, projects, and work in pictures."}</p>
-          </div>
-        </header>
         <div class="portfolio-timeline">
           ${data.experiences.map((experience, index) => renderExperienceCard(experience, index, runtime)).join("")}
         </div>
@@ -348,13 +329,6 @@ function renderSkills(content, runtime) {
     <section class="portfolio-os-app portfolio-skills" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("skills", runtime)}
       <main class="portfolio-main-pane">
-        <header class="portfolio-hero">
-          <div>
-            <p class="portfolio-kicker">Skills.app</p>
-            <h1>Skills and interests</h1>
-            <p class="portfolio-subtitle">Clicking a skill scopes the Projects app to matching work.</p>
-          </div>
-        </header>
         <section class="portfolio-skill-board">
           ${renderSkillGroup("Languages", languages, "language")}
           ${renderSkillGroup("Tech Stacks", techStacks, "tech")}
@@ -378,42 +352,19 @@ function renderSkills(content, runtime) {
 }
 
 function renderSettings(content, runtime) {
-  const data = currentData(runtime);
   content.innerHTML = `
     <section class="portfolio-os-app portfolio-settings" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("settings", runtime)}
       <main class="portfolio-main-pane">
-        <header class="portfolio-hero">
-          <div>
-            <p class="portfolio-kicker">System Preferences</p>
-            <h1>Portfolio settings</h1>
-            <p class="portfolio-subtitle">Language switches the restored legacy data across open portfolio apps.</p>
-          </div>
-        </header>
         <section class="portfolio-settings-list">
           <div class="portfolio-setting-row">
             <div>
               <strong>Language</strong>
-              <span>Current data locale: ${escapeHtml(runtime.locale.toUpperCase())}</span>
             </div>
             <div class="portfolio-segmented" role="group" aria-label="Language">
               <button type="button" data-locale-choice="ko" class="${runtime.locale === "ko" ? "is-active" : ""}">한국어</button>
               <button type="button" data-locale-choice="en" class="${runtime.locale === "en" ? "is-active" : ""}">English</button>
             </div>
-          </div>
-          <div class="portfolio-setting-row">
-            <div>
-              <strong>Data mounted</strong>
-              <span>${data.projects.length} projects · ${data.experiences.length} experience groups · ${runtime.presentations.length} decks</span>
-            </div>
-            <code>/mnt/portfolio/${escapeHtml(runtime.locale)}</code>
-          </div>
-          <div class="portfolio-setting-row">
-            <div>
-              <strong>DindbOS runtime</strong>
-              <span>SDK package host with Files, Terminal, Portfolio apps, and mounted VFS.</span>
-            </div>
-            <code>IndexedDB storage</code>
           </div>
         </section>
       </main>
@@ -431,15 +382,9 @@ function renderSettings(content, runtime) {
 
 function renderResume(content, runtime) {
   const copy = runtime.locale === "ko" ? {
-    eyebrow: "RESUME",
-    title: "이력서",
-    description: "경력과 기술을 한 페이지 문서로 확인하거나 PDF로 내려받으세요.",
     html: "HTML로 열기",
     pdf: "PDF로 열기",
   } : {
-    eyebrow: "RESUME",
-    title: "Resume",
-    description: "Review experience and skills in one page, or open the PDF export.",
     html: "Open HTML",
     pdf: "Open PDF",
   };
@@ -447,17 +392,10 @@ function renderResume(content, runtime) {
     <section class="portfolio-os-app portfolio-resume-app" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("resume", runtime)}
       <main class="portfolio-main-pane">
-        <header class="portfolio-toolbar">
-          <div>
-            <p class="portfolio-kicker">${copy.eyebrow}</p>
-            <h1>${copy.title}</h1>
-            <p class="portfolio-subtitle">${copy.description}</p>
-          </div>
-          <div class="portfolio-link-list portfolio-link-list--toolbar">
+        <div class="portfolio-link-list portfolio-resume-actions">
             <a href="/resume.html" target="_blank" rel="noreferrer">${copy.html}</a>
             <a href="/resume.pdf" target="_blank" rel="noreferrer">${copy.pdf}</a>
-          </div>
-        </header>
+        </div>
         <section class="portfolio-resume-frame-shell">
           <iframe
             class="portfolio-resume-frame"
@@ -591,13 +529,11 @@ function renderProjectRow(project, selectedId) {
 function renderProjectDetail(project, runtime) {
   const previewMedia = [...project.media].sort((left, right) => Number(left.type === "video") - Number(right.type === "video")).slice(0, 3);
   const copy = runtime.locale === "ko" ? {
-    detail: "PROJECT DETAIL",
     introduction: "프로젝트 소개",
     details: "주요 작업",
     links: "관련 링크",
     moreMedia: `외 ${Math.max(0, project.media.length - 3)}개 미디어`,
   } : {
-    detail: "PROJECT DETAIL",
     introduction: "Introduction",
     details: "Key work",
     links: "Links",
@@ -605,7 +541,6 @@ function renderProjectDetail(project, runtime) {
   };
   return `
     <div class="portfolio-detail-header">
-      <p class="portfolio-kicker">${copy.detail}</p>
       <h2>${escapeHtml(project.title)}</h2>
       <p>${escapeHtml(project.role)}</p>
     </div>
