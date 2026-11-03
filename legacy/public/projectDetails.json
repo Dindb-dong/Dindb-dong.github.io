@@ -401,5 +401,91 @@
         "url": "https://github.com/Dindb-dong/NotchNote-Releases/releases"
       }
     ]
+  },
+  "17": {
+    "title": "AI 상세페이지 생성·편집",
+    "role": "Backend & AI Workflow Engineer",
+    "languages": [
+      "Python",
+      "TypeScript"
+    ],
+    "techStacks": [
+      "FastAPI",
+      "React",
+      "AWS",
+      "Docker"
+    ],
+    "categories": [
+      "Web",
+      "AI"
+    ],
+    "description": [
+      "상품 정보와 브랜드 가이드로 상세페이지를 생성하고 편집하는 커머스 AI 서비스입니다.",
+      "생성 파이프라인과 백엔드, 편집기 연동 및 운영 인프라를 개발했습니다."
+    ],
+    "extraDescription": [
+      "브랜드 팔레트·가이드·업로드 폰트를 생성 입력과 편집 가능한 문서로 연결했습니다.",
+      "장시간 생성 작업이 배포 중 중단되는 문제를 다루고, 작업 큐와 워커의 종료·보호 흐름을 개선했습니다.",
+      "문서 토큰과 행 잠금으로 동시 편집 시 오래된 저장이 최신 문서를 덮어쓰지 않도록 했습니다.",
+      "AI 편집, 문서 왕복 저장, 모바일 터치 UI를 지원하는 자체 편집기 개발에 참여했습니다."
+    ],
+    "links": []
+  },
+  "18": {
+    "title": "Agency",
+    "role": "Backend Lead",
+    "languages": [
+      "Python"
+    ],
+    "techStacks": [
+      "FastAPI",
+      "PostgreSQL",
+      "AWS",
+      "Docker"
+    ],
+    "categories": [
+      "Web",
+      "AI"
+    ],
+    "description": [
+      "AI 콘텐츠 생성 서비스를 제공하는 Agency의 백엔드를 총괄했습니다.",
+      "비동기 생성 작업부터 크레딧 정산, 작업별 원가 기록과 운영 안정화까지 담당했습니다."
+    ],
+    "extraDescription": [
+      "비동기 생성 작업과 워커 운영을 관리하고, ECS 워커의 복구·확장 흐름을 개선했습니다.",
+      "크레딧 정산 기록을 바탕으로 작업별 토큰 사용량과 내부 원가를 추적하는 감사 구조를 구현했습니다.",
+      "워커 작업 RPC의 접근 권한을 제한하고 데이터 접근 경계를 보강했습니다.",
+      "API·워커 장애를 공통 에러코드와 구조화 로그로 추적하도록 운영 관측을 정비했습니다."
+    ],
+    "links": []
+  },
+  "19": {
+    "title": "Yomates",
+    "role": "Desktop & Mobile App Contributor",
+    "languages": [
+      "TypeScript"
+    ],
+    "techStacks": [
+      "Electron",
+      "React Native",
+      "Expo",
+      "Node.js"
+    ],
+    "categories": [
+      "AI",
+      "Mobile",
+      "Computer Science"
+    ],
+    "description": [
+      "에이전트와 함께 업무를 수행하는 Yomates의 데스크톱·모바일 앱 개발에 참여했습니다.",
+      "브라우저 연결과 인증 복구, 회의 녹음·전사 및 에이전트 API 안정화를 구현했습니다."
+    ],
+    "extraDescription": [
+      "데스크톱: 브라우저 접근 권한 변경 후 연결 상태를 갱신하고, 인증 재시도가 앱 재시작 이후에도 이어지도록 개선했습니다.",
+      "모바일: 회의 녹음, 구간별 전사와 채팅 내 실시간 미리보기를 구현했습니다.",
+      "에이전트가 녹음을 시작·종료하고 회의록·결정사항·할 일을 정리하는 흐름을 연결했습니다.",
+      "Managed API: 배포 종료 중 처리 중인 요청과 세션을 정리하고, 정산 복구와 운영 로그를 보강했습니다."
+    ],
+    "links": []
   }
 }

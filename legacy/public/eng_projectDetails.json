@@ -329,5 +329,91 @@
       {"name": "GitHub Releases", "url": "https://github.com/Dindb-dong/NotchNote-Releases"},
       {"name": "Download", "url": "https://github.com/Dindb-dong/NotchNote-Releases/releases"}
     ]
+  },
+  "17": {
+    "title": "AI Detail Page Generation & Editing",
+    "role": "Backend & AI Workflow Engineer",
+    "languages": [
+      "Python",
+      "TypeScript"
+    ],
+    "techStacks": [
+      "FastAPI",
+      "React",
+      "AWS",
+      "Docker"
+    ],
+    "categories": [
+      "Web",
+      "AI"
+    ],
+    "description": [
+      "An AI commerce service that generates editable product detail pages from product information and brand guidelines.",
+      "Developed generation workflows, backend services, editor integration, and operational infrastructure."
+    ],
+    "extraDescription": [
+      "Connected brand palettes, guidelines, and uploaded fonts to generation inputs and editable documents.",
+      "Improved queue and worker shutdown/protection flows to address long-running generation jobs interrupted by deployments.",
+      "Used document tokens and row locking to prevent stale concurrent saves from overwriting newer documents.",
+      "Contributed to a custom editor with AI editing, document round trips, and mobile touch interactions."
+    ],
+    "links": []
+  },
+  "18": {
+    "title": "Agency",
+    "role": "Backend Lead",
+    "languages": [
+      "Python"
+    ],
+    "techStacks": [
+      "FastAPI",
+      "PostgreSQL",
+      "AWS",
+      "Docker"
+    ],
+    "categories": [
+      "Web",
+      "AI"
+    ],
+    "description": [
+      "Led backend development for Agency, an AI content generation service.",
+      "Owned asynchronous generation jobs, credit settlement, per-job cost tracking, and operational reliability."
+    ],
+    "extraDescription": [
+      "Managed asynchronous generation jobs and improved ECS worker recovery and scaling flows.",
+      "Implemented an audit structure that tracks per-job token usage and internal costs from credit settlement records.",
+      "Restricted worker-job RPC access and strengthened data access boundaries.",
+      "Standardized API and worker error codes and structured logging for operational diagnostics."
+    ],
+    "links": []
+  },
+  "19": {
+    "title": "Yomates",
+    "role": "Desktop & Mobile App Contributor",
+    "languages": [
+      "TypeScript"
+    ],
+    "techStacks": [
+      "Electron",
+      "React Native",
+      "Expo",
+      "Node.js"
+    ],
+    "categories": [
+      "AI",
+      "Mobile",
+      "Computer Science"
+    ],
+    "description": [
+      "Contributed to the Yomates desktop and mobile apps for working with AI agents.",
+      "Implemented browser connection and authentication recovery, meeting recording and transcription, and agent API reliability improvements."
+    ],
+    "extraDescription": [
+      "Desktop: refreshed browser connection state after access changes and made authentication retries survive app restarts.",
+      "Mobile: implemented meeting recording, chunked transcription, and live previews within chat.",
+      "Connected agent-controlled recording start/stop to meeting notes, decisions, and action items.",
+      "Managed API: drained in-flight requests and sessions during shutdown and improved settlement recovery and operational logging."
+    ],
+    "links": []
   }
 }

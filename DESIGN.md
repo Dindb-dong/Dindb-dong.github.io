@@ -92,6 +92,13 @@
 - Compatibility constraints: current evergreen Chromium/WebKit/Firefox behavior, keyboard and touch input, Korean and English datasets.
 - Test/screenshot expectations: Playwright smoke coverage plus desktop, tablet, and mobile screenshots of overview and projects; inspect at least one narrow state and empty search state.
 
+## Featured work
+
+- Featured order: AI Detail Page Generation & Editing (17), Agency (18), Yomates (19), explicitly selected independently of archive order.
+- All three also appear under Leviosa AI experience, alongside Naver integration and frontend maintenance.
+- New company projects use calm green typographic covers until approved product screenshots are available. Private PR links and operational metrics stay outside site content.
+- Korean and English content share project IDs and featured order.
+
 ## Runtime revision
 
 - Source: `Dindb-dong/dindbos@61ee980f80491c14493228c96680282ffa8c72d6` (0.2.0).

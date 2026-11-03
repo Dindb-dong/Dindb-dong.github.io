@@ -5,18 +5,20 @@
     "period": "2026.03 ~",
     "position": "AI Engineer & Founding Member",
     "description": [
-      "Built core Cafe24 commerce automation product flows across CS automation, app installation/OAuth, storefront chat widget, product sourcing, upload automation, and AI-generated detail page workflows",
-      "Developed production-facing AI workflow infrastructure using TypeScript, React, Node.js, Python/FastAPI, Supabase/RDS, Redis, S3/Object Storage, Docker, AWS EC2, and GitHub Actions",
-      "Implemented Chat MCP workspace and standard JSON-RPC tool interfaces so sourcing, products, orders, CS, and content workflows could be executed through controlled AI tool calls",
-      "Shipped user-facing dashboards, settings modals, landing pages, chat widgets, product management screens, and a Figma-style detail page editor while keeping sensitive credentials and approval flows behind service boundaries",
-      "Improved operational reliability through token refresh handling, credential boundaries, durable job queues, external IO retry guards, observability hooks, regression tests, and CI/CD cleanup"
+      "Developed AI detail-page generation workflows, backend services, editor integration, and operational infrastructure",
+      "Led Agency backend development across asynchronous generation jobs, credit settlement, per-job cost tracking, access control, and observability",
+      "Contributed to Yomates desktop and mobile apps: browser connection/authentication recovery, meeting recording/transcription, live previews, and agent API reliability",
+      "Maintained Naver Smart Store and TalkTalk integrations across product uploads, automated inspections, price updates, and product-context-aware replies",
+      "Maintained the Leviosa web frontend across sourcing, product management, customer support, operational notifications, and backend integrations",
+      "Developed Cafe24 commerce automation flows including CS, app installation/OAuth, product sourcing/uploads, and storefront chat widgets"
     ],
     "projects": [
-      "Cafe24 CS Automation Platform",
-      "Cafe24 Sourcing and Product Upload Automation",
-      "AI Detail Page Generation and Visual Editor",
-      "Chat MCP Workspace and Tool Execution Platform",
-      "Storefront Chat Widget and Dashboard Operations"
+      "AI Detail Page Generation & Editing",
+      "Agency — Backend Lead",
+      "Yomates — Desktop & Mobile App Contributor",
+      "Naver Smart Store & TalkTalk Integration Maintenance",
+      "Leviosa Web Frontend Maintenance",
+      "Cafe24 Commerce Automation"
     ]
   },
   {

@@ -5,6 +5,7 @@ import {
   buildPortfolioFileSystem,
   CONTACT_LINKS,
   currentData,
+  FEATURED_PROJECT_IDS,
   loadPortfolioRuntime,
   persistLocale,
   portfolioDataForBuiltin,
@@ -119,7 +120,7 @@ function refreshViews(runtime) {
 function renderAbout(content, runtime) {
   const data = currentData(runtime);
   const profile = data.introduce?.profile || {};
-  const featuredProjects = [...data.projects].slice(-3).reverse();
+  const featuredProjects = FEATURED_PROJECT_IDS.map((id) => data.projects.find((project) => project.id === id)).filter(Boolean);
   const copy = runtime.locale === "ko" ? {
     eyebrow: "FULL-STACK AI ENGINEER",
     lead: "AI 모델부터 제품 경험까지 직접 설계하고 구현합니다.",
@@ -127,7 +128,7 @@ function renderAbout(content, runtime) {
     resume: "이력서 열기",
     github: "GitHub",
     featured: "대표 프로젝트",
-    featuredDescription: "최근 작업과 기술적 범위를 빠르게 살펴보세요.",
+    featuredDescription: "Leviosa AI에서 맡은 생성 서비스·백엔드·앱 개발을 살펴보세요.",
     viewAll: "전체 프로젝트",
     story: data.introduce?.sectionTitle || "소개",
     projectLabel: "프로젝트",
@@ -141,7 +142,7 @@ function renderAbout(content, runtime) {
     resume: "Open resume",
     github: "GitHub",
     featured: "Featured projects",
-    featuredDescription: "A quick look at recent work and technical range.",
+    featuredDescription: "Generation services, backend ownership, and app development at Leviosa AI.",
     viewAll: "View all projects",
     story: data.introduce?.sectionTitle || "About",
     projectLabel: "Projects",
@@ -310,7 +311,7 @@ function renderExperience(content, runtime) {
           <div>
             <p class="portfolio-kicker">Experience.log</p>
             <h1>Experience</h1>
-            <p class="portfolio-subtitle">Roles, achievements, and project links restored from legacy JSON.</p>
+            <p class="portfolio-subtitle">${runtime.locale === "ko" ? "회사와 팀에서 맡은 역할, 제품 개발과 운영 경험입니다." : "Roles, product development, and operational responsibilities across companies and teams."}</p>
           </div>
         </header>
         <div class="portfolio-timeline">
@@ -460,7 +461,7 @@ function renderResume(content, runtime) {
 function renderAppSidebar(active, runtime) {
   const items = runtime.locale === "ko" ? [
     ["about", "개요", "Profile"],
-    ["projects", "프로젝트", "16 works"],
+    ["projects", "프로젝트", `${currentData(runtime).projects.length} works`],
     ["experience", "경험", "Timeline"],
     ["skills", "기술", "Capabilities"],
     ["resume", "이력서", "resume.pdf"],
@@ -468,7 +469,7 @@ function renderAppSidebar(active, runtime) {
     ["contact", "연락하기", "GitHub"],
   ] : [
     ["about", "Overview", "Profile"],
-    ["projects", "Projects", "16 works"],
+    ["projects", "Projects", `${currentData(runtime).projects.length} works`],
     ["experience", "Experience", "Timeline"],
     ["skills", "Skills", "Capabilities"],
     ["resume", "Resume", "resume.pdf"],
@@ -558,7 +559,7 @@ function renderProjectRow(project, selectedId) {
   return `
     <button type="button" role="option" aria-selected="${project.id === selectedId}" class="portfolio-project-row ${project.id === selectedId ? "is-selected" : ""}" data-project-id="${project.id}">
       <span class="portfolio-project-cover">
-        ${cover ? renderMedia(cover, project.title, true) : "<span>No media</span>"}
+        ${cover ? renderMedia(cover, project.title, true) : `<span class="portfolio-project-monogram">${escapeHtml(project.title.slice(0, 2))}</span>`}
       </span>
       <span class="portfolio-project-summary">
         <strong>${escapeHtml(project.title)}</strong>
@@ -574,7 +575,7 @@ function renderFeaturedProject(project) {
   const cover = project.media.find((item) => item.type === "image") || project.media[0];
   return `
     <button class="portfolio-featured-project" type="button" data-featured-project="${project.id}">
-      <span class="portfolio-featured-media">${cover ? renderMedia(cover, project.title, true) : ""}</span>
+      <span class="portfolio-featured-media">${cover ? renderMedia(cover, project.title, true) : `<span class="portfolio-project-placeholder">${escapeHtml(project.title)}</span>`}</span>
       <span class="portfolio-featured-copy">
         <small>${escapeHtml(project.role || project.categories[0] || "Project")}</small>
         <strong>${escapeHtml(project.title)}</strong>
@@ -623,6 +624,7 @@ function renderProjectDetail(project, runtime) {
         ${project.extraDescription.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
       </ul>
     </section>
+    ${project.links.length || project.deck ? `
     <section class="portfolio-detail-section">
       <h3>${copy.links}</h3>
       <div class="portfolio-link-list">
@@ -630,6 +632,7 @@ function renderProjectDetail(project, runtime) {
         ${project.deck ? `<a href="/assets/presentations/${escapeAttr(project.deck.file)}" target="_blank" rel="noreferrer">Open presentation</a>` : ""}
       </div>
     </section>
+    ` : ""}
   `;
 }
 

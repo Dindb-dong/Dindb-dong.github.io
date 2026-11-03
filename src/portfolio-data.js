@@ -1,3 +1,5 @@
+export const FEATURED_PROJECT_IDS = [17, 18, 19];
+
 const LEGACY_BASE = "/legacy/public";
 const PRESENTATIONS_MANIFEST = "/assets/presentations/manifest.json";
 const LANGUAGE_STORAGE_KEYS = ["dindbos-language", "portfolio-language"];
