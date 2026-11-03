@@ -17,7 +17,8 @@ export function renderExperienceApp(content, runtime, id, state) {
     work: "Selected work", views: "Screens & materials", scope: "Scope of work", stack: "Technologies", more: "Explore projects",
     responsibility: "My responsibilities", media: "Enlarge image", links: "Related links", deck: "Presentation", close: "Close image", previous: "Previous image", next: "Next image",
   };
-  const tabs = ["overview", "projects", "gallery", "role"];
+  const tabs = ["overview", ...(app.projects.length ? ["projects"] : []), ...(app.media.length ? ["gallery"] : []), "role"];
+  if (!tabs.includes(state.tab)) state.tab = "overview";
   const selected = app.projects.find((project) => project.id === state.projectId) || app.projects[0];
   const images = (projectId) => app.media.map((media, index) => ({ ...media, index })).filter((media) => !projectId || media.projectId === projectId);
   const gallery = (items, className = "") => items.length ? `<div class="experience-gallery ${className}">${items.map((media) => `
@@ -38,14 +39,14 @@ export function renderExperienceApp(content, runtime, id, state) {
   if (state.tab === "overview") {
     body = `<section class="experience-intro">
       <div><h2>${html(app.summary)}</h2><p>${html(app.experience.description[0])}</p>
-        <button type="button" class="experience-primary" data-experience-tab="projects">${copy.more} <span aria-hidden="true">↗</span></button>
+        <button type="button" class="experience-primary" data-experience-tab="${app.projects.length ? "projects" : "role"}">${app.projects.length ? copy.more : copy.role} <span aria-hidden="true">↗</span></button>
       </div>
       ${gallery(images().slice(0, 1), "experience-hero-media")}
     </section>
     <div class="experience-focus" aria-label="${copy.scope}">${app.focus.map((focus, index) => `<div><span>${String(index + 1).padStart(2, "0")}</span><strong>${html(focus)}</strong></div>`).join("")}</div>
-    <section class="experience-section"><div class="experience-section-heading"><h2>${copy.work}</h2><span>${app.projects.length} ${ko ? "프로젝트" : "projects"}</span></div>
+    ${app.projects.length ? `<section class="experience-section"><div class="experience-section-heading"><h2>${copy.work}</h2><span>${app.projects.length} ${ko ? "프로젝트" : "projects"}</span></div>
       <div class="experience-project-grid">${app.projects.map(projectButton).join("")}</div>
-    </section>
+    </section>` : `<section class="experience-section"><h2>${copy.responsibility}</h2><ul class="experience-work-list">${app.experience.description.map(line => `<li>${html(line)}</li>`).join("")}</ul></section>`}
     ${app.media.length > 1 ? `<section class="experience-section"><div class="experience-section-heading"><h2>${copy.views}</h2><button type="button" data-experience-tab="gallery">${copy.gallery} ↗</button></div>${gallery(images().slice(1, 3))}</section>` : ""}`;
   } else if (state.tab === "projects") {
     body = `<section class="experience-section experience-section--first"><h2>${copy.work}</h2>

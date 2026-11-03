@@ -46,17 +46,24 @@
   {
     "id": 3,
     "groupName": "Yonsei University AI Club YAI",
-    "period": "2025.03 ~",
-    "position": "Research Member & External Relations Executive",
+    "period": "2025.01 ~",
+    "position": "Research Member & Vice President (18th Cohort)",
     "description": [
-      "CV: EfficientFace + AdaIN → Emotion classification and weight generation for style filter application",
-      "CV: CLIP + BLIP2 Query based Text to Image Retrieval → Find scene range when describing desired scene",
-      "RL: Dueling DDQN based Pokemon Game Agent → Pokemon game battle agent trained on self-developed simulator"
+      "Designed, built, and operate YAI-HUB, a web and mobile platform used daily by more than 60 members.",
+      "Unified membership and team operations, attendance, points, reports, live Q&A, notices, schedules, and finance workflows.",
+      "Built real-time collaborative documents and recruitment workflows for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.",
+      "Developed the public society website, role-based access, monitoring, audit logs, and backup workflows.",
+      "Researched EfficientFace/AdaIN emotion classification and style transfer, and CLIP/BLIP2 video retrieval.",
+      "Built Yakemon as a YAI web battle-simulator project and trained a Dueling DDQN agent in a custom Python environment.",
+      "Contributed to AI shadowboxing using webcam pose estimation and GRU-based punch trajectory prediction."
     ],
     "projects": [
+      "YAI-HUB — Society Web, Mobile & Public Website",
       "EfficientFace + AdaIN Neural Style Transfer Project",
       "CLIP + BLIP2 Query based Text to Image Retrieval Project",
-      "Yakemon: Dueling DDQN based Pokemon Game Agent Project (Self-Developed)"
+      "Yakemon: Dueling DDQN based Pokemon Game Agent Project (Self-Developed)",
+      "Yakemon: Self-Developed Web Battle Simulator",
+      "AI Shadowboxing"
     ]
   },
   {
@@ -69,15 +76,23 @@
       "Systematization of indicators for measuring brain capabilities",
       "Brain report auto-generation script development (Python)"
     ],
-    "projects": ["Noi Lab Brain Report Auto-Generation Script"]
+    "projects": [
+      "Noi Lab Brain Report Auto-Generation Script"
+    ]
   },
   {
     "id": 5,
     "groupName": "Yonsei University Central Computer Club YCC",
     "period": "2024.03 ~ 2025.06",
     "position": "Club Member",
-    "description": ["React Native study team leader", "Unity study team leader"],
-    "projects": ["Yakemon: Self-Developed Simulation Web Game"]
+    "description": [
+      "React Native study team leader",
+      "Unity study team leader"
+    ],
+    "projects": [
+      "React Native Study Group Lead",
+      "Unity Study Group Lead"
+    ]
   },
   {
     "id": 6,
@@ -89,6 +104,8 @@
       "Collaboration with marketing, design, research teams as tech team leader",
       "Close communication experience with planners and designers"
     ],
-    "projects": ["UPCY: React Native-based Secondhand Clothing Trading Platform"]
+    "projects": [
+      "UPCY: React Native-based Secondhand Clothing Trading Platform"
+    ]
   }
 ]

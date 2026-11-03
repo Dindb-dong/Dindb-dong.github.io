@@ -19,6 +19,7 @@ const LEGACY_FILES = {
 };
 
 const MEDIA = {
+  20: ["proj_20_1.png", "proj_20_2.png"],
   17: ["proj_17_1.png"],
   19: ["proj_19_2.png", "proj_19_1.png"],
   1: ["proj_1_1.mp4", "proj_1_2.png"],

@@ -15,14 +15,14 @@ async function openExperience(page, id) {
 }
 
 for (const [id, name] of apps) {
-  test(`${name} launches as an independent app with real media and case studies`, async ({ page }) => {
+  test(`${name} launches as an independent app with real media and case studies`, async ({ page }, testInfo) => {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     const app = await openExperience(page, id);
     await expect(page.locator(`.dos-icon[aria-label="Open ${name}.app"]`)).toHaveCount(1);
-    await expect(app.getByRole("navigation", { name: "Experience sections" }).getByRole("button")).toHaveCount(4);
+    await expect(app.getByRole("navigation", { name: "Experience sections" }).getByRole("button")).toHaveCount(id === 5 ? 2 : 4);
     const navigation = app.getByRole("navigation", { name: "Experience sections" });
-    await expect(navigation.locator("button svg")).toHaveCount(4);
+    await expect(navigation.locator("button svg")).toHaveCount(id === 5 ? 2 : 4);
     await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("background-color", "rgb(124, 159, 229)");
     await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("color", "rgb(255, 255, 255)");
     await expect(navigation.locator("button span").first()).toHaveCSS("font-size", "14px");
@@ -31,14 +31,21 @@ for (const [id, name] of apps) {
     const logo = app.locator(".experience-identity img");
     await expect(logo).toHaveJSProperty("complete", true);
     expect(await logo.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0);
-    const image = app.locator(".experience-hero-media img");
-    await expect(image).toBeVisible();
-    await expect(image).toHaveJSProperty("complete", true);
-    expect(await image.evaluate((element) => element.naturalWidth)).toBeGreaterThan(300);
-    await app.locator('nav [data-experience-tab="projects"]').click();
-    await expect(app.locator("[data-experience-case]")).toBeVisible();
-    await app.locator('nav [data-experience-tab="gallery"]').click();
-    expect(await app.locator(".experience-gallery figure").count()).toBeGreaterThan(0);
+    if (id !== 5) {
+      const image = app.locator(".experience-hero-media img");
+      await expect(image).toBeVisible();
+      await expect(image).toHaveJSProperty("complete", true);
+      expect(await image.evaluate((element) => element.naturalWidth)).toBeGreaterThan(300);
+      await app.locator('nav [data-experience-tab="projects"]').click();
+      await expect(app.locator("[data-experience-case]")).toBeVisible();
+      await app.locator('nav [data-experience-tab="gallery"]').click();
+      expect(await app.locator(".experience-gallery figure").count()).toBeGreaterThan(0);
+    } else {
+      await expect(app).not.toContainText("Yakemon");
+      await expect(app).toContainText("React Native");
+      await expect(app).toContainText("Unity");
+      await page.screenshot({ path: testInfo.outputPath("ycc-study-leadership.png"), animations: "disabled" });
+    }
     await app.locator('nav [data-experience-tab="role"]').click();
     await expect(app.locator(".experience-responsibilities article").first()).toBeVisible();
     expect(errors).toEqual([]);
@@ -177,3 +184,23 @@ for (const width of [1440, 390]) {
     await expect(page.locator('.app-dropdown-menu:popover-open')).toHaveCount(0);
   });
 }
+
+
+test("YAI-HUB and Yakemon belong to YAI, with verified media and no duplicate hub project", async ({ page }, testInfo) => {
+  const app = await openExperience(page, 3);
+  await expect(app).toContainText("60명이 넘는");
+  await page.screenshot({ path: testInfo.outputPath("yai-hub-overview.png"), animations: "disabled" });
+  await app.locator('nav [data-experience-tab="projects"]').click();
+  await expect(app.locator('[data-experience-project="20"]')).toHaveCount(1);
+  await expect(app.locator('[data-experience-project="9"]')).toHaveCount(1);
+  await expect(app.locator('[data-experience-project="7"]')).toHaveCount(1);
+  await expect(app.locator('[data-experience-case="20"]')).toBeVisible();
+  await expect(app.getByRole("link", { name: "Website", exact: false })).toHaveAttribute("href", "https://y-yai.com/");
+  await app.locator('nav [data-experience-tab="gallery"]').click();
+  await expect(app.locator(".experience-gallery figure")).toHaveCount(7);
+  for (const image of await app.locator('.experience-gallery img[src*="proj_20_"]').all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect(image).toHaveJSProperty("complete", true);
+    expect(await image.evaluate(el => el.naturalWidth)).toBeGreaterThan(1000);
+  }
+});

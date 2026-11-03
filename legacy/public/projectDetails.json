@@ -467,5 +467,43 @@
         "url": "https://yomates.ai/"
       }
     ]
+  },
+  "20": {
+    "title": "YAI-HUB — 학회 웹·모바일 플랫폼",
+    "role": "Full-Stack Developer & System Architect",
+    "languages": [
+      "TypeScript",
+      "Python"
+    ],
+    "techStacks": [
+      "Next.js",
+      "React",
+      "FastAPI",
+      "PostgreSQL",
+      "Supabase",
+      "Yjs",
+      "Hocuspocus",
+      "Capacitor"
+    ],
+    "categories": [
+      "Web",
+      "Mobile",
+      "Computer Science"
+    ],
+    "description": [
+      "60명이 넘는 YAI 학회원이 매일 사용하는 학회 웹·모바일 플랫폼을 설계·개발·운영합니다."
+    ],
+    "extraDescription": [
+      "학회원·팀 관리, 출석, 마일리지, 개인·팀 보고서, 실시간 질문방, 공지·캘린더·아카이브와 재정 업무를 통합했습니다.",
+      "Yjs·Hocuspocus 기반 실시간 협업 문서와 지원서·코딩테스트·평가자 배정·면접 일정·평가를 포함한 리크루팅 도구를 구현했습니다.",
+      "연구·프로그램·성과·알럼나이·모집 정보를 소개하는 공개 학회 사이트를 함께 개발했습니다.",
+      "권한 관리, 운영 모니터링, 감사로그와 백업을 구축했으며 Capacitor 기반 모바일 연동을 적용했습니다."
+    ],
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://y-yai.com/"
+      }
+    ]
   }
 }

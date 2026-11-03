@@ -715,7 +715,7 @@ function renderExperienceCard(experience, index, runtime) {
           <div class="portfolio-mini-projects">${experience.projects.map((project) => `<span>${escapeHtml(project)}</span>`).join("")}</div>
         </details>
       </div>
-      <button type="button" class="experience-launcher-cover" data-experience-open="${experience.id}" aria-label="${escapeAttr(`${app.name}.app ${ko ? "화면으로 열기" : "Open from preview"}`)}"><img src="${escapeAttr(app.media[0].src)}" alt="${escapeAttr(app.media[0].caption)}" loading="lazy"></button>
+      ${app.media.length ? `<button type="button" class="experience-launcher-cover" data-experience-open="${experience.id}" aria-label="${escapeAttr(`${app.name}.app ${ko ? "화면으로 열기" : "Open from preview"}`)}"><img src="${escapeAttr(app.media[0].src)}" alt="${escapeAttr(app.media[0].caption)}" loading="lazy"></button>` : ""}
     </article>`;
 }
 

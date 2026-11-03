@@ -30,13 +30,17 @@ export const EXPERIENCE_APPS = [
   },
   {
     id: 3, appId: "experience-yai", name: "YAI",
-    projectIds: [5, 6, 7, 14],
-    summary: pair("모델 연구를 실험과 동작하는 인터랙션으로 연결합니다.", "Turning model research into experiments and working interactions."),
+    projectIds: [20, 5, 6, 7, 9, 14],
+    summary: pair("학회 운영 플랫폼을 만들고, AI 모델을 연구합니다.", "Building the society platform and researching AI models."),
     focus: pair(["컴퓨터 비전", "멀티모달 검색", "강화학습"], ["Computer vision", "Multimodal retrieval", "Reinforcement learning"]),
     media: [
+      shot("proj_20_1.png", 20, pair("YAI-HUB 학회원·운영 플랫폼", "YAI-HUB member and operations platform"), pair("사용자 제공 실제 운영 화면", "User-supplied operations screenshot")),
+      shot("proj_20_2.png", 20, pair("YAI 공개 학회 사이트", "YAI public society website"), pair("사용자 제공 실제 서비스 화면", "User-supplied service screenshot")),
       shot("proj_5_1.png", 5, pair("감정 분류와 스타일 전이 모델의 실험 결과", "Emotion classification and style transfer results"), pair("프로젝트 발표 자료", "Project presentation")),
       shot("proj_6_2.png", 6, pair("영상 검색 모델의 유사도 시각화", "Similarity visualization for the video retrieval model"), pair("실험 실행 화면", "Experiment screenshot")),
       shot("proj_7_1.png", 7, pair("포켓몬 강화학습 에이전트 발표", "Pokémon reinforcement-learning agent presentation"), pair("프로젝트 발표 자료", "Project presentation")),
+      shot("proj_9_1.png", 9, pair("Yakemon 웹 배틀 시뮬레이터", "Yakemon web battle simulator"), pair("YAI 프로젝트 게임 캡처", "YAI project game screenshot")),
+      shot("proj_14_1.png", 14, pair("AI 섀도우복싱 프로젝트", "AI shadowboxing project"), pair("프로젝트 발표 자료", "Project presentation")),
     ],
   },
   {
@@ -50,12 +54,10 @@ export const EXPERIENCE_APPS = [
   },
   {
     id: 5, appId: "experience-ycc", name: "YCC",
-    projectIds: [9],
-    summary: pair("스터디를 이끌고, 직접 만든 게임으로 개발 경험을 쌓았습니다.", "Leading study groups and learning through a game built from scratch."),
-    focus: pair(["React Native 스터디", "Unity 스터디", "게임 개발"], ["React Native study", "Unity study", "Game development"]),
-    media: [
-      shot("proj_9_1.png", 9, pair("Yakemon의 턴 기반 전투와 기술 선택", "Turn-based combat and move selection in Yakemon"), pair("기존 게임 캡처", "Archived game screenshot")),
-    ],
+    projectIds: [],
+    summary: pair("React Native와 Unity 스터디를 이끌었습니다.", "Leading React Native and Unity study groups."),
+    focus: pair(["React Native 스터디", "Unity 스터디"], ["React Native study", "Unity study"]),
+    media: [],
   },
   {
     id: 6, appId: "experience-sdp", name: "SDP",

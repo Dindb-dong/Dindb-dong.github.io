@@ -1514,3 +1514,7 @@ input {
   .portfolio-about .portfolio-featured-grid { grid-template-columns: minmax(0, 1fr); }
   .portfolio-about .portfolio-featured-project { grid-template-columns: minmax(0, 1fr); }
 }
+
+.experience-intro:not(:has(.experience-hero-media)) { grid-template-columns: minmax(0, 1fr); }
+
+.portfolio-experience-launcher:not(:has(.experience-launcher-cover)) { grid-template-columns: 34px minmax(0, 1fr); }

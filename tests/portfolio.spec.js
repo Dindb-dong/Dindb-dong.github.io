@@ -53,8 +53,8 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
   await search.fill("does-not-exist");
   await expect(page.getByText("검색 결과 없음")).toBeVisible();
   await page.getByRole("button", { name: "검색 초기화" }).click();
-  await expect(page.locator("[data-project-id]")).toHaveCount(18);
-  await expect(page.getByRole("status")).toContainText("18개 프로젝트");
+  await expect(page.locator("[data-project-id]")).toHaveCount(19);
+  await expect(page.getByRole("status")).toContainText("19개 프로젝트");
 });
 
 test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
