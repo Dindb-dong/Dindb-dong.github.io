@@ -13,4 +13,4 @@ Reviewed 2026-11-03. The six experience apps reuse existing portfolio sources wi
 
 All selected images were opened and inspected. The new galleries omit identifiable assessment reports (proj_8_1/proj_8_2) and the customer/order dashboard (proj_3_1). The older project archive remains as supplied. No invented service screens or performance metrics were added.
 
-Organization logo sources and the Alus brand-icon distinction are recorded in [the logo source table](../assets/experience-icons/README.md).
+Organization logo sources, the user-supplied ALUS symbol crop and the Leviosa frontend vector mark are recorded in [the logo source table](../assets/experience-icons/README.md).

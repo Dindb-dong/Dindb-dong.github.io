@@ -65,7 +65,7 @@ export function renderExperienceApp(content, runtime, id, state) {
   }
   content.innerHTML = `<section class="portfolio-os-app experience-app" data-experience-app="${id}" data-experience-tab-active="${state.tab}">
     <aside class="experience-sidebar">
-      <div class="experience-identity"><img src="/assets/experience-icons/${html(app.name)}-official.svg" alt=""><strong>${html(app.name)}</strong><span>${html(app.experience.period)}</span></div>
+      <div class="experience-identity"><img src="${html(app.icon)}" alt=""><strong>${html(app.name)}</strong><span>${html(app.experience.period)}</span></div>
       <nav aria-label="Experience sections">${tabs.map((tab) => `<button type="button" data-experience-tab="${tab}" ${state.tab === tab ? 'aria-current="page"' : ""}><span>${copy[tab]}</span><small>${tab === "projects" ? app.projects.length : tab === "gallery" ? app.media.length : ""}</small></button>`).join("")}</nav>
       <label class="experience-switch"><span>${copy.change}</span><select aria-label="${copy.change}" data-experience-switch>${EXPERIENCE_APPS.map((entry) => `<option value="${entry.id}" ${entry.id === id ? "selected" : ""}>${html(entry.name)}.app</option>`).join("")}</select></label>
     </aside>

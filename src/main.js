@@ -103,7 +103,7 @@ function portfolioApps(runtime) {
       id: app.appId,
       name: app.name,
       title: `${app.name}.app`,
-      icon: `/assets/experience-icons/${app.name}-official.svg`,
+      icon: app.icon || `/assets/experience-icons/${app.name}-official.svg`,
       desktop: true,
       singleton: true,
       width: 1180,
@@ -692,7 +692,7 @@ function renderExperienceCard(experience, index, runtime) {
     <article class="portfolio-timeline-card portfolio-experience-launcher">
       <div class="portfolio-timeline-index">${String(index + 1).padStart(2, "0")}</div>
       <div class="portfolio-timeline-body">
-        <header><h2 class="experience-launcher-name"><img src="/assets/experience-icons/${escapeAttr(app.name)}-official.svg" alt="">${escapeHtml(experience.groupName)}</h2><p>${escapeHtml([experience.position, experience.period].join(" · "))}</p></header>
+        <header><h2 class="experience-launcher-name"><img src="${escapeAttr(app.icon)}" alt="">${escapeHtml(experience.groupName)}</h2><p>${escapeHtml([experience.position, experience.period].join(" · "))}</p></header>
         <p class="experience-launcher-summary">${escapeHtml(app.summary)}</p>
         <div class="experience-launcher-focus">${app.focus.map((focus) => `<span>${escapeHtml(focus)}</span>`).join("")}</div>
         <button type="button" class="experience-primary" data-experience-open="${experience.id}">${escapeHtml(app.name)}.app ${ko ? "열기" : "Open"} ↗</button>

@@ -121,4 +121,4 @@
 - Image buttons open a native modal dialog with full-size media, useful captions, previous/next controls, Escape dismissal and focus restoration.
 - Each app owns its selected tab/project. Minimize restores it; closing/reopening resets it. Language changes refresh open views without closing apps.
 - Verify desktop, tablet and mobile; all six registrations, timeline launch, singleton behavior, independent app state, project selection, image navigation/keyboard dismissal, language refresh and no page overflow.
-- Use inspected actual organization logos on the desktop, timeline cards and app sidebar, preserving colors and aspect ratios. Store original sources locally; see `assets/experience-icons/README.md`. Alus uses its company-operated POWAPOWA brand favicon, explicitly documented as a brand icon.
+- Use inspected actual organization logos on the desktop, timeline cards and app sidebar, preserving colors and aspect ratios. Store original sources locally; see `assets/experience-icons/README.md`. Alus uses the red symbol from the user-supplied corporate logo; Leviosa uses the vector favicon from the company frontend source.

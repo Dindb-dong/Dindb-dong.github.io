@@ -6,6 +6,7 @@ const shot = (file, projectId, caption, kind) => ({
 export const EXPERIENCE_APPS = [
   {
     id: 1, appId: "experience-leviosa", name: "Leviosa-AI",
+    icon: "/assets/experience-icons/Leviosa-AI-symbol.svg",
     projectIds: [17, 19],
     summary: pair("AI 서비스를 설계하고, 제품으로 만들고, 운영합니다.", "Building and operating AI products, from architecture to everyday use."),
     focus: pair(["제품 전체 개발", "백엔드 아키텍처", "운영 자동화"], ["End-to-end products", "Backend architecture", "Workflow automation"]),
@@ -17,6 +18,7 @@ export const EXPERIENCE_APPS = [
   },
   {
     id: 2, appId: "experience-alus", name: "Alus-Healthcare",
+    icon: "/assets/experience-icons/Alus-Healthcare-symbol.svg",
     projectIds: [2, 4, 1, 3],
     summary: pair("헬스케어 제품과 커머스 운영을 소프트웨어로 연결했습니다.", "Connecting healthcare products and commerce operations through software."),
     focus: pair(["커머스 개발", "디바이스 연동", "업무 자동화"], ["Commerce development", "Device integration", "Workflow automation"]),
@@ -73,6 +75,7 @@ export function experienceContent(runtime, id) {
   const app = EXPERIENCE_APPS.find((entry) => entry.id === id);
   return {
     ...app,
+    icon: app.icon || `/assets/experience-icons/${app.name}-official.svg`,
     experience: data.experiences.find((entry) => entry.id === id),
     summary: app.summary[locale],
     focus: app.focus[locale],
