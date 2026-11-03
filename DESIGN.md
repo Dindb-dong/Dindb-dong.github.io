@@ -149,7 +149,18 @@
 
 ## Product-first overview (2026-11-03)
 
+Status: implemented previous direction, superseded for the next redesign by the pending panel proposals below. Do not continue expanding the product showcase.
+
 - Lead with “AI를 설계하고, 서비스로 완성합니다.” at 30px maximum, smaller than the previous 34px name. Use 28px/26px in narrower windows; retain neutral ink and SUIT.
 - Move the portrait and identity into the sidebar. Narrow desktop sidebars from 240px to 196px with 44px navigation rows and reduced padding, shared with experience apps.
 - Hero uses the supplied actual Yomates desktop screenshot, with a caption and a working project-detail action, on the existing soft-blue surface. Do not present a reconstructed editor or landing-page artwork as a real editor capture.
 - Call the featured section “만든 제품” / “Products I build”. Give detail-page development more width, and replace long role labels with concrete product contributions. Stack hero/media and products in narrow windows.
+
+## Pending profile panel redesign (2026-11-03)
+
+- Await the user's selection from image-generated alternatives before replacing the running overview. [Panel brief](docs/design/overview-panel-concepts/brief.md) records verified facts, sources and the five-panel inventory.
+- Replace the product showcase and promotional hero with at-a-glance academic/language, self-assessed status, career, research/leadership and detailed development-tools panels.
+- Current user-defined grades: potential SS, backend A+, infrastructure A, DB A-, AI A, frontend B+. Use visible grades; do not invent numerical performance scores.
+- Natural languages: Korean native, English advanced, Japanese advanced, directly confirmed by the user. Preserve the Korean copy “한국어 원어민 · 영어 상 · 일본어 상”.
+- Panel 05 is development tools only, grouped by language, web/app, backend/database, AI/research and infrastructure. Remove workflow/process filler and all “작업 방식” content.
+- Preserve main #7c9fe5, secondary #2563eb and compact typography. Compare A dashboard, B character-status sheet and C compact dossier; individual panel treatments may be mixed after selection.
