@@ -59,6 +59,10 @@ test("mobile layout exposes every portfolio destination without page overflow", 
   }
   expect(await page.evaluate(() => document.body.scrollWidth)).toBe(await page.evaluate(() => document.body.clientWidth));
 
+  const readingPane = page.locator(".portfolio-about .portfolio-main-pane");
+  expect(await readingPane.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
+  const paneBounds = await readingPane.boundingBox();
+  expect((await readingPane.locator("h1").boundingBox()).x - paneBounds.x).toBeGreaterThanOrEqual(16);
   await page.screenshot({ path: testInfo.outputPath("mobile-overview.png") });
   await navigation.locator('[data-sidebar-target="projects"]').click();
   await expect(page.getByRole("searchbox", { name: "프로젝트 검색" })).toBeVisible();
