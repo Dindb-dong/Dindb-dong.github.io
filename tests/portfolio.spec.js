@@ -44,6 +44,55 @@ test("desktop app shortcuts remain visible beside the default portfolio window",
   await page.screenshot({ path: testInfo.outputPath("desktop.png") });
 });
 
+test("career desktop shortcuts form a reachable lower-right group while other icons close the gaps", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.locator(".dos-window").getByRole("button", { name: "Minimize", exact: true }).click();
+  const names = ["Leviosa-AI", "Alus-Healthcare", "NOI-LAB", "SDP", "YAI", "YCC"];
+  const bounds = [];
+  for (const name of names) {
+    const icon = page.locator(`.dos-icon[aria-label="Open ${name}.app"]`);
+    await expect(icon).toBeVisible();
+    const box = await icon.boundingBox();
+    expect(box.x).toBeGreaterThan(1000);
+    expect(box.y).toBeGreaterThan(450);
+    expect(box.x + box.width).toBeLessThanOrEqual(1440);
+    expect(box.y + box.height).toBeLessThan(820);
+    expect(await icon.evaluate(el => {
+      const b = el.getBoundingClientRect();
+      return document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)?.closest(".dos-icon") === el;
+    })).toBe(true);
+    bounds.push(box);
+  }
+  for (let i = 0; i < bounds.length; i++) for (let j = i + 1; j < bounds.length; j++) {
+    const a = bounds[i], b = bounds[j];
+    expect(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y).toBe(true);
+  }
+  const left = await page.locator(".dos-icon").evaluateAll((icons, names) => icons.filter(icon => !names.some(name => icon.getAttribute("aria-label") === `Open ${name}.app`)).map(icon => ({ x: icon.getBoundingClientRect().x, y: icon.getBoundingClientRect().y })), names);
+  expect(left).toHaveLength(10);
+  expect(new Set(left.map(box => box.y)).size).toBe(5);
+  expect(new Set(left.map(box => box.x)).size).toBe(2);
+  await page.screenshot({ path: testInfo.outputPath("desktop-career-group.png"), animations: "disabled" });
+  await page.locator('.dos-icon[aria-label="Open Leviosa-AI.app"]').dblclick();
+  await expect(page.locator('.experience-app[data-experience-app="1"]')).toBeVisible();
+});
+
+for (const width of [1024, 390]) {
+  test(`all desktop shortcuts remain reachable at ${width}px`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.locator(".dos-window").getByRole("button", { name: "Minimize", exact: true }).click();
+    for (const icon of await page.locator(".dos-icon").all()) {
+      await icon.scrollIntoViewIfNeeded();
+      expect(await icon.evaluate(el => {
+        const b = el.getBoundingClientRect();
+        return document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)?.closest(".dos-icon") === el;
+      })).toBe(true);
+    }
+    await page.screenshot({ path: testInfo.outputPath(`desktop-group-${width}.png`), animations: "disabled" });
+  });
+}
+
 test("project search, empty state, and reset remain usable", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();

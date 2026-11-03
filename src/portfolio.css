@@ -1268,3 +1268,24 @@ input {
   .portfolio-project-controls .portfolio-search-field { flex-basis: 100%; }
   .portfolio-project-controls .portfolio-filter-group { flex: 1 1 100%; }
 }
+
+/* Career launchers occupy their own lower-right desktop cluster. */
+.dos-desktop > .dos-icon:is([aria-label="Open Leviosa-AI.app"], [aria-label="Open Alus-Healthcare.app"], [aria-label="Open NOI-LAB.app"], [aria-label="Open SDP.app"], [aria-label="Open YAI.app"], [aria-label="Open YCC.app"]) { order: 1; }
+@media (min-width: 761px) {
+  .dos-desktop > .dos-icon:is([aria-label="Open Leviosa-AI.app"], [aria-label="Open Alus-Healthcare.app"], [aria-label="Open NOI-LAB.app"], [aria-label="Open SDP.app"], [aria-label="Open YAI.app"], [aria-label="Open YCC.app"]) {
+    position: fixed;
+    right: calc(24px + var(--career-column) * 104px);
+    bottom: calc(108px + var(--career-row) * 112px);
+    width: 96px;
+    height: 104px;
+  }
+  .dos-icon[aria-label="Open Leviosa-AI.app"] { --career-column: 2; --career-row: 1; }
+  .dos-icon[aria-label="Open Alus-Healthcare.app"] { --career-column: 1; --career-row: 1; }
+  .dos-icon[aria-label="Open NOI-LAB.app"] { --career-column: 0; --career-row: 1; }
+  .dos-icon[aria-label="Open SDP.app"] { --career-column: 2; --career-row: 0; }
+  .dos-icon[aria-label="Open YAI.app"] { --career-column: 1; --career-row: 0; }
+  .dos-icon[aria-label="Open YCC.app"] { --career-column: 0; --career-row: 0; }
+}
+@media (min-width: 761px) and (max-width: 1179px) {
+  .dindbos-host .dos-desktop { overflow-y: auto; }
+}

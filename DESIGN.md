@@ -165,3 +165,9 @@
 - Project search, category filters and result count share one compact responsive control strip. The search input retains an accessible localized label; mobile wraps the strip without page overflow.
 - Legacy project records lack consistent dates. Default order is newest registration first (descending project ID), shared across locales and retained through filtering/reset; do not fabricate project dates.
 - Settings present language selection; runtime mounting/storage implementation details are not portfolio content.
+
+## Desktop shortcut groups (2026-11-04)
+
+- On desktop, move only Leviosa-AI, Alus-Healthcare, NOI-LAB, SDP, YAI and YCC into a 3×2 lower-right group above the dock. The user's purple rectangle marks placement; do not render a border/container.
+- Remaining ten icons flow continuously in the existing left grid. Preserve SDK icons, desktop semantics, launch handlers and window stacking; no SDK patch.
+- Narrow desktop keeps a scrollable left column. Mobile keeps all icons in the scrollable desktop grid, ordering career launchers after other apps.
