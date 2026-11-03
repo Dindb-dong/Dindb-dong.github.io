@@ -18,9 +18,10 @@ test("desktop app shortcuts remain visible beside the default portfolio window",
   await page.goto("/");
 
   const shortcuts = page.locator(".dos-icon");
-  await expect(shortcuts).toHaveCount(10);
+  await expect(shortcuts).toHaveCount(16);
   for (const name of ["Portfolio.app", "Projects.app", "Resume.app", "Files.app", "Terminal.app"]) {
     const shortcut = page.locator(`.dos-icon[aria-label="Open ${name}"]`);
+    await shortcut.scrollIntoViewIfNeeded();
     await expect(shortcut).toBeVisible();
     expect(await shortcut.evaluate((element) => {
       const bounds = element.getBoundingClientRect();

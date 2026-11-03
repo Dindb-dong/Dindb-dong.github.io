@@ -4,7 +4,7 @@
 
 - Status: Active
 - Last refreshed: 2026-11-03
-- Primary product surfaces: DindbOS desktop, Portfolio app, Projects app, Resume app
+- Primary product surfaces: DindbOS desktop, Portfolio app, Projects app, Resume app, six independent experience apps
 - Evidence reviewed: `src/main.js`, `src/portfolio.css`, `src/portfolio-data.js`, the installed `dindbos` runtime styles and APIs, legacy Korean/English portfolio data, and live screenshots at 1440×900 and 390×844
 
 ## Brand
@@ -110,3 +110,15 @@
 
 - [ ] Decide later whether DindbOS should expose a user-selectable dark theme; this redesign keeps one controlled light presentation so portfolio contrast is predictable.
 - [ ] Review and refresh older project copy independently from this interface redesign; source descriptions remain authoritative for now.
+
+## Experience apps
+
+- Mode: MODIFY. Reuse the SUIT/system typography, OS chrome, existing surface/ink tokens and spacing. Use calm green accents within experience apps.
+- Register six singleton apps: Leviosa-AI, Alus-Healthcare, YAI, NOI-LAB, YCC and SDP. Keep the existing timeline as an app launcher with representative images, role, period and an explicit open action.
+- Each app has overview, project case studies, media library and responsibilities. Organization/role/period lead; project selection and real screenshots explain the work. No fabricated metrics or copied marketing claims.
+- Desktop: compact persistent sidebar and spacious content; mobile: a compact header and wrapping navigation with one scrollable content region.
+- Images are curated from inspected repository assets and newly captured public pages. Preserve provenance and distinguish product screenshots, presentation results, code and promotional app captures. Exclude identifiable assessment reports and customer-order screenshots from the new galleries.
+- Image buttons open a native modal dialog with full-size media, useful captions, previous/next controls, Escape dismissal and focus restoration.
+- Each app owns its selected tab/project. Minimize restores it; closing/reopening resets it. Language changes refresh open views without closing apps.
+- Verify desktop, tablet and mobile; all six registrations, timeline launch, singleton behavior, independent app state, project selection, image navigation/keyboard dismissal, language refresh and no page overflow.
+- Use inspected actual organization logos on the desktop, timeline cards and app sidebar, preserving colors and aspect ratios. Store original sources locally; see `assets/experience-icons/README.md`. Alus uses its company-operated POWAPOWA brand favicon, explicitly documented as a brand icon.

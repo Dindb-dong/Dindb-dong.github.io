@@ -1,3 +1,5 @@
+import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
+import { renderExperienceApp } from "./experience-app.js";
 import { createAndBootDindbOS } from "dindbos";
 import "dindbos/styles.css";
 import "./portfolio.css";
@@ -18,7 +20,7 @@ async function bootPortfolioOS() {
   const runtime = await loadPortfolioRuntime();
   const data = currentData(runtime);
 
-  await createAndBootDindbOS({
+  const os = await createAndBootDindbOS({
     root: "#app",
     theme: { mode: "light", accent: "#287a58", wallpaper: "meadow", dockSize: 48 },
     session: {
@@ -50,6 +52,10 @@ async function bootPortfolioOS() {
       }],
     },
   });
+  runtime.launchExperience = (id) => {
+    const app = EXPERIENCE_APPS.find((entry) => entry.id === id);
+    if (app) os.launch(app.appId);
+  };
 }
 
 function portfolioApps(runtime) {
@@ -93,6 +99,21 @@ function portfolioApps(runtime) {
       manifest: appManifest(),
       render: ({ content }) => registerView(runtime, "resume", content, renderResume),
     },
+    ...EXPERIENCE_APPS.map((app) => ({
+      id: app.appId,
+      name: app.name,
+      title: `${app.name}.app`,
+      icon: `/assets/experience-icons/${app.name}-official.svg`,
+      desktop: true,
+      singleton: true,
+      width: 1180,
+      height: 760,
+      manifest: appManifest(),
+      render: ({ content }) => {
+        const state = { tab: "overview", projectId: app.projectIds[0] };
+        return registerView(runtime, app.appId, content, (element, currentRuntime) => renderExperienceApp(element, currentRuntime, app.id, state));
+      },
+    })),
   ];
 }
 
@@ -309,13 +330,12 @@ function renderExperience(content, runtime) {
       <main class="portfolio-main-pane">
         <header class="portfolio-hero">
           <div>
-            <p class="portfolio-kicker">Experience.log</p>
-            <h1>Experience</h1>
-            <p class="portfolio-subtitle">${runtime.locale === "ko" ? "회사와 팀에서 맡은 역할, 제품 개발과 운영 경험입니다." : "Roles, product development, and operational responsibilities across companies and teams."}</p>
+            <h1>${runtime.locale === "ko" ? "경력 앱" : "Experience apps"}</h1>
+            <p class="portfolio-subtitle">${runtime.locale === "ko" ? "각 앱을 열어 역할과 프로젝트, 실제 화면을 살펴보세요." : "Open an app to explore my role, projects, and work in pictures."}</p>
           </div>
         </header>
         <div class="portfolio-timeline">
-          ${data.experiences.map((experience, index) => renderExperienceCard(experience, index)).join("")}
+          ${data.experiences.map((experience, index) => renderExperienceCard(experience, index, runtime)).join("")}
         </div>
       </main>
     </section>
@@ -500,6 +520,9 @@ function renderAppSidebar(active, runtime) {
 }
 
 function wireSidebar(content, runtime) {
+  content.querySelectorAll("[data-experience-open]").forEach((button) => {
+    button.addEventListener("click", () => runtime.launchExperience(Number(button.dataset.experienceOpen)));
+  });
   content.querySelectorAll("[data-sidebar-target]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = button.dataset.sidebarTarget;
@@ -662,24 +685,23 @@ function renderMedia(item, title, compact) {
   return `<img class="${compact ? "is-compact" : ""}" src="${escapeAttr(item.src)}" alt="${escapeAttr(title)}">`;
 }
 
-function renderExperienceCard(experience, index) {
+function renderExperienceCard(experience, index, runtime) {
+  const app = experienceContent(runtime, experience.id);
+  const ko = runtime.locale === "ko";
   return `
-    <article class="portfolio-timeline-card">
+    <article class="portfolio-timeline-card portfolio-experience-launcher">
       <div class="portfolio-timeline-index">${String(index + 1).padStart(2, "0")}</div>
       <div class="portfolio-timeline-body">
-        <header>
-          <h2>${escapeHtml(experience.groupName || experience.title || "Experience")}</h2>
-          <p>${escapeHtml([experience.position, experience.period].filter(Boolean).join(" · "))}</p>
-        </header>
-        <ul>
-          ${(experience.description || []).map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
-        </ul>
-        <div class="portfolio-mini-projects">
-          ${(experience.projects || []).map((project) => `<span>${escapeHtml(project)}</span>`).join("")}
-        </div>
+        <header><h2 class="experience-launcher-name"><img src="/assets/experience-icons/${escapeAttr(app.name)}-official.svg" alt="">${escapeHtml(experience.groupName)}</h2><p>${escapeHtml([experience.position, experience.period].join(" · "))}</p></header>
+        <p class="experience-launcher-summary">${escapeHtml(app.summary)}</p>
+        <div class="experience-launcher-focus">${app.focus.map((focus) => `<span>${escapeHtml(focus)}</span>`).join("")}</div>
+        <button type="button" class="experience-primary" data-experience-open="${experience.id}">${escapeHtml(app.name)}.app ${ko ? "열기" : "Open"} ↗</button>
+        <details class="experience-launcher-details"><summary>${ko ? "담당 업무 요약" : "Responsibilities at a glance"}</summary><ul>${experience.description.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>
+          <div class="portfolio-mini-projects">${experience.projects.map((project) => `<span>${escapeHtml(project)}</span>`).join("")}</div>
+        </details>
       </div>
-    </article>
-  `;
+      <button type="button" class="experience-launcher-cover" data-experience-open="${experience.id}" aria-label="${escapeAttr(`${app.name}.app ${ko ? "화면으로 열기" : "Open from preview"}`)}"><img src="${escapeAttr(app.media[0].src)}" alt="${escapeAttr(app.media[0].caption)}" loading="lazy"></button>
+    </article>`;
 }
 
 function renderSkillGroup(title, values, filterType) {
