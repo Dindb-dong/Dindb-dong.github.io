@@ -2,21 +2,25 @@
   {
     "id": 1,
     "groupName": "Leviosa AI",
-    "period": "2026.03 ~",
+    "period": "2026.02 ~ 2026.10",
     "position": "AI Engineer & Founding Member",
     "description": [
-      "Built core Cafe24 commerce automation product flows across CS automation, app installation/OAuth, storefront chat widget, product sourcing, upload automation, and AI-generated detail page workflows",
-      "Developed production-facing AI workflow infrastructure using TypeScript, React, Node.js, Python/FastAPI, Supabase/RDS, Redis, S3/Object Storage, Docker, AWS EC2, and GitHub Actions",
-      "Implemented Chat MCP workspace and standard JSON-RPC tool interfaces so sourcing, products, orders, CS, and content workflows could be executed through controlled AI tool calls",
-      "Shipped user-facing dashboards, settings modals, landing pages, chat widgets, product management screens, and a Figma-style detail page editor while keeping sensitive credentials and approval flows behind service boundaries",
-      "Improved operational reliability through token refresh handling, credential boundaries, durable job queues, external IO retry guards, observability hooks, regression tests, and CI/CD cleanup"
+      "Owned the AI detail-page product end to end: custom editor/canvas engine, AI generation workflows, system architecture, infrastructure, deployment, and operations",
+      "Led Agency backend development across asynchronous generation jobs, credit settlement, per-job cost tracking, access control, and observability",
+      "Contributed to Yomates backend architecture design; implemented error handling and shared modules for every server task type and integrated monitoring",
+      "Contributed to most Leviosa web features, handled most maintenance independently, and built most of the admin interface",
+      "Maintained Naver Smart Store and TalkTalk integrations across product uploads, automated inspections, price updates, and product-context-aware replies",
+      "Built and operated internal agent workflows with Telegram and Notion; this experience informed the evolution of the Yomates product idea",
+      "Developed Cafe24 commerce automation flows including CS, app installation/OAuth, product sourcing/uploads, and storefront chat widgets"
     ],
     "projects": [
-      "Cafe24 CS Automation Platform",
-      "Cafe24 Sourcing and Product Upload Automation",
-      "AI Detail Page Generation and Visual Editor",
-      "Chat MCP Workspace and Tool Execution Platform",
-      "Storefront Chat Widget and Dashboard Operations"
+      "AI Detail Page Generation & Editing — End-to-End Development & Operations",
+      "Agency — Backend Lead",
+      "Yomates — Backend Architecture, Error Handling & Monitoring",
+      "Leviosa Web & Admin Development and Maintenance",
+      "Naver Smart Store & TalkTalk Integrations",
+      "Internal Automation with Telegram & Notion",
+      "Cafe24 Commerce Automation"
     ]
   },
   {
@@ -42,38 +46,53 @@
   {
     "id": 3,
     "groupName": "Yonsei University AI Club YAI",
-    "period": "2025.03 ~",
-    "position": "Research Member & External Relations Executive",
+    "period": "2025.01 ~",
+    "position": "Research Member & Vice President (18th Cohort)",
     "description": [
-      "CV: EfficientFace + AdaIN → Emotion classification and weight generation for style filter application",
-      "CV: CLIP + BLIP2 Query based Text to Image Retrieval → Find scene range when describing desired scene",
-      "RL: Dueling DDQN based Pokemon Game Agent → Pokemon game battle agent trained on self-developed simulator"
+      "Designed, built, and operate YAI-HUB, a web and mobile platform used daily by more than 60 members.",
+      "Unified membership and team operations, attendance, points, reports, live Q&A, notices, schedules, and finance workflows.",
+      "Built real-time collaborative documents and recruitment workflows for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.",
+      "Developed the public society website, role-based access, monitoring, audit logs, and backup workflows.",
+      "Researched EfficientFace/AdaIN emotion classification and style transfer, and CLIP/BLIP2 video retrieval.",
+      "Built Yakemon as a YAI web battle-simulator project and trained a Dueling DDQN agent in a custom Python environment.",
+      "Contributed to AI shadowboxing using webcam pose estimation and GRU-based punch trajectory prediction."
     ],
     "projects": [
+      "YAI-HUB — Society Web, Mobile & Public Website",
       "EfficientFace + AdaIN Neural Style Transfer Project",
       "CLIP + BLIP2 Query based Text to Image Retrieval Project",
-      "Yakemon: Dueling DDQN based Pokemon Game Agent Project (Self-Developed)"
+      "Yakemon: Dueling DDQN based Pokemon Game Agent Project (Self-Developed)",
+      "Yakemon: Self-Developed Web Battle Simulator",
+      "AI Shadowboxing"
     ]
   },
   {
     "id": 4,
     "groupName": "Noi Lab Co., Ltd.",
-    "period": "2024.07 ~ 2025.11",
-    "position": "Development Team Intern",
+    "period": "2024.07 ~ 2024.11",
+    "position": "Software Engineer & Researcher",
     "description": [
       "Experience in various startup events and booth operations",
       "Systematization of indicators for measuring brain capabilities",
       "Brain report auto-generation script development (Python)"
     ],
-    "projects": ["Noi Lab Brain Report Auto-Generation Script"]
+    "projects": [
+      "Noi Lab Brain Report Auto-Generation Script"
+    ]
   },
   {
     "id": 5,
     "groupName": "Yonsei University Central Computer Club YCC",
     "period": "2024.03 ~ 2025.06",
     "position": "Club Member",
-    "description": ["React Native study team leader", "Unity study team leader"],
-    "projects": ["Yakemon: Self-Developed Simulation Web Game"]
+    "description": [
+      "React Native study team leader",
+      "Unity study team leader"
+    ],
+    "projects": [
+      "React Native Study Group Lead",
+      "Unity Study Group Lead"
+    ]
   },
   {
     "id": 6,
@@ -85,6 +104,8 @@
       "Collaboration with marketing, design, research teams as tech team leader",
       "Close communication experience with planners and designers"
     ],
-    "projects": ["UPCY: React Native-based Secondhand Clothing Trading Platform"]
+    "projects": [
+      "UPCY: React Native-based Secondhand Clothing Trading Platform"
+    ]
   }
 ]

@@ -1,0 +1,29 @@
+:root {
+  --brand-accent: #7c9fe5;
+  --brand-secondary: #2563eb;
+  --brand-on-accent: #ffffff;
+  --brand-accent-hover: #2563eb;
+  --brand-accent-soft: #eff6ff;
+  --brand-ink: #202124;
+  --brand-muted: #777777;
+  --brand-border: #e5e5e5;
+  --brand-surface: #f5f5f5;
+  --brand-paper: #ffffff;
+  --brand-sky: #7dd3fc;
+  --brand-lavender: #c4b5fd;
+  --brand-nav-size: 14px;
+  --portfolio-canvas: var(--brand-surface);
+  --portfolio-surface: var(--brand-paper);
+  --portfolio-surface-muted: var(--brand-surface);
+  --portfolio-ink: var(--brand-ink);
+  --portfolio-muted: var(--brand-muted);
+  --portfolio-line: var(--brand-border);
+  --portfolio-line-strong: #b6b6b6;
+  --portfolio-blue: var(--brand-accent);
+  --portfolio-blue-dark: var(--brand-accent-hover);
+  --portfolio-blue-soft: var(--brand-accent-soft);
+  --portfolio-green: var(--brand-accent);
+  --portfolio-purple: var(--brand-accent);
+  --portfolio-coral: var(--brand-accent);
+  --portfolio-amber: var(--brand-accent);
+}

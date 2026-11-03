@@ -268,21 +268,44 @@
   "15": {
     "title": "DindbOS",
     "role": "Open-Source SDK Developer",
-    "languages": ["TypeScript", "JavaScript"],
-    "techStacks": ["React", "Vite", "npm"],
-    "categories": ["Web", "Computer Science"],
+    "languages": [
+      "JavaScript",
+      "TypeScript"
+    ],
+    "techStacks": [
+      "React",
+      "Vite",
+      "IndexedDB",
+      "npm"
+    ],
+    "categories": [
+      "Web",
+      "Computer Science"
+    ],
     "description": [
-      "Open-source web OS SDK installable with npm install dindbos.",
-      "This portfolio website is built by installing and booting the DindbOS SDK."
+      "An embeddable, macOS-inspired desktop SDK for React and JavaScript apps.",
+      "This portfolio runs on the source-built DindbOS 0.2.0 SDK."
     ],
     "extraDescription": [
-      "Designed an SDK that lets web projects mount apps, files, browser-like surfaces, and portfolio data inside a DindbOS runtime.",
-      "Published the package to npm so other projects can install it as a reusable web OS layer.",
-      "Migrated this portfolio site to consume the published SDK instead of keeping the OS runtime only as local application code."
+      "Built app registration, window management, focus, Dock state, virtual files, and browser-backed storage as a reusable desktop runtime.",
+      "Supports React components with host context, imperative JavaScript apps, and class instances; exposes theme tokens and UI slots for replacing the desktop shell.",
+      "Includes Files, Notes, Reminders, Calendar, Photos, Music, Clock, TextEdit, Viewer, Terminal, Calculator, Activity Monitor, and Settings.",
+      "Ships a project scaffolding CLI and examples for React/Vite, Vanilla/Vite, Next.js, and Astro.",
+      "The portfolio pins a package built from the current source revision; npm currently offers the earlier 0.1.1 release. Browser verification for the SDK is currently limited to Chrome on macOS and emulated mobile layouts."
     ],
     "links": [
-      {"name": "GitHub", "url": "https://github.com/Dindb-dong/dindbos"},
-      {"name": "npm", "url": "https://www.npmjs.com/package/dindbos"}
+      {
+        "name": "GitHub",
+        "url": "https://github.com/Dindb-dong/dindbos#readme"
+      },
+      {
+        "name": "Live desktop",
+        "url": "https://dindb-dong.github.io/dindbos/"
+      },
+      {
+        "name": "npm",
+        "url": "https://www.npmjs.com/package/dindbos"
+      }
     ]
   },
   "16": {
@@ -305,6 +328,110 @@
       {"name": "Website", "url": "https://notchnote.com/"},
       {"name": "GitHub Releases", "url": "https://github.com/Dindb-dong/NotchNote-Releases"},
       {"name": "Download", "url": "https://github.com/Dindb-dong/NotchNote-Releases/releases"}
+    ]
+  },
+  "17": {
+    "title": "AI Detail Page Generation & Editing",
+    "role": "Full-Stack Developer & System Architect",
+    "languages": [
+      "Python",
+      "TypeScript"
+    ],
+    "techStacks": [
+      "FastAPI",
+      "React",
+      "PostgreSQL",
+      "AWS",
+      "Docker"
+    ],
+    "categories": [
+      "Web",
+      "AI"
+    ],
+    "description": [
+      "An AI commerce service that generates editable product detail pages from product information and brand guidelines.",
+      "Built and managed the product end to end: the custom editor, AI generation workflows, system architecture, deployment, and operations."
+    ],
+    "extraDescription": [
+      "Built the custom editor and canvas engine, including AI editing, document persistence, HTML/shape conversion, and mobile touch UI.",
+      "Designed and implemented the entire workflow from product and brand inputs through AI generation, editing, and saving.",
+      "Designed the system architecture, job queues, and workers, and owned infrastructure, deployment, and operations.",
+      "Resolved reliability issues including deployment interruptions during long-running generation and concurrent document save conflicts."
+    ],
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://leviosa.ai.kr/agency/detail-page/new-landing"
+      }
+    ]
+  },
+  "19": {
+    "title": "Yomates",
+    "role": "Backend Architecture & Reliability",
+    "languages": [
+      "TypeScript"
+    ],
+    "techStacks": [
+      "Node.js",
+      "TypeScript",
+      "AWS"
+    ],
+    "categories": [
+      "AI",
+      "Web"
+    ],
+    "description": [
+      "Contributed to backend architecture design for Yomates, an AI agent service for business workflows.",
+      "Implemented error handling and shared modules for every type of server task and connected them to the monitoring system."
+    ],
+    "extraDescription": [
+      "Contributed to backend architecture design and implemented error-handling structures across server tasks.",
+      "Consolidated task-specific error handling into shared modules for consistent failure handling and diagnostics.",
+      "Connected task errors and execution status to monitoring so operational issues could be traced."
+    ],
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://yomates.ai/"
+      }
+    ]
+  },
+  "20": {
+    "title": "YAI-HUB — AI Society Web & Mobile Platform",
+    "role": "Full-Stack Developer & System Architect",
+    "languages": [
+      "TypeScript",
+      "Python"
+    ],
+    "techStacks": [
+      "Next.js",
+      "React",
+      "FastAPI",
+      "PostgreSQL",
+      "Supabase",
+      "Yjs",
+      "Hocuspocus",
+      "Capacitor"
+    ],
+    "categories": [
+      "Web",
+      "Mobile",
+      "Computer Science"
+    ],
+    "description": [
+      "Replaced fragmented Notion, Google Forms and Google Sheets workflows with one web and mobile platform, used daily by more than 60 YAI members."
+    ],
+    "extraDescription": [
+      "Brought attendance, individual and team reports, announcements, member and team management, activity points, live Q&A, calendars, archives and finance into one place.",
+      "Built Yjs/Hocuspocus-based real-time collaborative documents and recruitment tools for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.",
+      "Developed the public society website covering research, programs, achievements, alumni, and recruitment.",
+      "Implemented role-based access, operational monitoring, audit logs, backups, and Capacitor-based mobile integration."
+    ],
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://y-yai.com/"
+      }
     ]
   }
 }

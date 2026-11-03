@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-63 -21 470 470" role="img" aria-label="Leviosa">
+ <defs><linearGradient id="lvg" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#5A25BF"/><stop offset=".55" stop-color="#8B3FF0"/><stop offset="1" stop-color="#B478E8"/></linearGradient></defs>
+ <g fill="url(#lvg)">
+  <g transform="translate(0,425) scale(0.1,-0.1)"><path d="M1560 4221 c-252 -52 -427 -109 -600 -196 -457 -230 -729 -622 -912 -1315 -40 -150 -41 -162 -46 -345 -2 -104 -1 -677 3 -1272 l7 -1083 145 0 c108 0 170 5 246 21 683 141 1079 587 1246 1405 50 244 71 439 71 661 l0 196 -74 -100 c-88 -118 -197 -223 -310 -297 -81 -54 -305 -171 -312 -163 -2 2 31 33 74 70 127 107 284 276 355 383 108 163 187 359 242 599 l25 110 0 678 c0 535 -3 677 -12 676 -7 0 -74 -13 -148 -28z"/></g>
+  <circle cx="268" cy="352" r="76"/>
+ </g>
+</svg>

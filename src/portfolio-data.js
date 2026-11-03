@@ -17,6 +17,9 @@ const LEGACY_FILES = {
 };
 
 const MEDIA = {
+  20: ["proj_20_1.png", "proj_20_2.png"],
+  17: ["proj_17_1.png"],
+  19: ["proj_19_2.png", "proj_19_1.png"],
   1: ["proj_1_1.mp4", "proj_1_2.png"],
   2: ["proj_2_1.png", "proj_2_2.png", "proj_2_3.png"],
   3: ["proj_3_1.png", "proj_3_2.png"],
@@ -297,14 +300,14 @@ function normalizeProjects(projectsJson) {
       categories: toArray(project.categories),
       description: toArray(project.description),
       extraDescription: toArray(project.extraDescription),
-      links: toArray(project.links),
+      links: Array.isArray(project.links) ? project.links.filter((link) => link?.url) : [],
       media: (MEDIA[projectId] || []).map((file) => ({
         file,
         src: `${LEGACY_BASE}/thumbnails/${file}`,
         type: /\.(mp4|mov)$/i.test(file) ? "video" : "image",
       })),
     };
-  });
+  }).sort((left, right) => right.id - left.id);
 }
 
 async function fetchJson(path) {
