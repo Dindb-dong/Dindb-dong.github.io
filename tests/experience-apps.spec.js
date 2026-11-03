@@ -21,6 +21,11 @@ for (const [id, name] of apps) {
     const app = await openExperience(page, id);
     await expect(page.locator(`.dos-icon[aria-label="Open ${name}.app"]`)).toHaveCount(1);
     await expect(app.getByRole("navigation", { name: "Experience sections" }).getByRole("button")).toHaveCount(4);
+    const navigation = app.getByRole("navigation", { name: "Experience sections" });
+    await expect(navigation.locator("button svg")).toHaveCount(4);
+    await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("background-color", "rgb(124, 159, 229)");
+    await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("color", "rgb(255, 255, 255)");
+    await expect(navigation.locator("button span").first()).toHaveCSS("font-size", "14px");
     const logo = app.locator(".experience-identity img");
     await expect(logo).toHaveJSProperty("complete", true);
     expect(await logo.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0);

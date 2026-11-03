@@ -40,10 +40,10 @@
 
 ## Visual language
 
-- Shell: DindbOS 0.2.0 native meadow wallpaper, icons, menus, Dock and window chrome; calm green accent through the public theme API.
-- Color: white portfolio surfaces, near-black ink, solid violet active navigation matching the user reference, calm green primary actions, neutral separators; new palette tokens use OKLCH.
+- Shell: DindbOS 0.2.0 native meadow wallpaper, icons, menus, Dock and window chrome; main #7c9fe5 accent through the public theme API.
+- Color: main #7c9fe5, secondary #2563eb, ink #202124, muted #777777, border #e5e5e5 and surface #f5f5f5, per the latest user-provided design board and explicit main/sub assignment. Use white text on color-filled buttons and selected navigation, as explicitly requested by the user.
 - Typography: system sans stack with compact OS chrome and editorial but restrained portfolio headings; no viewport-sized text.
-- Spacing/layout rhythm: 4px base with 8/12/16/24/32px steps; generous icon-and-label navigation and spacious reading areas.
+- Spacing/layout rhythm: 8px rhythm with 8/16/24/32px steps (12px only for compact control padding); generous icon-and-label navigation and spacious reading areas.
 - Shape/radius/elevation: 6–8px content radii, 12px OS icon tiles, restrained two-layer neutral shadows for windows and elevated controls.
 - Motion: short state transitions only; all non-essential motion disabled under reduced-motion.
 - Imagery/iconography: real project screenshots and a locally hosted profile portrait; outline system icons sit on high-contrast, role-colored tiles.
@@ -59,7 +59,7 @@
 
 - Target standard: WCAG 2.2 AA for the primary portfolio flows.
 - Keyboard/focus behavior: all navigation, filters, project rows, and actions use native controls with visible focus; project list selection exposes `aria-selected`.
-- Contrast/readability: text and icons meet contrast on solid surfaces; color is reinforced by icon shape and text labels.
+- Contrast/readability: dark ink on white for reading; color is reinforced by icons and labels. White on the main #7c9fe5 fill follows the user’s explicit preference and is not an AA contrast pairing; use the secondary blue for high-contrast focus and links.
 - Screen-reader semantics: one main content region per app view, ordered headings, named navigation/groups, useful image alternatives, and live project-result status.
 - Reduced motion and sensory considerations: respect `prefers-reduced-motion`; avoid essential hover-only information and decorative animation.
 
@@ -113,10 +113,10 @@
 
 ## Experience apps
 
-- Mode: MODIFY. Reuse the SUIT/system typography, OS chrome, existing surface/ink tokens and spacing. Use calm green accents within experience apps.
+- Mode: MODIFY. Reuse the SUIT/system typography, OS chrome, existing surface/ink tokens and spacing. Use the same shared main/sub colors and navigation styles as Portfolio.
 - Register six singleton apps: Leviosa-AI, Alus-Healthcare, YAI, NOI-LAB, YCC and SDP. Keep the existing timeline as an app launcher with representative images, role, period and an explicit open action.
 - Each app has overview, project case studies, media library and responsibilities. Organization/role/period lead; project selection and real screenshots explain the work. No fabricated metrics or copied marketing claims.
-- Desktop: compact persistent sidebar and spacious content; mobile: a compact header and wrapping navigation with one scrollable content region.
+- Desktop: compact persistent sidebar and spacious content; mobile: a compact header and horizontally scrolling navigation with one scrollable content region.
 - Images are curated from inspected repository assets and newly captured public pages. Preserve provenance and distinguish product screenshots, presentation results, code and promotional app captures. Exclude identifiable assessment reports and customer-order screenshots from the new galleries.
 - Image buttons open a native modal dialog with full-size media, useful captions, previous/next controls, Escape dismissal and focus restoration.
 - Each app owns its selected tab/project. Minimize restores it; closing/reopening resets it. Language changes refresh open views without closing apps.
@@ -125,7 +125,15 @@
 
 ## Portfolio opening screen refresh
 
-- User reference: single-line bold navigation labels, consistent outline icons, generous white sidebar, broad violet active row. Keep the seven portfolio destinations; omit redundant English subtitles.
-- Astra review: combine identity, introduction and actions; lead with real project screenshots; move numeric summary after featured work. Preserve green primary actions and SUIT.
+- User reference: single-line bold navigation labels, consistent outline icons, generous white sidebar, broad rounded active row using the shared main blue. Keep the seven portfolio destinations; omit redundant English subtitles.
+- Astra review: combine identity, introduction and actions; lead with real project screenshots; move numeric summary after featured work. Preserve SUIT; colors now follow the latest shared blue palette.
 - Adapt navigation to app content width with container queries, including resized desktop windows. Narrow apps use horizontally scrolling labeled tabs with keyboard access.
 - Window position/size belong to the SDK window manager. Host sets initial bounds once via the window API; never pin window geometry with CSS !important. Verify real pointer dragging and resizing on host apps and SDK builtins.
+
+## Shared design board and tokens
+
+- Current visual board: `/design-board.html` (source: `public/design-board.html`), following the user-supplied Oh My Canvas design-system reference. This is a local review surface, not a new desktop app.
+- Color source of truth: `assets/design-tokens.css`, imported by app CSS and linked by the board. Main #7c9fe5; sub #2563eb. Sky #7dd3fc and lavender #c4b5fd are supporting swatches, not competing primary UI colors. Brand logos retain their original colors.
+- Shared desktop navigation: 14px labels (down from 18px), 22px outline icons, 56px row targets, 16px row radius, white sidebar, main-color selected row. Narrow windows use 13px labels and 44px targets.
+- Portfolio and all six experience apps reuse `portfolio-sidebar-nav` and `src/navigation-icons.js`. Experience navigation retains its project/media counts and four destinations.
+- Main-colored actions and selected navigation use white text; secondary-colored hover actions also use white. Links and focus use the secondary blue.

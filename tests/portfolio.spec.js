@@ -134,3 +134,23 @@ test("portfolio minimizes, restores, closes, and reopens on the new runtime", as
   await page.getByRole("button", { name: "Launch Portfolio", exact: true }).click();
   await expect(window.getByRole("heading", { name: "Kim Dong Wook", exact: true })).toBeVisible();
 });
+
+
+test("design board and portfolio share the main/sub palette", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  const navigation = page.getByRole("navigation", { name: "Portfolio sections" });
+  await expect(navigation.locator("button span").first()).toHaveCSS("font-size", "14px");
+  await expect(navigation.locator('[aria-current="page"]')).toHaveCSS("background-color", "rgb(124, 159, 229)");
+  await expect(navigation.locator('[aria-current="page"]')).toHaveCSS("color", "rgb(255, 255, 255)");
+  await expect(page.locator(".portfolio-about .portfolio-action--primary")).toHaveCSS("color", "rgb(255, 255, 255)");
+  await page.screenshot({ path: testInfo.outputPath("shared-palette-portfolio.png") });
+  await page.goto("/design-board.html");
+  await expect(page.getByRole("heading", { name: "Kim Dong Wook · Design Board" })).toBeVisible();
+  await expect(page.locator(".primary")).toHaveCSS("background-color", "rgb(124, 159, 229)");
+  await expect(page.locator(".primary")).toHaveCSS("color", "rgb(255, 255, 255)");
+  await expect(page.locator(".secondary")).toHaveCSS("background-color", "rgb(37, 99, 235)");
+  await page.getByRole("navigation").getByRole("button", { name: "프로젝트" }).click();
+  await expect(page.getByRole("navigation").getByRole("button", { name: "프로젝트" })).toHaveAttribute("aria-current", "page");
+  await page.screenshot({ path: testInfo.outputPath("design-board.png"), fullPage: true });
+});
