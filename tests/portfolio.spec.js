@@ -95,6 +95,25 @@ test("project controls combine search and filters, keep newest registration firs
   await expect(rows.first()).toHaveAttribute("data-project-id", "20");
 });
 
+for (const width of [1440, 390]) {
+  test(`selecting a project preserves window and list scroll at ${width}px`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
+    const row = page.locator('[data-project-id="4"]');
+    await row.scrollIntoViewIfNeeded();
+    const scrollPositions = () => page.locator(".portfolio-finder, .portfolio-project-list").evaluateAll(elements => elements.map(el => el.scrollTop));
+    const before = await scrollPositions();
+    expect(before.reduce((sum, value) => sum + value, 0)).toBeGreaterThan(100);
+    await row.click();
+    await expect(row).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator(".portfolio-detail-pane h2")).toHaveText("브랜드 홍보용 QR 루틴 챌린지 웹앱");
+    expect(await scrollPositions()).toEqual(before);
+    await expect(row).toBeFocused();
+    await page.screenshot({ path: testInfo.outputPath(`project-scroll-${width}.png`), animations: "disabled" });
+  });
+}
+
 test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");

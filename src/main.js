@@ -273,7 +273,13 @@ function renderProjects(content, runtime) {
   content.querySelectorAll("[data-project-id]").forEach((button) => {
     button.addEventListener("click", () => {
       runtime.selectedProjectId = Number(button.dataset.projectId);
-      renderProjects(content, runtime);
+      content.querySelectorAll("[data-project-id]").forEach((row) => {
+        const selected = Number(row.dataset.projectId) === runtime.selectedProjectId;
+        row.setAttribute("aria-selected", String(selected));
+        row.classList.toggle("is-selected", selected);
+      });
+      const project = data.projects.find((project) => project.id === runtime.selectedProjectId);
+      content.querySelector(".portfolio-detail-pane").innerHTML = renderProjectDetail(project, runtime);
     });
   });
   content.querySelectorAll("[data-filter-type]").forEach((button) => {
