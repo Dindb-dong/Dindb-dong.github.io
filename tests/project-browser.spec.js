@@ -35,8 +35,8 @@ for (const width of [390, 1440]) {
     await popup.getByRole("checkbox", { name: "TypeScript", exact: true }).check();
     await popup.getByRole("button", { name: "닫기", exact: true }).click();
     await expect(button).toBeFocused();
-    await page.getByRole("searchbox").fill("YAI-HUB");
-    await expect(page.getByRole("status")).toHaveText("1개 프로젝트");
+    await page.getByRole("combobox").fill("YAI-HUB");
+    await expect(page.locator("[data-project-id]")).toHaveCount(1);
     await expect(page.locator(".portfolio-detail-pane h2")).toContainText("YAI-HUB");
     await button.click();
     await page.screenshot({ path: testInfo.outputPath(`project-popup-${width}.png`) });
@@ -44,40 +44,49 @@ for (const width of [390, 1440]) {
     expect(bounds.x).toBeGreaterThanOrEqual(0);
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
     await popup.getByRole("button", { name: "초기화", exact: true }).click();
-    await expect(page.getByRole("status")).toHaveText("19개 프로젝트");
+    await expect(page.locator("[data-project-id]")).toHaveCount(19);
     await button.click();
     await popup.press("Escape");
     await expect(popup).toBeHidden();
   });
 }
 
-test("mobile project selector replaces the list and keeps search above one readable detail pane", async ({ browser }, testInfo) => {
+test("mobile searchable selector replaces separate dropdown, search and count rows", async ({ browser }, testInfo) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   const page = await context.newPage();
   try {
     await page.goto("/");
     await page.locator('nav [data-sidebar-target="projects"]').tap();
-    const picker = page.getByRole("button", { name: "현재 프로젝트", exact: true });
+    const picker = page.getByRole("combobox", { name: "프로젝트 검색", exact: true });
     await expect(page.locator(".portfolio-project-list")).toBeHidden();
-    const search = page.getByRole("searchbox");
+    const search = page.getByRole("combobox");
     const filter = page.getByRole("button", { name: "필터", exact: true });
-    expect((await picker.boundingBox()).y).toBeLessThan((await search.boundingBox()).y);
-    expect((await page.locator(".portfolio-search-field").boundingBox()).width / (await filter.boundingBox()).width).toBeGreaterThan(2);
+    expect((await picker.boundingBox()).y).toBe((await search.boundingBox()).y);
+    await expect(page.locator(".portfolio-result-count")).toHaveCount(0);
+    await expect(filter).toHaveText("");
+    expect((await filter.boundingBox()).width).toBe(44);
+    expect((await page.locator(".searchable-select").boundingBox()).width / (await filter.boundingBox()).width).toBeGreaterThan(2);
     await picker.tap();
-    const choice = page.locator('[data-dropdown-value="16"]');
+    const choice = page.locator('[data-select-value="16"]');
     const title = await choice.innerText();
     await choice.tap();
     await expect(page.locator(".portfolio-detail-pane h2")).toHaveText(title);
-    await expect(picker).toContainText(title);
+    await expect(picker).toHaveValue(title);
     await page.locator(".portfolio-finder-layout").evaluate(el => { el.scrollTop = el.scrollHeight; });
     await picker.tap();
-    await page.locator('[data-dropdown-value="20"]').tap();
+    await page.locator('[data-select-value="20"]').tap();
     await expect(page.locator(".portfolio-finder-layout")).toHaveJSProperty("scrollTop", 0);
     await search.fill("no-match-example");
-    await expect(picker).toBeDisabled();
+    await expect(picker).toBeEnabled();
     await expect(page.locator(".portfolio-detail-pane")).toContainText("프로젝트를 찾지 못했습니다");
     await search.fill("");
     await expect(picker).toBeEnabled();
+    await page.screenshot({ path: testInfo.outputPath("mobile-project-selector-open.png") });
+    const selectedOption = page.locator('.searchable-select-menu [aria-selected="true"]');
+    const colors = await selectedOption.evaluate(el => ({ color: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor }));
+    expect(colors.background).toBe("rgb(124, 159, 229)");
+    expect(colors.color).toBe("rgb(255, 255, 255)");
+    await picker.press("Escape");
     await page.screenshot({ path: testInfo.outputPath("mobile-project-selector.png") });
   } finally { await context.close(); }
 });
@@ -92,9 +101,34 @@ test("skill filters appear in the popup and overview project links clear previou
   const popup = page.getByRole("dialog", { name: "필터", exact: true });
   await expect(popup.getByRole("checkbox", { name: "Python", exact: true })).toBeChecked();
   await popup.getByRole("button", { name: "닫기", exact: true }).click();
-  await page.getByRole("searchbox").fill("no-match-example");
+  await page.getByRole("combobox").fill("no-match-example");
   await nav.locator('[data-sidebar-target="about"]').click();
   await page.locator('[data-profile-project="20"]').click();
   await expect(page.locator(".portfolio-detail-pane h2")).toContainText("YAI-HUB");
-  await expect(page.getByRole("status")).toHaveText("19개 프로젝트");
+  await expect(page.locator("[data-project-id]")).toHaveCount(19);
+});
+
+test("searchable selector supports keyboard selection, dismissal and empty-result recovery", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.locator('nav [data-sidebar-target="projects"]').click();
+  const input = page.getByRole("combobox", { name: "프로젝트 검색", exact: true });
+  await input.fill("Yomates");
+  await expect(page.locator(".searchable-select-menu [role=option]")).toHaveCount(1);
+  await input.press("ArrowDown");
+  await input.press("Enter");
+  await expect(input).toHaveValue("Yomates");
+  await expect(input).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator(".portfolio-detail-pane h2")).toHaveText("Yomates");
+  await input.press("ArrowDown");
+  await input.press("End");
+  await expect(input).toHaveAttribute("aria-activedescendant", /option-18$/);
+  await input.press("Escape");
+  await expect(input).toHaveValue("Yomates");
+  await expect(input).toHaveAttribute("aria-expanded", "false");
+  await input.fill("검색결과없음-xyz");
+  await expect(page.locator(".searchable-select-menu")).toContainText("검색 결과 없음");
+  await expect(input).toBeEnabled();
+  await input.fill("");
+  await expect(page.locator(".searchable-select-menu [role=option]")).toHaveCount(19);
 });

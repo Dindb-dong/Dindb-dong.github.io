@@ -1321,3 +1321,21 @@ input {
   .portfolio-finder-layout { display: block; min-height: 0; overflow: auto; }
   .portfolio-detail-pane { max-height: none; overflow: visible; padding: 16px; }
 }
+
+/* One reusable search-and-select field, paired with an icon-only filter. */
+.searchable-select { position: relative; min-width: 0; }
+.searchable-select > input { width: 100%; min-width: 0; height: 44px; padding: 10px 36px; border: 1px solid var(--brand-border); border-radius: 12px; background: var(--brand-paper); color: var(--brand-ink); font: inherit; font-size: 13px; text-overflow: ellipsis; }
+.searchable-select > svg { position: absolute; left: 12px; top: 13px; width: 18px; height: 18px; color: var(--brand-muted); pointer-events: none; }
+.searchable-select > svg:last-of-type { left: auto; right: 12px; }
+.searchable-select-menu .app-dropdown-option { grid-template-columns: minmax(0, 1fr); }
+.searchable-select-menu .app-dropdown-option.is-active:not([aria-selected="true"]) { background: var(--brand-accent-soft); }
+.searchable-select-empty { padding: 12px; margin: 0; font-size: 13px; color: var(--brand-muted); }
+.portfolio-finder { grid-template-rows: auto minmax(0, 1fr); }
+.portfolio-project-controls { grid-template-columns: minmax(0, 1fr) 44px; gap: 10px; }
+.portfolio-filter-trigger { width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 12px; }
+.portfolio-filter-trigger svg { width: 18px; height: 18px; }
+.portfolio-filter-trigger[data-filter-active="true"] { background: var(--brand-accent-soft); border-color: var(--brand-secondary); }
+@container portfolio-window (max-width: 760px) {
+  .portfolio-finder { grid-template-rows: auto minmax(0, 1fr); }
+  .portfolio-project-controls { grid-template-columns: minmax(0, 1fr) 44px; }
+}

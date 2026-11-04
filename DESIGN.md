@@ -162,7 +162,7 @@
 ## Tab chrome cleanup (2026-11-04)
 
 - No repeated tab title/overline/instruction stacks in project archive, experience launcher, skills, settings or resume. Keep personal identity and actual company/project names. Remove PROJECT DETAIL overline.
-- Project search, category filters and result count share one compact responsive control strip. The search input retains an accessible localized label; mobile wraps the strip without page overflow.
+- Project search/selection and the icon filter share one compact responsive control strip. The input retains an accessible localized label; no result-count row is shown.
 - Legacy project records lack consistent dates. Default order is newest registration first (descending project ID), shared across locales and retained through filtering/reset; do not fabricate project dates.
 - Settings and Contact tabs are removed; saved language preferences remain respected at boot. Profile links and resume stay in the overview.
 
@@ -187,5 +187,8 @@
 - Five destinations only: Overview, Projects, Experience, Skills and Resume. Portfolio-specific compact tabs fit together at 320px with at least 44px touch widths; career apps retain the SDK component's larger targets.
 - Remove only the visible education/language heading and status self-assessment subtitle. Preserve the education section's accessible name, all factual content and other panel headings. Frontend is A-. A 72×90px portrait appears to the right of the name on narrow screens only.
 - Canvas library document remains DindbOS · Portfolio Mobile Navigation, Page 1. New project board `02af514e-369d-4263-9268-1c719cad3097`, controls main `3d65ab2d-c03e-4b76-9405-53f31e181fc5`, component `component-6cd7750a-1151-40dc-82c6-bd7962fce267`; profile board `d1032534-0d65-4860-961a-4aadc8c5068b`. Reopened from the library to verify persistence. Reviewed actual mobile screenshots against both boards.
-- Mobile Projects replaces the list with the shared project dropdown above a 70/30 search/filter strip. The detail occupies one independently scrolling region below; controls stay visible. Desktop keeps the project list and uses the same filter button/popover.
+- Projects uses one searchable selection field beside a 44px icon-only filter button on mobile and desktop. The closed field shows the current project; opening it allows immediate title/role/technology search and selection, including keyboard navigation and empty-result recovery. Mobile replaces the list with this field; the detail occupies one independently scrolling region below and controls stay visible. Desktop keeps the project list. No project-count row is shown.
+- Canvas refinement board `38e37259-87b3-4278-bdaa-b42223b296fe`, main `8e89f635-69b2-48e5-85a5-0be13b87b5ac`, component `component-9230efc8-17d0-4746-b204-aafa4dd60850` maps to reusable `src/searchable-select.js`. Reviewed at 390px with closed/open states; existing colors and 44px touch targets are retained.
 - The native auto popover provides oldest/newest registration and title sorting, category OR selection, technology-tag AND selection, reset, outside dismissal and Escape. Tags come from existing languages/technology data, with no fabricated metadata or completion dates. Checkbox changes preserve the popup and its scroll; project changes reset only the detail region.
+
+- Implementation comparison: reviewed actual Chrome mobile captures `mobile-project-selector.png` and `mobile-project-selector-open.png` against the searchable-select board. The one-row field, 44px icon filter, selected blue option and removed count match the revised design.

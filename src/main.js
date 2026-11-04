@@ -1,4 +1,4 @@
-import { renderDropdown, mountDropdown } from "./dropdown.js";
+import { renderSearchableSelect, mountSearchableSelect } from "./searchable-select.js";
 import { filteredProjects } from "./project-filters.js";
 import { revealActiveNavigation, sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
@@ -239,18 +239,18 @@ function renderProjects(content, runtime) {
     choices.tags = ["language", "tech"].includes(filter.type) ? [filter.value] : [];
     runtime.projectFilter = { type: "all", value: "All" };
   }
-  const projects = filteredProjects(data.projects, runtime.projectFilter, runtime.projectQuery, choices);
+  let projects = filteredProjects(data.projects, runtime.projectFilter, runtime.projectQuery, choices);
   const selected = projects.find(project => project.id === runtime.selectedProjectId) || projects[0];
   runtime.selectedProjectId = selected?.id || null;
   const ko = runtime.locale === "ko";
   const copy = ko ? {
-    search: "프로젝트 검색", placeholder: "제목, 역할, 기술 검색", picker: "현재 프로젝트", empty: "검색 결과 없음",
+    search: "프로젝트 검색", placeholder: "제목, 역할, 기술 검색", empty: "검색 결과 없음",
     filter: "필터", sort: "정렬", newest: "최신 등록순", oldest: "오래된 등록순", title: "이름순",
-    category: "카테고리", tags: "기술 태그 · 모두 포함", reset: "초기화", close: "닫기", count: `${projects.length}개 프로젝트`,
+    category: "카테고리", tags: "기술 태그 · 모두 포함", reset: "초기화", close: "닫기",
   } : {
-    search: "Search projects", placeholder: "Search title, role, or technology", picker: "Current project", empty: "No matching projects",
+    search: "Search projects", placeholder: "Search title, role, or technology", empty: "No matching projects",
     filter: "Filters", sort: "Sort", newest: "Newest registered", oldest: "Oldest registered", title: "Name",
-    category: "Categories", tags: "Technology tags · match all", reset: "Reset", close: "Close", count: `${projects.length} projects`,
+    category: "Categories", tags: "Technology tags · match all", reset: "Reset", close: "Close",
   };
   const prefix = content.closest("[data-window-id]")?.dataset.windowId || "portfolio";
   const popupId = `${prefix}-project-filters`;
@@ -262,18 +262,10 @@ function renderProjects(content, runtime) {
     <section class="portfolio-os-app portfolio-projects" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("projects", runtime)}
       <main class="portfolio-main-pane portfolio-finder">
-        <div class="portfolio-project-picker">${renderDropdown({
-          id: `${prefix}-project-picker`, label: copy.picker, value: String(selected?.id), placeholder: copy.empty,
-          options: projects.map(project => ({ value: String(project.id), label: project.title })),
-        })}</div>
         <div class="portfolio-project-controls" role="search" aria-label="${copy.search}">
-          <label class="portfolio-search-field">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
-            <input type="search" aria-label="${copy.search}" value="${escapeAttr(runtime.projectQuery || "")}" placeholder="${escapeAttr(copy.placeholder)}" data-project-search>
-          </label>
-          <button type="button" class="portfolio-filter-trigger" data-project-filters popovertarget="${escapeAttr(popupId)}" aria-label="${copy.filter}" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg><span>${copy.filter}${activeFilters ? ` · ${activeFilters}` : ""}</span></button>
+          ${renderSearchableSelect({ id: `${prefix}-project-picker`, label: copy.search, placeholder: copy.placeholder })}
+          <button type="button" class="portfolio-filter-trigger" data-project-filters popovertarget="${escapeAttr(popupId)}" aria-label="${copy.filter}" aria-haspopup="dialog" aria-expanded="false" data-filter-active="${activeFilters > 0}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg></button>
         </div>
-        <p class="portfolio-result-count" role="status">${copy.count}</p>
         <section class="portfolio-finder-layout">
           <div class="portfolio-project-list" role="listbox" aria-label="Projects">${projects.length ? projects.map(project => renderProjectRow(project, selected.id)).join("") : renderProjectListEmpty(runtime)}</div>
           <article class="portfolio-detail-pane">${selected ? renderProjectDetail(selected, runtime) : renderEmptyDetail(runtime)}</article>
@@ -299,12 +291,27 @@ function renderProjects(content, runtime) {
     detail.innerHTML = renderProjectDetail(project, runtime);
     detail.scrollTop = 0;
     content.querySelector(".portfolio-finder-layout").scrollTop = 0;
-    const picker = content.querySelector(".portfolio-project-picker");
-    picker.querySelector("[data-dropdown-trigger] span").textContent = project.title;
-    picker.querySelectorAll("[role=option]").forEach(option => option.setAttribute("aria-selected", String(Number(option.dataset.dropdownValue) === project.id)));
   };
-  content.querySelectorAll("[data-project-id]").forEach(button => button.addEventListener("click", () => selectProject(button.dataset.projectId)));
-  const disposeDropdown = mountDropdown(content.querySelector(".portfolio-project-picker [data-dropdown]"), selectProject);
+  const renderResults = () => {
+    projects = filteredProjects(data.projects, runtime.projectFilter, runtime.projectQuery, choices);
+    const selected = projects.find(project => project.id === runtime.selectedProjectId) || projects[0];
+    runtime.selectedProjectId = selected?.id || null;
+    content.querySelector(".portfolio-project-list").innerHTML = projects.length ? projects.map(project => renderProjectRow(project, selected.id)).join("") : renderProjectListEmpty(runtime);
+    const detail = content.querySelector(".portfolio-detail-pane");
+    detail.innerHTML = selected ? renderProjectDetail(selected, runtime) : renderEmptyDetail(runtime);
+    detail.scrollTop = 0;
+    content.querySelector(".portfolio-finder-layout").scrollTop = 0;
+  };
+  const picker = mountSearchableSelect(content.querySelector("[data-searchable-select]"), {
+    options: filteredProjects(data.projects, runtime.projectFilter, "", choices).map(project => ({ value: String(project.id), label: project.title, searchText: [project.title, project.role, ...project.categories, ...project.languages, ...project.techStacks, ...project.description].join(" ") })),
+    value: String(selected?.id), query: runtime.projectQuery, empty: copy.empty,
+    onSearch: (query, value) => { runtime.projectQuery = query; runtime.selectedProjectId = Number(value); renderResults(); },
+    onSelect: value => { const hadQuery = Boolean(runtime.projectQuery); runtime.projectQuery = ""; runtime.selectedProjectId = Number(value); if (hadQuery) renderResults(); selectProject(value); },
+  });
+  content.querySelector(".portfolio-project-list").addEventListener("click", event => {
+    const button = event.target.closest("[data-project-id]");
+    if (button) picker.select(button.dataset.projectId);
+  });
   const popup = content.querySelector(".portfolio-filter-popover");
   const trigger = content.querySelector("[data-project-filters]");
   const lifetime = new AbortController();
@@ -335,19 +342,15 @@ function renderProjects(content, runtime) {
     rerenderFilters(input.id);
   }));
   content.querySelector("[data-project-sort]").addEventListener("change", event => { choices.sort = event.target.value; rerenderFilters(event.target.id); });
-  content.querySelector("[data-project-search]").addEventListener("input", event => {
-    runtime.projectQuery = event.target.value;
-    renderProjects(content, runtime);
-    content.querySelector("[data-project-search]").focus();
-  });
-  content.querySelectorAll("[data-project-reset]").forEach(button => button.addEventListener("click", () => {
+  content.addEventListener("click", event => {
+    if (!event.target.closest("[data-project-reset]")) return;
     runtime.projectQuery = "";
     runtime.projectFilter = { type: "all", value: "All" };
     runtime.projectChoices = { categories: [], tags: [], sort: "newest" };
     renderProjects(content, runtime);
     content.querySelector("[data-project-filters]").focus({ preventScroll: true });
-  }));
-  projectControlCleanup.set(content, () => { disposeDropdown(); lifetime.abort(); });
+  }, { signal: lifetime.signal });
+  projectControlCleanup.set(content, () => { picker.destroy(); lifetime.abort(); });
   wireSidebar(content, runtime);
   return () => { projectControlCleanup.get(content)?.(); projectControlCleanup.delete(content); };
 }

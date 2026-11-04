@@ -97,7 +97,7 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
   await page.goto("/");
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
 
-  const search = page.getByRole("searchbox", { name: "프로젝트 검색" });
+  const search = page.getByRole("combobox", { name: "프로젝트 검색" });
   await search.fill("DindbOS");
   await expect(page.locator("[data-project-id]" )).toHaveCount(1);
   await expect(page.locator("[data-project-id]")).toContainText("DindbOS");
@@ -106,7 +106,7 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
   await expect(page.locator(".portfolio-project-list").getByText("검색 결과 없음")).toBeVisible();
   await page.getByRole("button", { name: "검색 초기화" }).click();
   await expect(page.locator("[data-project-id]")).toHaveCount(19);
-  await expect(page.getByRole("status")).toContainText("19개 프로젝트");
+  await expect(page.locator(".portfolio-result-count")).toHaveCount(0);
 });
 
 test("project controls combine search and filters, keep newest registration first, and omit redundant tab headers", async ({ page }, testInfo) => {
@@ -115,7 +115,7 @@ test("project controls combine search and filters, keep newest registration firs
   const nav = page.getByRole("navigation", { name: "Portfolio sections" });
   await nav.locator('[data-sidebar-target="projects"]').click();
   const controls = page.getByRole("search", { name: "프로젝트 검색", exact: true });
-  const search = controls.getByRole("searchbox", { name: "프로젝트 검색" });
+  const search = controls.getByRole("combobox", { name: "프로젝트 검색" });
   const rows = page.locator("[data-project-id]");
   const ids = () => rows.evaluateAll(items => items.map(item => Number(item.dataset.projectId)));
   expect(await ids()).toEqual([20, 19, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
@@ -144,7 +144,7 @@ test("project controls combine search and filters, keep newest registration firs
   await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
   await page.reload();
   await nav.locator('[data-sidebar-target="projects"]').click();
-  await expect(page.getByRole("searchbox", { name: "Search projects" })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toBeVisible();
   await expect(rows.first()).toHaveAttribute("data-project-id", "20");
 });
 
@@ -204,8 +204,8 @@ test("mobile layout exposes every portfolio destination without page overflow", 
   expect((await readingPane.locator("h1").boundingBox()).x - paneBounds.x).toBeGreaterThanOrEqual(16);
   await page.screenshot({ path: testInfo.outputPath("mobile-overview.png") });
   await navigation.locator('[data-sidebar-target="projects"]').click();
-  await expect(page.getByRole("searchbox", { name: "프로젝트 검색" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "현재 프로젝트", exact: true })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "프로젝트 검색" })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "프로젝트 검색", exact: true })).toBeVisible();
   await expect(page.locator(".portfolio-detail-pane")).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("mobile.png") });
 });

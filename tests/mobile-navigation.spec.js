@@ -34,7 +34,7 @@ for (const width of [320, 390, 430]) {
     await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
     await page.reload();
     await assertTouchTarget(nav.locator('[data-sidebar-target="projects"]'), page);
-    await expect(page.getByRole("searchbox", { name: "Search projects" })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Search projects" })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath(`portfolio-english-${width}.png`) });
   });
 }

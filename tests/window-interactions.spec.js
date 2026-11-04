@@ -60,7 +60,7 @@ test("portfolio navigation adapts when a desktop window is narrowed", async ({ p
     expect(await frame.locator(selector).evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
   }
   await expect(frame.locator(".portfolio-project-list")).toBeHidden();
-  await expect(frame.getByRole("button", { name: "현재 프로젝트", exact: true })).toBeVisible();
+  await expect(frame.getByRole("combobox", { name: "프로젝트 검색", exact: true })).toBeVisible();
   await expect(frame.locator(".portfolio-detail-pane h2")).toBeInViewport();
   await page.screenshot({ path: testInfo.outputPath("narrow-desktop.png") });
 });
