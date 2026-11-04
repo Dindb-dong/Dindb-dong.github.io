@@ -284,7 +284,7 @@
     ],
     "description": [
       "An embeddable, macOS-inspired desktop SDK for React and JavaScript apps.",
-      "This portfolio runs on the source-built DindbOS 0.2.0 SDK."
+      "This portfolio runs on the source-built DindbOS 0.2.3 SDK."
     ],
     "extraDescription": [
       "Built app registration, window management, focus, Dock state, virtual files, and browser-backed storage as a reusable desktop runtime.",

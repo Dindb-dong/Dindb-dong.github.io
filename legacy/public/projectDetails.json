@@ -347,7 +347,7 @@
     ],
     "description": [
       "React와 JavaScript 앱을 웹페이지 안에 데스크톱으로 담는 macOS 스타일 오픈소스 SDK입니다.",
-      "이 포트폴리오도 소스에서 빌드한 DindbOS 0.2.0 SDK로 실행됩니다."
+      "이 포트폴리오도 소스에서 빌드한 DindbOS 0.2.3 SDK로 실행됩니다."
     ],
     "extraDescription": [
       "앱 등록, 창 관리, 포커스, Dock 상태, 가상 파일과 브라우저 저장소를 재사용 가능한 데스크톱 런타임으로 설계했습니다.",
