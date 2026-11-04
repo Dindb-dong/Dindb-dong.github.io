@@ -119,7 +119,9 @@ test("project controls combine search and filters, keep newest registration firs
   const rows = page.locator("[data-project-id]");
   const ids = () => rows.evaluateAll(items => items.map(item => Number(item.dataset.projectId)));
   expect(await ids()).toEqual([20, 19, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
-  await expect(rows.first()).toHaveAttribute("aria-selected", "true");
+  await expect(rows.first()).toHaveAttribute("aria-selected", "false");
+  await expect(page.locator(".portfolio-detail-pane")).toBeHidden();
+  await expect(search).toHaveValue("전체 보기");
   const filterButton = controls.getByRole("button", { name: "필터", exact: true });
   expect(Math.abs((await search.boundingBox()).y - (await filterButton.boundingBox()).y)).toBeLessThan(8);
   await filterButton.click();
@@ -153,6 +155,7 @@ for (const width of [1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
+    await page.locator('[data-project-id="20"]').click();
     const row = page.locator('[data-project-id="4"]');
     await row.scrollIntoViewIfNeeded();
     const scrollPositions = () => page.locator(".portfolio-finder, .portfolio-project-list").evaluateAll(elements => elements.map(el => el.scrollTop));
@@ -206,7 +209,9 @@ test("mobile layout exposes every portfolio destination without page overflow", 
   await navigation.locator('[data-sidebar-target="projects"]').click();
   await expect(page.getByRole("combobox", { name: "프로젝트 검색" })).toBeVisible();
   await expect(page.getByRole("combobox", { name: "프로젝트 검색", exact: true })).toBeVisible();
-  await expect(page.locator(".portfolio-detail-pane")).toBeVisible();
+  await expect(page.locator(".portfolio-detail-pane")).toBeHidden();
+  await expect(page.locator(".portfolio-project-list")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "프로젝트 검색", exact: true })).toHaveValue("전체 보기");
   await page.screenshot({ path: testInfo.outputPath("mobile.png") });
 });
 

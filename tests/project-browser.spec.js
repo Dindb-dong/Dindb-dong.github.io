@@ -59,7 +59,9 @@ test("mobile searchable selector replaces separate dropdown, search and count ro
     await page.goto("/");
     await page.locator('nav [data-sidebar-target="projects"]').tap();
     const picker = page.getByRole("combobox", { name: "프로젝트 검색", exact: true });
-    await expect(page.locator(".portfolio-project-list")).toBeHidden();
+    await expect(page.locator(".portfolio-project-list")).toBeVisible();
+    await expect(picker).toHaveValue("전체 보기");
+    await expect(page.locator(".portfolio-detail-pane")).toBeHidden();
     const search = page.getByRole("combobox");
     const filter = page.getByRole("button", { name: "필터", exact: true });
     expect((await picker.boundingBox()).y).toBe((await search.boundingBox()).y);
@@ -141,6 +143,10 @@ for (const width of [390, 1440]) {
     const picker = page.getByRole("combobox", { name: "프로젝트 검색", exact: true });
     const list = page.locator(".portfolio-project-list");
     const detail = page.locator(".portfolio-detail-pane");
+    await expect(picker).toHaveValue("전체 보기");
+    await expect(list).toBeVisible();
+    await expect(detail).toBeHidden();
+    await expect(list.locator("[data-project-id]")).toHaveCount(19);
     await picker.fill("Yomates");
     await page.getByRole("option", { name: "Yomates", exact: true }).click();
     await expect(detail).toBeVisible();

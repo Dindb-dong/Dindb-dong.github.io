@@ -1,8 +1,8 @@
 # DindbOS source package
 
 - Repository: https://github.com/Dindb-dong/dindbos
-- Commit: `a34c321a230e135aac1ae436919d1a812007c6fd`
-- Package: `dindbos@0.2.1`
+- Commit: `8f9d5d1e9abf18da67e13cad5572c76b74269356`
+- Package: `dindbos@0.2.2`
 - Built on: 2026-11-04
 - Build: `npm run build:sdk`, then `npm pack`
 
@@ -13,3 +13,5 @@ The DindbOS project thumbnail comes from this revision's `docs/assets/desktop.pn
 The upstream MIT license and artwork provenance are included in the tarball.
 
 0.2.1 adds the shared mobile liquid-glass tab bar used by the portfolio and career apps.
+
+0.2.2 exports the shared searchable selector used by the project browser.
