@@ -1,5 +1,5 @@
 import { renderDropdown, mountDropdown } from "./dropdown.js";
-import { sidebarIcon } from "./navigation-icons.js";
+import { revealActiveNavigation, sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
 
 const html = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
@@ -70,7 +70,7 @@ export function renderExperienceApp(content, runtime, id, state) {
   content.innerHTML = `<section class="portfolio-os-app experience-app" data-experience-app="${id}" data-experience-tab-active="${state.tab}">
     <aside class="experience-sidebar">
       <div class="experience-identity"><img src="${html(app.icon)}" alt=""><strong>${html(app.name)}</strong><span>${html(app.experience.period)}</span></div>
-      <nav class="portfolio-sidebar-nav" aria-label="Experience sections">${tabs.map((tab) => `<button type="button" data-experience-tab="${tab}" ${state.tab === tab ? 'aria-current="page"' : ""}>${sidebarIcon(tab)}<span>${copy[tab]}</span><small>${tab === "projects" ? app.projects.length : tab === "gallery" ? app.media.length : ""}</small></button>`).join("")}</nav>
+      <nav class="portfolio-sidebar-nav dos-mobile-tabbar" aria-label="Experience sections">${tabs.map((tab) => `<button type="button" data-experience-tab="${tab}" ${state.tab === tab ? 'aria-current="page"' : ""}>${sidebarIcon(tab)}<span>${copy[tab]}</span><small>${tab === "projects" ? app.projects.length : tab === "gallery" ? app.media.length : ""}</small></button>`).join("")}</nav>
       <div class="experience-switch"><span>${copy.change}</span>${renderDropdown({
         id: `experience-switch-${id}`, label: copy.change, value: String(id),
         options: EXPERIENCE_APPS.map(entry => ({ value: String(entry.id), label: `${entry.name}.app`, icon: entry.icon || `/assets/experience-icons/${entry.name}-official.svg` })),
@@ -83,6 +83,7 @@ export function renderExperienceApp(content, runtime, id, state) {
     <dialog class="experience-lightbox" aria-label="${copy.views}"><div class="experience-lightbox-toolbar"><p data-lightbox-caption></p><button type="button" data-lightbox-close aria-label="${copy.close}">${copy.close} ×</button></div><img data-lightbox-image alt=""><div class="experience-lightbox-controls"><button type="button" data-lightbox-previous>${copy.previous}</button><span data-lightbox-count></span><button type="button" data-lightbox-next>${copy.next}</button></div></dialog>
   </section>`;
 
+  revealActiveNavigation(content);
   const render = () => renderExperienceApp(content, runtime, id, state);
   content.querySelectorAll("[data-experience-tab]").forEach((button) => button.addEventListener("click", () => {
     state.tab = button.dataset.experienceTab;

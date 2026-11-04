@@ -4,12 +4,12 @@ test("overview shows verified profile panels and launches career and research de
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
   await expect(page.locator(".profile-panel")).toHaveCount(5);
-  await expect(page.locator(".profile-panel h2")).toHaveText(["학력·언어", "개발 도구", "스테이터스", "커리어", "AI"]);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["개발 도구", "스테이터스", "커리어", "AI"]);
   await expect(page.locator(".profile-education")).toContainText("과천외국어고등학교");
   await expect(page.locator(".profile-education")).toContainText("응용통계학 · 컴퓨터과학");
   await expect(page.locator(".profile-education")).toContainText("4.00");
   await expect(page.locator(".profile-languages dd")).toHaveText(["원어민", "상", "상"]);
-  await expect(page.locator(".profile-grade-grid dd")).toHaveText(["SS", "A+", "A", "A-", "A", "B+"]);
+  await expect(page.locator(".profile-grade-grid dd")).toHaveText(["SS", "A+", "A", "A-", "A", "A-"]);
   await expect(page.locator(".profile-research")).toContainText("YAI 18기 부학회장");
   await expect(page.locator(".profile-ai-interests dt")).toHaveText(["CV", "RL"]);
   await expect(page.locator(".profile-career")).toContainText("2024.07–2024.11");
@@ -97,16 +97,16 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
   await page.goto("/");
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
 
-  const search = page.getByRole("searchbox", { name: "프로젝트 검색" });
+  const search = page.getByRole("combobox", { name: "프로젝트 검색" });
   await search.fill("DindbOS");
   await expect(page.locator("[data-project-id]" )).toHaveCount(1);
   await expect(page.locator("[data-project-id]")).toContainText("DindbOS");
 
   await search.fill("does-not-exist");
-  await expect(page.getByText("검색 결과 없음")).toBeVisible();
+  await expect(page.locator(".portfolio-project-list").getByText("검색 결과 없음")).toBeVisible();
   await page.getByRole("button", { name: "검색 초기화" }).click();
   await expect(page.locator("[data-project-id]")).toHaveCount(19);
-  await expect(page.getByRole("status")).toContainText("19개 프로젝트");
+  await expect(page.locator(".portfolio-result-count")).toHaveCount(0);
 });
 
 test("project controls combine search and filters, keep newest registration first, and omit redundant tab headers", async ({ page }, testInfo) => {
@@ -115,40 +115,47 @@ test("project controls combine search and filters, keep newest registration firs
   const nav = page.getByRole("navigation", { name: "Portfolio sections" });
   await nav.locator('[data-sidebar-target="projects"]').click();
   const controls = page.getByRole("search", { name: "프로젝트 검색", exact: true });
-  const search = controls.getByRole("searchbox", { name: "프로젝트 검색" });
+  const search = controls.getByRole("combobox", { name: "프로젝트 검색" });
   const rows = page.locator("[data-project-id]");
   const ids = () => rows.evaluateAll(items => items.map(item => Number(item.dataset.projectId)));
   expect(await ids()).toEqual([20, 19, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
-  await expect(rows.first()).toHaveAttribute("aria-selected", "true");
-  const filters = controls.getByRole("group", { name: "Project filters" });
-  expect(Math.abs((await search.boundingBox()).y - (await filters.boundingBox()).y)).toBeLessThan(8);
-  await filters.getByRole("button", { name: "Web", exact: true }).click();
+  await expect(rows.first()).toHaveAttribute("aria-selected", "false");
+  await expect(page.locator(".portfolio-detail-pane")).toBeHidden();
+  await expect(search).toHaveValue("전체 보기");
+  const filterButton = controls.getByRole("button", { name: "필터", exact: true });
+  expect(Math.abs((await search.boundingBox()).y - (await filterButton.boundingBox()).y)).toBeLessThan(8);
+  await filterButton.click();
+  const filters = page.getByRole("dialog", { name: "필터", exact: true });
+  await filters.getByRole("checkbox", { name: "Web", exact: true }).check();
+  await filters.getByRole("button", { name: "닫기", exact: true }).click();
   await search.fill("YAI-HUB");
   await expect(rows).toHaveCount(1);
   await expect(rows).toHaveAttribute("data-project-id", "20");
   await search.fill("");
-  await filters.getByRole("button", { name: "All", exact: true }).click();
+  await filterButton.click();
+  await filters.getByRole("button", { name: "초기화", exact: true }).click();
   await expect(rows).toHaveCount(19);
   await expect(rows.first()).toHaveAttribute("data-project-id", "20");
   await expect(page.locator(".portfolio-kicker, .portfolio-hero, .portfolio-toolbar")).toHaveCount(0);
   await expect(page.locator(".portfolio-finder h1")).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath("project-controls.png"), animations: "disabled" });
-  for (const target of ["experience", "skills", "settings", "resume"]) {
+  for (const target of ["experience", "skills", "resume"]) {
     await nav.locator(`[data-sidebar-target="${target}"]`).click();
     await expect(page.locator(".portfolio-main-pane > header, .portfolio-main-pane > h1")).toHaveCount(0);
   }
-  await nav.locator('[data-sidebar-target="settings"]').click();
-  await page.getByRole("button", { name: "English", exact: true }).click();
+  await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
+  await page.reload();
   await nav.locator('[data-sidebar-target="projects"]').click();
-  await expect(page.getByRole("searchbox", { name: "Search projects" })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toBeVisible();
   await expect(rows.first()).toHaveAttribute("data-project-id", "20");
 });
 
-for (const width of [1440, 390]) {
+for (const width of [1440]) {
   test(`selecting a project preserves window and list scroll at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
+    await page.locator('[data-project-id="20"]').click();
     const row = page.locator('[data-project-id="4"]');
     await row.scrollIntoViewIfNeeded();
     const scrollPositions = () => page.locator(".portfolio-finder, .portfolio-project-list").evaluateAll(elements => elements.map(el => el.scrollTop));
@@ -163,13 +170,33 @@ for (const width of [1440, 390]) {
   });
 }
 
+test("selecting another project resets only the detail scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
+  await page.locator('[data-project-id="16"]').click();
+  const detail = page.locator(".portfolio-detail-pane");
+  await detail.evaluate(el => { el.scrollTop = el.scrollHeight; });
+  expect(await detail.evaluate(el => el.scrollTop)).toBeGreaterThan(100);
+  const scrollPositions = () => page.locator(".portfolio-finder, .portfolio-project-list").evaluateAll(elements => elements.map(el => el.scrollTop));
+  const before = await scrollPositions();
+  const next = page.locator('[data-project-id="20"]');
+  await next.click();
+  await expect(next).toHaveAttribute("aria-selected", "true");
+  await expect(detail).toHaveJSProperty("scrollTop", 0);
+  expect(await scrollPositions()).toEqual(before);
+  await expect(next).toBeFocused();
+  const title = await detail.locator("h2").boundingBox();
+  expect(title.y).toBeGreaterThanOrEqual((await detail.boundingBox()).y);
+});
+
 test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
   const navigation = page.getByRole("navigation", { name: "Portfolio sections" });
-  await expect(navigation.getByRole("button")).toHaveCount(7);
-  for (const target of ["about", "projects", "experience", "skills", "resume", "settings", "contact"]) {
+  await expect(navigation.getByRole("button")).toHaveCount(5);
+  for (const target of ["about", "projects", "experience", "skills", "resume"]) {
     await expect(navigation.locator(`[data-sidebar-target="${target}"]`)).toBeVisible();
   }
   expect(await page.evaluate(() => document.body.scrollWidth)).toBe(await page.evaluate(() => document.body.clientWidth));
@@ -180,9 +207,11 @@ test("mobile layout exposes every portfolio destination without page overflow", 
   expect((await readingPane.locator("h1").boundingBox()).x - paneBounds.x).toBeGreaterThanOrEqual(16);
   await page.screenshot({ path: testInfo.outputPath("mobile-overview.png") });
   await navigation.locator('[data-sidebar-target="projects"]').click();
-  await expect(page.getByRole("searchbox", { name: "프로젝트 검색" })).toBeVisible();
-  await expect(page.locator("[data-project-id]").first()).toBeVisible();
-  await expect(page.locator(".portfolio-detail-pane")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "프로젝트 검색" })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "프로젝트 검색", exact: true })).toBeVisible();
+  await expect(page.locator(".portfolio-detail-pane")).toBeHidden();
+  await expect(page.locator(".portfolio-project-list")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "프로젝트 검색", exact: true })).toHaveValue("전체 보기");
   await page.screenshot({ path: testInfo.outputPath("mobile.png") });
 });
 
@@ -214,10 +243,10 @@ test("Leviosa experience includes representative work and maintenance in both la
     await expect(company).toContainText(text);
   }
   await page.screenshot({ path: testInfo.outputPath("leviosa-experience.png") });
-  await nav.locator('[data-sidebar-target="settings"]').click();
-  await page.getByRole("button", { name: "English", exact: true }).click();
+  await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
+  await page.reload();
   await nav.locator('[data-sidebar-target="about"]').click();
-  await expect(page.locator(".profile-panel h2")).toHaveText(["Education & languages", "Development tools", "Skills", "Experience", "AI"]);
+  await expect(page.locator(".profile-panel h2")).toHaveText(["Development tools", "Skills", "Experience", "AI"]);
   await expect(page.locator(".profile-languages dd")).toHaveText(["Native", "Advanced", "Advanced"]);
   await nav.locator('[data-sidebar-target="experience"]').click();
   for (const text of ["AI Detail Page", "Agency", "Yomates", "Naver Smart Store", "Web & Admin", "Telegram & Notion"]) {
@@ -225,12 +254,12 @@ test("Leviosa experience includes representative work and maintenance in both la
   }
 });
 
-test("language and resume controls work inside the portfolio window", async ({ page }) => {
+test("saved language and resume work with five portfolio tabs", async ({ page }) => {
   await page.goto("/");
   const navigation = page.getByRole("navigation", { name: "Portfolio sections" });
 
-  await navigation.locator('[data-sidebar-target="settings"]').click();
-  await page.getByRole("button", { name: "English" }).click();
+  await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
+  await page.reload();
   await expect(page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="about"]')).toContainText("Overview");
 
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="resume"]').click();

@@ -760,9 +760,6 @@ input {
     grid-template-columns: 184px minmax(0, 1fr);
   }
 
-  .portfolio-finder-layout {
-    grid-template-columns: minmax(260px, 0.8fr) minmax(340px, 1.2fr);
-  }
 }
 
 
@@ -869,30 +866,6 @@ input {
   .portfolio-filter-group button {
     min-width: 0;
     padding: 0 6px;
-  }
-
-  .portfolio-finder-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .portfolio-project-list {
-    max-height: 285px;
-    border-right: 0;
-    border-bottom: 1px solid var(--portfolio-line);
-  }
-
-  .portfolio-detail-pane {
-    max-height: none;
-    padding: 15px;
-  }
-
-  .portfolio-media-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .portfolio-media-grid > :first-child {
-    grid-column: span 2;
-    grid-row: auto;
   }
 
   .portfolio-timeline-card {
@@ -1100,27 +1073,19 @@ input {
 :is(.portfolio-sidebar-nav, .experience-sidebar > nav) button:focus-visible { outline: 3px solid var(--brand-secondary); outline-offset: 2px; }
 .portfolio-sidebar-foot { border-color: var(--brand-border); font-size: 11px; }
 @container portfolio-window (max-width: 760px) {
-  .portfolio-os-app:not(.experience-app) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-  .portfolio-sidebar { gap: 12px; padding: 14px 12px 10px; border-right: 0; border-bottom: 1px solid var(--brand-border); grid-template-rows: auto auto; }
-  .portfolio-sidebar-title { padding-inline: 4px; }
-  :is(.portfolio-sidebar-nav, .experience-sidebar > nav) { display: grid; grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; gap: 6px; overflow-x: auto; padding: 3px 2px 8px; }
-  :is(.portfolio-sidebar-nav, .experience-sidebar > nav) button { width: auto; min-height: 44px; padding: 10px 13px; gap: 8px; border-radius: 12px; }
-  :is(.portfolio-sidebar-nav, .experience-sidebar > nav) button svg { width: 20px; height: 20px; flex-basis: 20px; }
-  :is(.portfolio-sidebar-nav, .experience-sidebar > nav) button span { font-size: 13px; }
-  .portfolio-sidebar-foot { display: none; }
-}
-
-@container portfolio-window (max-width: 760px) {
-  .experience-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-  .experience-sidebar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px 12px 10px; border-right: 0; border-bottom: 1px solid var(--brand-border); }
-  .experience-identity { grid-template-columns: 38px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
-  .experience-identity img { width: 36px; height: 36px; }
-  .experience-identity strong { font-size: 14px; }
-  .experience-identity > span { font-size: 10px; }
-  .experience-switch { display: flex; align-items: center; margin: 0; }
-  .experience-switch > span { flex-shrink: 0; }
-  .experience-sidebar :is(.portfolio-sidebar-nav, .experience-sidebar > nav) { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; gap: 6px; overflow-x: auto; }
-  .experience-sidebar :is(.portfolio-sidebar-nav, .experience-sidebar > nav) button { justify-content: start; }
+  .portfolio-os-app:not(.experience-app) { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .portfolio-os-app { background: var(--brand-surface); }
+  .portfolio-main-pane, .experience-main { background: var(--brand-paper); }
+  .portfolio-sidebar, .experience-sidebar { display: contents; }
+  .portfolio-sidebar-title, .portfolio-sidebar-foot, .experience-identity { display: none; }
+  .portfolio-main-pane { grid-column: 1; grid-row: 1; }
+  .portfolio-sidebar-nav { grid-column: 1; grid-row: 2; margin: 10px 12px; }
+  .portfolio-sidebar-nav button small { display: none; }
+  .experience-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
+  .experience-main { grid-column: 1; grid-row: 2; min-height: 0; }
+  .experience-sidebar > nav { grid-row: 3; }
+  .experience-switch { grid-column: 1; grid-row: 1; display: block; margin: 0; padding: 10px 12px 0; }
+  .experience-switch > span { display: none; }
 }
 
 /* App controls use background feedback; never draw a focus ring. */
@@ -1156,7 +1121,6 @@ input {
   .experience-sidebar { padding: 20px 10px 14px; gap: 20px; }
 }
 @container portfolio-window (max-width: 760px) {
-  .portfolio-sidebar { padding: 12px 10px 6px; gap: 8px; }
   .portfolio-sidebar-title { grid-template-columns: 30px minmax(0, 1fr); }
   .portfolio-sidebar .portfolio-avatar { width: 30px; height: 36px; }
   .portfolio-sidebar-person small { margin-top: 2px; }
@@ -1289,3 +1253,88 @@ input {
 @media (min-width: 761px) and (max-width: 1179px) {
   .dindbos-host .dos-desktop { overflow-y: auto; }
 }
+
+.portfolio-finder { container-type: inline-size; container-name: project-finder; }
+@container project-finder (max-width: 722px) {
+  .portfolio-finder-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio-project-list {
+    max-height: 285px;
+    border-right: 0;
+    border-bottom: 1px solid var(--portfolio-line);
+  }
+
+  .portfolio-detail-pane {
+    max-height: none;
+    padding: 15px;
+  }
+
+  .portfolio-media-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .portfolio-media-grid > :first-child {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+
+}
+
+.profile-mobile-portrait { display: none; }
+.portfolio-project-picker { display: none; }
+.portfolio-finder { grid-template-rows: auto auto minmax(0, 1fr); align-content: stretch; overflow: hidden; gap: 12px; }
+.portfolio-project-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+.portfolio-project-controls .portfolio-search-field { width: auto; min-width: 0; }
+.portfolio-filter-trigger { display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 84px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--brand-border); border-radius: 8px; background: var(--brand-paper); color: var(--brand-ink); cursor: pointer; }
+.portfolio-filter-trigger svg { width: 20px; height: 20px; }
+.portfolio-filter-trigger[aria-expanded="true"] { background: var(--brand-accent-soft); }
+.portfolio-result-count { margin: 0; text-align: right; }
+.portfolio-filter-popover { position: fixed; inset: auto; margin: 0; width: min(360px, calc(100vw - 24px)); max-height: min(560px, calc(100dvh - 24px)); overflow: auto; padding: 16px; border: 1px solid var(--brand-border); border-radius: 16px; background: var(--brand-paper); color: var(--brand-ink); box-shadow: var(--portfolio-shadow); font: 13px var(--portfolio-font); }
+.portfolio-filter-popover header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.portfolio-filter-popover header button, .portfolio-filter-popover > button { min-height: 44px; padding: 8px 12px; border: 1px solid var(--brand-border); border-radius: 8px; background: var(--brand-paper); color: var(--brand-ink); cursor: pointer; }
+.portfolio-sort-field { display: grid; gap: 8px; }
+.portfolio-filter-popover fieldset { min-width: 0; margin: 16px 0; padding: 0; border: 0; }
+.portfolio-filter-popover legend { margin-bottom: 8px; font-weight: 600; }
+.portfolio-filter-options { display: flex; flex-wrap: wrap; gap: 6px; }
+.portfolio-filter-options label { display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 10px; border: 1px solid var(--brand-border); border-radius: 8px; cursor: pointer; }
+.portfolio-filter-options label:has(:checked) { border-color: var(--brand-secondary); background: var(--brand-accent-soft); }
+.portfolio-filter-options input { width: 16px; height: 16px; margin: 0; accent-color: var(--brand-secondary); }
+.portfolio-filter-tags { max-height: 180px; overflow: auto; }
+.app-dropdown-option:not(:has(img)) { grid-template-columns: minmax(0, 1fr) 20px; }
+.app-dropdown-option:not(:has(img)) span { white-space: normal; }
+@container project-finder (max-width: 722px) {
+  .portfolio-finder-layout { overflow: auto; }
+}
+@container portfolio-window (max-width: 760px) {
+  .profile-header { display: grid; grid-template-columns: minmax(0, 1fr) 72px; align-items: center; gap: 16px; }
+  .profile-mobile-portrait { display: block; grid-column: 2; grid-row: 1; width: 72px; height: 90px; object-fit: cover; object-position: top; border-radius: 8px; }
+  .profile-links { grid-column: 1 / -1; }
+  .portfolio-os-app .portfolio-sidebar > .dos-mobile-tabbar > button { flex: 1 1 0; min-width: 44px; padding-inline: 2px; font-size: 10px; }
+  .portfolio-finder { grid-template-rows: auto auto auto minmax(0, 1fr); padding: 16px; }
+  .portfolio-project-picker { display: block; min-width: 0; }
+  .portfolio-project-picker .app-dropdown-trigger > span { white-space: normal; text-align: left; }
+  .portfolio-project-controls { grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 10px; }
+  .portfolio-filter-trigger { min-width: 0; padding-inline: 6px; gap: 6px; }
+  .portfolio-project-list { display: none; }
+  .portfolio-finder-layout { display: block; min-height: 0; overflow: auto; }
+  .portfolio-detail-pane { max-height: none; overflow: visible; padding: 16px; }
+}
+
+/* One reusable search-and-select field, paired with an icon-only filter. */
+.portfolio-projects { --dos-select-line: var(--brand-border); --dos-select-bg: var(--brand-paper); --dos-select-text: var(--brand-ink); --dos-select-muted: var(--brand-muted); --dos-select-accent: var(--brand-accent); --dos-select-soft: var(--brand-accent-soft); }
+.portfolio-finder { grid-template-rows: auto minmax(0, 1fr); }
+.portfolio-project-controls { grid-template-columns: minmax(0, 1fr) 44px; gap: 10px; }
+.portfolio-filter-trigger { width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 12px; }
+.portfolio-filter-trigger svg { width: 18px; height: 18px; }
+.portfolio-filter-trigger[data-filter-active="true"] { background: var(--brand-accent-soft); border-color: var(--brand-secondary); }
+@container portfolio-window (max-width: 760px) {
+  .portfolio-finder { grid-template-rows: auto minmax(0, 1fr); }
+  .portfolio-project-controls { grid-template-columns: minmax(0, 1fr) 44px; }
+}
+
+.portfolio-finder-layout.is-browsing { display: block; overflow: auto; }
+.portfolio-finder-layout.is-browsing > .portfolio-project-list { display: block; width: 100%; max-height: none; overflow: visible; }
+.portfolio-finder-layout.is-browsing > .portfolio-detail-pane { display: none; }
+.portfolio-sort-field .app-dropdown-trigger { border-radius: 16px; }

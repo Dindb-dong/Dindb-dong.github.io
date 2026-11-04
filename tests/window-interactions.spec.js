@@ -20,7 +20,9 @@ for (const app of ["portfolio", "terminal", "experience-leviosa"]) {
     await page.mouse.up();
     await expect.poll(async () => Math.abs((await frame.boundingBox()).y - before.y)).toBeGreaterThan(30);
     const moved = await frame.boundingBox();
-    const handle = await frame.locator('[data-resize="bottom-right"]').boundingBox();
+    const resizeHandle = frame.locator('[data-resize="bottom-right"]');
+  await resizeHandle.hover();
+  const handle = await resizeHandle.boundingBox();
     await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
     await page.mouse.down();
     await page.mouse.move(handle.x + handle.width / 2 - 100, handle.y + handle.height / 2 - 80, { steps: 12 });
@@ -36,18 +38,31 @@ test("portfolio navigation adapts when a desktop window is narrowed", async ({ p
   await page.goto("/");
   const frame = page.locator('.dos-window[data-window-id="portfolio"]');
   await expect(frame).toBeVisible();
-  const handle = await frame.locator('[data-resize="bottom-right"]').boundingBox();
+  await expect(frame.locator(".portfolio-about")).toBeVisible();
+  const resizeHandle = frame.locator('[data-resize="bottom-right"]');
+  await resizeHandle.hover();
+  const handle = await resizeHandle.boundingBox();
   const bounds = await frame.boundingBox();
   await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
   await page.mouse.down();
   await page.mouse.move(handle.x + handle.width / 2 - (bounds.width - 680), handle.y + handle.height / 2, { steps: 15 });
   await page.mouse.up();
+  await expect.poll(async () => (await frame.boundingBox()).width).toBeLessThan(682);
   const nav = frame.getByRole("navigation", { name: "Portfolio sections" });
-  await expect(nav).toHaveCSS("grid-auto-flow", "column");
-  expect((await frame.locator(".portfolio-sidebar").boundingBox()).height).toBeLessThan(200);
-  await nav.locator('[data-sidebar-target="settings"]').click();
-  await expect(frame.locator('[data-locale-choice="en"]')).toBeVisible();
+  await expect(nav).toHaveCSS("display", "flex");
+  expect((await nav.boundingBox()).height).toBeLessThan(100);
+  await nav.locator('[data-sidebar-target="skills"]').click();
+  await expect(frame.locator(".portfolio-skill-board")).toBeVisible();
   await nav.locator('[data-sidebar-target="about"]').click();
   expect(await frame.locator('.portfolio-about').evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
+  await nav.locator('[data-sidebar-target="projects"]').click();
+  for (const selector of [".portfolio-finder", ".portfolio-finder-layout", ".portfolio-project-list", ".portfolio-detail-pane"]) {
+    expect(await frame.locator(selector).evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
+  }
+  await expect(frame.locator(".portfolio-project-list")).toBeVisible();
+  await expect(frame.locator(".portfolio-detail-pane")).toBeHidden();
+  await frame.locator('[data-project-id="20"]').click();
+  await expect(frame.getByRole("combobox", { name: "프로젝트 검색", exact: true })).toBeVisible();
+  await expect(frame.locator(".portfolio-detail-pane h2")).toBeInViewport();
   await page.screenshot({ path: testInfo.outputPath("narrow-desktop.png") });
 });

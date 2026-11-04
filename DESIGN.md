@@ -27,7 +27,7 @@
 
 ## Information architecture
 
-- Primary navigation: persistent Portfolio app navigation with Overview, Projects, Experience, Skills, Resume, and Settings; persistent DindbOS dock for broader OS apps.
+- Primary navigation: persistent Portfolio app navigation with Overview, Projects, Experience, Skills, and Resume; persistent DindbOS dock for broader OS apps.
 - Core routes/screens: Overview as the default orientation surface; Projects as a searchable/filterable master-detail view; Experience and Skills as supporting evidence; Resume as a direct document view.
 - Content hierarchy: compact identity and profile links → education/languages, self-assessed status, career, research/leadership and detailed tools. Projects remain in their dedicated app/view.
 
@@ -40,7 +40,7 @@
 
 ## Visual language
 
-- Shell: DindbOS 0.2.0 native meadow wallpaper, icons, menus, Dock and window chrome; main #7c9fe5 accent through the public theme API.
+- Shell: DindbOS 0.2.1 native meadow wallpaper, icons, menus, Dock and window chrome; main #7c9fe5 accent through the public theme API.
 - Color: main #7c9fe5, secondary #2563eb, ink #202124, muted #777777, border #e5e5e5 and surface #f5f5f5, per the latest user-provided design board and explicit main/sub assignment. Use white text on color-filled buttons and selected navigation, as explicitly requested by the user.
 - Typography: system sans stack with compact OS chrome and editorial but restrained portfolio headings; no viewport-sized text.
 - Spacing/layout rhythm: 8px rhythm with 8/16/24/32px steps (12px only for compact control padding); generous icon-and-label navigation and spacious reading areas.
@@ -101,7 +101,7 @@
 
 ## Runtime revision
 
-- Source: `Dindb-dong/dindbos@61ee980f80491c14493228c96680282ffa8c72d6` (0.2.0).
+- Source: `Dindb-dong/dindbos@a34c321a230e135aac1ae436919d1a812007c6fd` (0.2.1).
 - Installed from a checked-in source-built tarball because npm still publishes 0.1.1. See `vendor/README.md`.
 - Keep the existing IndexedDB storage name so returning visitors retain their files.
 - Retain launcher placement beside the portfolio; use native SDK appearance for the shell.
@@ -125,7 +125,7 @@
 
 ## Portfolio opening screen refresh
 
-- User reference: single-line bold navigation labels, consistent outline icons, generous white sidebar, broad rounded active row using the shared main blue. Keep the seven portfolio destinations; omit redundant English subtitles.
+- User reference: single-line bold navigation labels, consistent outline icons, generous white sidebar, broad rounded active row using the shared main blue. Keep five portfolio destinations; omit redundant English subtitles.
 - Astra review: combine identity, introduction and actions; lead with real project screenshots; move numeric summary after featured work. Preserve SUIT; colors now follow the latest shared blue palette.
 - Adapt navigation to app content width with container queries, including resized desktop windows. Narrow apps use horizontally scrolling labeled tabs with keyboard access.
 - Window position/size belong to the SDK window manager. Host sets initial bounds once via the window API; never pin window geometry with CSS !important. Verify real pointer dragging and resizing on host apps and SDK builtins.
@@ -153,7 +153,7 @@
 - Five semantic panels: academic/language, self-assessed status, career, research/leadership and detailed development tools. Desktop uses three independent columns with content-height panels: education/tools, status, career/AI. Panels never stretch to a sibling’s height. Tablet pairs education/status and tools/career, with AI below; mobile restores education, status, career, AI, tools reading order.
 - Remove the promotional hero, product showcase, generic numeric summary and long opening biography from this view. Keep the underlying project archive and biography data.
 - No panel numbering, eyebrow headings, gradients, decorative badges, fake progress bars, repeated explanatory paragraphs or card shadows. The user revised the status treatment on 2026-11-04: compact icon rows, letter-grade badges and five decorative segments matching the supplied reference, with potential SS on a filled main-blue row. Segments are hidden from assistive technology; they do not assert measured scores or percentages.
-- User-defined grades: potential SS, backend A+, infrastructure A, DB A-, AI A, frontend B+. Natural languages: 한국어 원어민 · 영어 상 · 일본어 상.
+- User-defined grades: potential SS, backend A+, infrastructure A, DB A-, AI A, frontend A-. Natural languages: 한국어 원어민 · 영어 상 · 일본어 상.
 - School facts: Yonsei Applied Statistics/Computer Science, GPA 4.00/4.3, 2023.03–2028.02; Gwacheon Foreign Language High School/Japanese, 2020.03–2023.01. Do not claim an already completed university graduation or invent a primary/double-major distinction.
 - Career buttons launch the corresponding existing apps. Synchronize the verified Leviosa period 2026.02–2026.10 across languages; NOI-LAB ends 2024.11. The AI panel starts with YAI 18th-cohort Vice President, then lists CV and RL interests and opens YAI-HUB in the project browser. DDQN and CLIP/BLIP2 remain in the project archive.
 - Development tools are plain categorized text, not decorative pills: languages, web/mobile, backend/database, AI/research and infrastructure. No workflow/process filler.
@@ -162,12 +162,43 @@
 ## Tab chrome cleanup (2026-11-04)
 
 - No repeated tab title/overline/instruction stacks in project archive, experience launcher, skills, settings or resume. Keep personal identity and actual company/project names. Remove PROJECT DETAIL overline.
-- Project search, category filters and result count share one compact responsive control strip. The search input retains an accessible localized label; mobile wraps the strip without page overflow.
+- Project search/selection and the icon filter share one compact responsive control strip. The input retains an accessible localized label; no result-count row is shown.
 - Legacy project records lack consistent dates. Default order is newest registration first (descending project ID), shared across locales and retained through filtering/reset; do not fabricate project dates.
-- Settings present language selection; runtime mounting/storage implementation details are not portfolio content.
+- Settings and Contact tabs are removed; saved language preferences remain respected at boot. Profile links and resume stay in the overview.
 
 ## Desktop shortcut groups (2026-11-04)
 
 - On desktop, move only Leviosa-AI, Alus-Healthcare, NOI-LAB, SDP, YAI and YCC into a 3×2 lower-right group above the dock. The user's purple rectangle marks placement; do not render a border/container.
 - Remaining ten icons flow continuously in the existing left grid. Preserve SDK icons, desktop semantics, launch handlers and window stacking; no SDK patch.
 - Narrow desktop keeps a scrollable left column. Mobile keeps all icons in the scrollable desktop grid, ordering career launchers after other apps.
+
+## Mobile glass navigation (2026-11-04)
+
+- Canvas: DindbOS · Portfolio Mobile Navigation, Page 1 (`page-0959dd44-73da-422d-8f68-016cc5dce6a7`). Reviewed component board `5b4132bd-0793-4508-9e4b-93c26ce41b96` and mobile screen board `bfb5aa81-4d2b-44c9-930e-d67bf4869ea1`; component `component-e63836fc-600a-4006-b4fc-d42a9b4d5e4c` and linked instance survived library reopen.
+- DindbOS 0.2.1 provides `.dos-mobile-tabbar` in its shared styles: a frosted capsule with selected pill, icons and visible labels, 64×52px minimum targets, native keyboard focus and horizontal scrolling for long menus. Mobile uses the existing glass material's frosted fallback, not the desktop-only optical adapter.
+- At app widths ≤760px the same semantic navigation moves into a reserved bottom row. Portfolio removes the duplicate sidebar identity; career apps retain a compact company switcher above the independently scrolling content. No floating overlay may cover content or steal touch input.
+- Main/sub colors remain #7c9fe5/#2563eb. Desktop sidebars stay unchanged. Re-selecting a tab reveals the selected destination within the local horizontal bar only.
+- Projects collapse based on actual finder content width ≤722px, including narrowed desktop windows. Selecting a project resets detail scroll while retaining list/window scroll and focus.
+
+- Implementation comparison: reviewed actual Chrome screenshots `portfolio-touch-390.png` and `experience-touch-1.png` against the saved Canvas component/screen. The selected capsule, icon/label hierarchy, bottom row and content separation match; the runtime theme supplies the final neutral glass tint.
+
+## Profile and project browser refinement (2026-11-04)
+
+- Five destinations only: Overview, Projects, Experience, Skills and Resume. Portfolio-specific compact tabs fit together at 320px with at least 44px touch widths; career apps retain the SDK component's larger targets.
+- Remove only the visible education/language heading and status self-assessment subtitle. Preserve the education section's accessible name, all factual content and other panel headings. Frontend is A-. A 72×90px portrait appears to the right of the name on narrow screens only.
+- Canvas library document remains DindbOS · Portfolio Mobile Navigation, Page 1. New project board `02af514e-369d-4263-9268-1c719cad3097`, controls main `3d65ab2d-c03e-4b76-9405-53f31e181fc5`, component `component-6cd7750a-1151-40dc-82c6-bd7962fce267`; profile board `d1032534-0d65-4860-961a-4aadc8c5068b`. Reopened from the library to verify persistence. Reviewed actual mobile screenshots against both boards.
+- Projects uses one searchable selection field beside a 44px icon-only filter button on mobile and desktop. The closed field shows the current project; opening it allows immediate title/role/technology search and selection, including keyboard navigation and empty-result recovery. Projects initially shows the All list on every viewport; search/filter states also show a full-width result list through this field; the detail occupies one independently scrolling region below and controls stay visible. Desktop keeps the project list. No project-count row is shown.
+- Canvas refinement board `38e37259-87b3-4278-bdaa-b42223b296fe`, main `8e89f635-69b2-48e5-85a5-0be13b87b5ac`, component `component-9230efc8-17d0-4746-b204-aafa4dd60850` maps to the DindbOS public `renderSearchableSelect` / `mountSearchableSelect` exports. Reviewed at 390px with closed/open states; existing colors and 44px touch targets are retained.
+- The native auto popover provides oldest/newest registration and title sorting, category OR selection, technology-tag AND selection, reset, outside dismissal and Escape. Tags come from existing languages/technology data, with no fabricated metadata or completion dates. Checkbox changes preserve the popup and its scroll; project changes reset only the detail region.
+
+- Implementation comparison: reviewed actual Chrome mobile captures `mobile-project-selector.png` and `mobile-project-selector-open.png` against the searchable-select board. The one-row field, 44px icon filter, selected blue option and removed count match the revised design.
+
+## Shared selector and return to project lists (2026-11-04)
+
+- Consume DindbOS 0.2.2 via the checked-in package; remove the duplicate host selector implementation and styles. Public functions come from `dindbos`, CSS from `dindbos/styles.css`, with existing brand colors passed through `--dos-select-*` tokens.
+- A pinned localized All choice returns to the list while retaining category/tag/sort choices and clearing the search query. Search shows matching rows; selecting a row or dropdown option opens its detail. Opening Filters clears a prior project query and shows results drawn from the entire dataset. Filter/sort/reset changes keep the list visible. Explicit overview project links still open their requested detail.
+- Sorting reuses `src/dropdown.js` with 16px trigger / 20px menu / 14px option radii, native nested popovers, keyboard access and cleanup. Canvas board `c84956e2-bae4-4a83-aa34-fbf52556d233`, main `acae9829-f4aa-4e26-8c05-860ec2c3b73b`, component `component-1ec67bc4-8435-4e1d-911c-44f5dc32d959`; searchable board updated in place with the pinned All option.
+
+- Comparison: reviewed Chrome mobile `all-projects-390.png` and `rounded-sort-390.png` against the updated boards. The full-width results, pinned All choice and 20px/14px sort menu/option radii match; nested options retain their border-free shared styling.
+
+- Initial runtime state is All/list on mobile and desktop, including the Projects launcher. A project opens only after an explicit selection or a direct overview project link.

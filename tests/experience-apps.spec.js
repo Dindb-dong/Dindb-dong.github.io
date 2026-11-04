@@ -52,7 +52,7 @@ for (const [id, name] of apps) {
   });
 }
 
-test("experience viewer supports keyboard, state, multiple apps, and language refresh", async ({ page }, testInfo) => {
+test("experience viewer supports keyboard, state, and multiple apps", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const app = await openExperience(page, 1);
   await page.screenshot({ path: testInfo.outputPath("leviosa-overview.png") });
@@ -79,13 +79,6 @@ test("experience viewer supports keyboard, state, multiple apps, and language re
   await yai.locator("[data-dropdown-trigger]").click();
   await yai.getByRole("option", { name: "Leviosa-AI.app", exact: true }).click();
   await expect(page.locator('.experience-app[data-experience-app="1"]')).toHaveCount(1);
-  await expect(app.locator('[data-experience-case="19"]')).toBeVisible();
-  await page.getByRole("button", { name: "Focus Kim Dong Wook.app", exact: true }).click();
-  const nav = page.getByRole("navigation", { name: "Portfolio sections" });
-  await nav.locator('[data-sidebar-target="settings"]').click();
-  await page.getByRole("button", { name: "English", exact: true }).click();
-  await page.getByRole("button", { name: "Focus Leviosa-AI.app", exact: true }).click();
-  await expect(app.locator('nav [data-experience-tab="gallery"]')).toHaveText("Media library3");
   await expect(app.locator('[data-experience-case="19"]')).toBeVisible();
   await window.getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Focus YAI.app", exact: true }).click();
@@ -131,8 +124,10 @@ test("an already-open experience menu stays styled with its previous markup", as
   await expect(selected).toHaveCSS("background-color", "rgb(124, 159, 229)");
   await expect(selected).toHaveCSS("border-radius", "12px");
   await expect(selected.locator("span")).toHaveCSS("font-size", "14px");
-  const first = await nav.locator("button").nth(0).boundingBox();
-  const second = await nav.locator("button").nth(1).boundingBox();
+  const [first, second] = await nav.locator("button").evaluateAll(buttons => buttons.slice(0, 2).map(button => {
+    const { y, height } = button.getBoundingClientRect();
+    return { y, height };
+  }));
   expect(second.y - first.y).toBeGreaterThan(first.height + 3);
   await page.screenshot({ path: testInfo.outputPath("existing-menu.png") });
   await nav.locator('[data-experience-tab="projects"]').click();
