@@ -1,13 +1,13 @@
 const escape = (value) => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 
-export function renderDropdown({ id, label, value, options }) {
+export function renderDropdown({ id, label, value, options, placeholder = label }) {
   const current = options.find(option => option.value === value);
   return `<div class="app-dropdown" data-dropdown>
-    <button type="button" class="app-dropdown-trigger" data-dropdown-trigger aria-label="${escape(label)}" aria-haspopup="listbox" aria-expanded="false" aria-controls="${escape(id)}">
-      <span>${escape(current.label)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    <button type="button" class="app-dropdown-trigger" data-dropdown-trigger aria-label="${escape(label)}" ${options.length ? "" : "disabled"} aria-haspopup="listbox" aria-expanded="false" aria-controls="${escape(id)}">
+      <span>${escape(current?.label || placeholder)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
     <div id="${escape(id)}" class="app-dropdown-menu" data-dropdown-menu role="listbox" aria-label="${escape(label)}" popover="auto">
-      ${options.map(option => `<button type="button" class="app-dropdown-option" role="option" aria-selected="${option.value === value}" data-dropdown-value="${escape(option.value)}" tabindex="-1"><img src="${escape(option.icon)}" alt=""><span>${escape(option.label)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>`).join("")}
+      ${options.map(option => `<button type="button" class="app-dropdown-option" role="option" aria-selected="${option.value === value}" data-dropdown-value="${escape(option.value)}" tabindex="-1">${option.icon ? `<img src="${escape(option.icon)}" alt="">` : ""}<span>${escape(option.label)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>`).join("")}
     </div>
   </div>`;
 }
@@ -38,6 +38,7 @@ export function mountDropdown(root, onSelect) {
     if (restoreFocus) trigger.focus({ preventScroll: true });
   };
   const open = (index = options.findIndex(option => option.getAttribute("aria-selected") === "true")) => {
+    if (!options.length) return;
     if (!opened()) {
       menu.showPopover();
       trigger.setAttribute("aria-expanded", "true");
@@ -47,6 +48,7 @@ export function mountDropdown(root, onSelect) {
     }
     position();
     options[Math.max(0, index)].focus({ preventScroll: true });
+    options[Math.max(0, index)].scrollIntoView({ block: "nearest" });
   };
   trigger.addEventListener("click", () => opened() ? close(true) : open(), listen);
   trigger.addEventListener("keydown", event => {
@@ -61,6 +63,7 @@ export function mountDropdown(root, onSelect) {
       event.preventDefault();
       const next = event.key === "Home" ? 0 : event.key === "End" ? options.length - 1 : (index + (event.key === "ArrowDown" ? 1 : -1) + options.length) % options.length;
       options[next].focus({ preventScroll: true });
+      options[next].scrollIntoView({ block: "nearest" });
     } else if (event.key === "Escape") {
       event.preventDefault();
       close(true);
@@ -71,7 +74,7 @@ export function mountDropdown(root, onSelect) {
     if (!opened()) positioning?.abort();
   }, listen);
   options.forEach(option => option.addEventListener("click", () => {
-    close();
+    close(true);
     onSelect(option.dataset.dropdownValue);
   }, listen));
   return () => { close(); lifetime.abort(); };

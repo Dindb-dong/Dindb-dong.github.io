@@ -21,7 +21,8 @@ for (const width of [320, 390, 430]) {
     await page.goto("/");
     const app = page.locator(".portfolio-os-app");
     const nav = app.getByRole("navigation", { name: "Portfolio sections" });
-    for (const target of ["projects", "experience", "skills", "resume", "settings", "about"]) {
+    await expect(nav.getByRole("button")).toHaveCount(5);
+    for (const target of ["projects", "experience", "skills", "resume", "about"]) {
       await assertTouchTarget(nav.locator(`[data-sidebar-target="${target}"]`), page);
       await expect(nav.locator(`[data-sidebar-target="${target}"]`)).toHaveAttribute("aria-current", "page");
       await expect(nav.locator(`[data-sidebar-target="${target}"]`)).toBeInViewport({ ratio: 1 });
@@ -30,8 +31,8 @@ for (const width of [320, 390, 430]) {
       expect(await app.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);
     }
     await page.screenshot({ path: testInfo.outputPath(`portfolio-touch-${width}.png`) });
-    await assertTouchTarget(nav.locator('[data-sidebar-target="settings"]'), page);
-    await page.getByRole("button", { name: "English", exact: true }).tap();
+    await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
+    await page.reload();
     await assertTouchTarget(nav.locator('[data-sidebar-target="projects"]'), page);
     await expect(page.getByRole("searchbox", { name: "Search projects" })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath(`portfolio-english-${width}.png`) });

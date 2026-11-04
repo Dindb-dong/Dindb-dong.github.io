@@ -1,3 +1,5 @@
+import { renderDropdown, mountDropdown } from "./dropdown.js";
+import { filteredProjects } from "./project-filters.js";
 import { revealActiveNavigation, sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
 import { renderExperienceApp } from "./experience-app.js";
@@ -6,13 +8,13 @@ import "dindbos/styles.css";
 import "./portfolio.css";
 import {
   buildPortfolioFileSystem,
-  CONTACT_LINKS,
   currentData,
   loadPortfolioRuntime,
-  persistLocale,
   portfolioDataForBuiltin,
   SKILLS,
 } from "./portfolio-data.js";
+
+const projectControlCleanup = new WeakMap();
 
 bootPortfolioOS();
 
@@ -137,6 +139,8 @@ function registerView(runtime, id, content, render, windowApi) {
   const dispose = render(content, runtime);
   return () => {
     dispose?.();
+    projectControlCleanup.get(content)?.();
+    projectControlCleanup.delete(content);
     if (runtime.views.get(id)?.content === content) runtime.views.delete(id);
   };
 }
@@ -152,18 +156,18 @@ function renderAbout(content, runtime) {
   const ko = runtime.locale === "ko";
   const copy = ko ? {
     education: "학력·언어", university: "연세대학교", major: "응용통계학 · 컴퓨터과학",
-    school: "과천외국어고등학교", track: "일본어과", stats: "스테이터스", assessment: "자기평가",
+    school: "과천외국어고등학교", track: "일본어과", stats: "스테이터스",
     career: "커리어", research: "AI", tools: "개발 도구", resume: "이력서 열기",
     leadership: "YAI 18기 부학회장", hub: "60명 넘는 학회원이 매일 사용하는 웹·앱",
     interests: "관심 분야", rl: "강화학습", vision: "컴퓨터 비전",
   } : {
     education: "Education & languages", university: "Yonsei University", major: "Applied Statistics · Computer Science",
-    school: "Gwacheon Foreign Language High School", track: "Japanese", stats: "Skills", assessment: "Self-assessed",
+    school: "Gwacheon Foreign Language High School", track: "Japanese", stats: "Skills",
     career: "Experience", research: "AI", tools: "Development tools", resume: "Open resume",
     leadership: "YAI 18th-cohort Vice President", hub: "Web & mobile platform used daily by 60+ members",
     interests: "Research interests", rl: "Reinforcement learning", vision: "Computer vision",
   };
-  const grades = [[ko ? "잠재력" : "Potential", "SS", "potential", 0], [ko ? "백엔드" : "Backend", "A+", "backend", 4], [ko ? "인프라" : "Infra", "A", "infra", 4], ["DB", "A-", "database", 3], ["AI", "A", "ai", 4], [ko ? "프론트" : "Frontend", "B+", "skills", 3]];
+  const grades = [[ko ? "잠재력" : "Potential", "SS", "potential", 0], [ko ? "백엔드" : "Backend", "A+", "backend", 4], [ko ? "인프라" : "Infra", "A", "infra", 4], ["DB", "A-", "database", 3], ["AI", "A", "ai", 4], [ko ? "프론트" : "Frontend", "A-", "skills", 3]];
   const languages = ko ? [["한국어", "원어민"], ["영어", "상"], ["일본어", "상"]] : [["Korean", "Native"], ["English", "Advanced"], ["Japanese", "Advanced"]];
   const tools = [
     [ko ? "언어" : "Languages", SKILLS.languages],
@@ -182,6 +186,7 @@ function renderAbout(content, runtime) {
       <main class="portfolio-main-pane profile-overview">
         <header class="profile-header">
           <div><h1>${ko ? "김동욱" : "Kim Dong Wook"}</h1><p>Full-Stack AI & SW Engineer</p></div>
+          <img class="profile-mobile-portrait" src="/assets/images/kim-dong-wook.png" alt="Kim Dong Wook">
           <nav class="profile-links" aria-label="${ko ? "프로필 링크" : "Profile links"}">
             <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">GitHub ↗</a>
             <a href="https://www.linkedin.com/in/dindb-dong/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
@@ -191,7 +196,6 @@ function renderAbout(content, runtime) {
         <div class="profile-panels">
           <div class="profile-column">
             <section class="profile-panel profile-education" aria-label="${copy.education}">
-              <h2>${copy.education}</h2>
               <div class="profile-school"><h3>${copy.university}</h3><p>${copy.major}</p><div class="profile-school-meta"><time>2023.03–2028.02</time><span>GPA <strong>4.00</strong> / 4.3</span></div></div>
               <div class="profile-school"><h3>${copy.school}</h3><p>${copy.track} <span class="profile-date">· 2020.03–2023.01</span></p></div>
               <dl class="profile-languages">${languages.map(([name, level]) => `<div><dt>${name}</dt><dd>${level}</dd></div>`).join("")}</dl>
@@ -203,7 +207,7 @@ function renderAbout(content, runtime) {
           </div>
           <div class="profile-column">
             <section class="profile-panel profile-stats" aria-label="${copy.stats}">
-              <header><h2>${copy.stats}</h2><span>${copy.assessment}</span></header>
+              <header><h2>${copy.stats}</h2></header>
               <dl class="profile-grade-grid">${grades.map(([name, grade, icon, segments]) => `<div ${grade === "SS" ? 'class="profile-potential"' : ""}><dt>${sidebarIcon(icon)}<span>${name}</span></dt>${segments ? `<span class="profile-grade-meter" aria-hidden="true">${Array.from({length: 5}, (_, index) => `<i${index < segments ? ' class="is-filled"' : ""}></i>`).join("")}</span>` : ""}<dd>${grade}</dd></div>`).join("")}</dl>
             </section>
           </div>
@@ -226,90 +230,126 @@ function renderAbout(content, runtime) {
 }
 
 function renderProjects(content, runtime) {
+  projectControlCleanup.get(content)?.();
   const data = currentData(runtime);
-  const projects = filteredProjects(data.projects, runtime.projectFilter, runtime.projectQuery);
-  const selected = data.projects.find((project) => project.id === runtime.selectedProjectId) || projects[0] || data.projects[0];
-  if (selected && projects.some((project) => project.id === selected.id)) runtime.selectedProjectId = selected.id;
-  const copy = runtime.locale === "ko" ? {
-    search: "프로젝트 검색",
-    placeholder: "제목, 역할, 기술 검색",
-    count: `${projects.length}개 프로젝트`,
+  const choices = runtime.projectChoices ||= { categories: [], tags: [], sort: "newest" };
+  if (runtime.projectFilter?.type !== "all") {
+    const filter = runtime.projectFilter;
+    choices.categories = filter.type === "category" ? [filter.value] : [];
+    choices.tags = ["language", "tech"].includes(filter.type) ? [filter.value] : [];
+    runtime.projectFilter = { type: "all", value: "All" };
+  }
+  const projects = filteredProjects(data.projects, runtime.projectFilter, runtime.projectQuery, choices);
+  const selected = projects.find(project => project.id === runtime.selectedProjectId) || projects[0];
+  runtime.selectedProjectId = selected?.id || null;
+  const ko = runtime.locale === "ko";
+  const copy = ko ? {
+    search: "프로젝트 검색", placeholder: "제목, 역할, 기술 검색", picker: "현재 프로젝트", empty: "검색 결과 없음",
+    filter: "필터", sort: "정렬", newest: "최신 등록순", oldest: "오래된 등록순", title: "이름순",
+    category: "카테고리", tags: "기술 태그 · 모두 포함", reset: "초기화", close: "닫기", count: `${projects.length}개 프로젝트`,
   } : {
-    search: "Search projects",
-    placeholder: "Search title, role, or technology",
-    count: `${projects.length} projects`,
+    search: "Search projects", placeholder: "Search title, role, or technology", picker: "Current project", empty: "No matching projects",
+    filter: "Filters", sort: "Sort", newest: "Newest registered", oldest: "Oldest registered", title: "Name",
+    category: "Categories", tags: "Technology tags · match all", reset: "Reset", close: "Close", count: `${projects.length} projects`,
   };
-
+  const prefix = content.closest("[data-window-id]")?.dataset.windowId || "portfolio";
+  const popupId = `${prefix}-project-filters`;
+  const categories = unique(data.projects.flatMap(project => project.categories));
+  const tags = unique(data.projects.flatMap(project => [...project.languages, ...project.techStacks]));
+  const checks = (values, type) => values.map((value, index) => `<label><input id="${escapeAttr(`${prefix}-${type}-${index}`)}" type="checkbox" data-project-choice="${type}" value="${escapeAttr(value)}" ${choices[type].includes(value) ? "checked" : ""}><span>${escapeHtml(value)}</span></label>`).join("");
+  const activeFilters = choices.categories.length + choices.tags.length + Number(runtime.projectFilter?.type !== "all");
   content.innerHTML = `
     <section class="portfolio-os-app portfolio-projects" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("projects", runtime)}
       <main class="portfolio-main-pane portfolio-finder">
+        <div class="portfolio-project-picker">${renderDropdown({
+          id: `${prefix}-project-picker`, label: copy.picker, value: String(selected?.id), placeholder: copy.empty,
+          options: projects.map(project => ({ value: String(project.id), label: project.title })),
+        })}</div>
         <div class="portfolio-project-controls" role="search" aria-label="${copy.search}">
           <label class="portfolio-search-field">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
             <input type="search" aria-label="${copy.search}" value="${escapeAttr(runtime.projectQuery || "")}" placeholder="${escapeAttr(copy.placeholder)}" data-project-search>
           </label>
-          <div class="portfolio-filter-group" role="group" aria-label="Project filters">
-            ${renderFilterButton("all", "All", runtime.projectFilter)}
-            ${renderFilterButton("category", "AI", runtime.projectFilter)}
-            ${renderFilterButton("category", "Web", runtime.projectFilter)}
-            ${renderFilterButton("category", "Mobile", runtime.projectFilter)}
-            ${renderFilterButton("category", "Data Science", runtime.projectFilter)}
-          </div>
-          <p class="portfolio-result-count" role="status">${copy.count}</p>
+          <button type="button" class="portfolio-filter-trigger" data-project-filters popovertarget="${escapeAttr(popupId)}" aria-label="${copy.filter}" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg><span>${copy.filter}${activeFilters ? ` · ${activeFilters}` : ""}</span></button>
         </div>
+        <p class="portfolio-result-count" role="status">${copy.count}</p>
         <section class="portfolio-finder-layout">
-          <div class="portfolio-project-list" role="listbox" aria-label="Projects">
-            ${projects.length ? projects.map((project) => renderProjectRow(project, selected?.id)).join("") : renderProjectListEmpty(runtime)}
-          </div>
-          <article class="portfolio-detail-pane">
-            ${selected && projects.some((project) => project.id === selected.id) ? renderProjectDetail(selected, runtime) : renderEmptyDetail(runtime)}
-          </article>
+          <div class="portfolio-project-list" role="listbox" aria-label="Projects">${projects.length ? projects.map(project => renderProjectRow(project, selected.id)).join("") : renderProjectListEmpty(runtime)}</div>
+          <article class="portfolio-detail-pane">${selected ? renderProjectDetail(selected, runtime) : renderEmptyDetail(runtime)}</article>
         </section>
+        <div id="${escapeAttr(popupId)}" class="portfolio-filter-popover" popover="auto" role="dialog" aria-label="${copy.filter}">
+          <header><strong>${copy.filter}</strong><button type="button" data-filter-close>${copy.close}</button></header>
+          <label class="portfolio-sort-field">${copy.sort}<select id="${escapeAttr(prefix)}-sort" aria-label="${copy.sort}" data-project-sort>${["newest", "oldest", "title"].map(value => `<option value="${value}" ${choices.sort === value ? "selected" : ""}>${copy[value]}</option>`).join("")}</select></label>
+          <fieldset><legend>${copy.category}</legend><div class="portfolio-filter-options">${checks(categories, "categories")}</div></fieldset>
+          <fieldset><legend>${copy.tags}</legend><div class="portfolio-filter-options portfolio-filter-tags">${checks(tags, "tags")}</div></fieldset>
+          <button type="button" data-project-reset>${copy.reset}</button>
+        </div>
       </main>
-    </section>
-  `;
-
-  content.querySelectorAll("[data-project-id]").forEach((button) => {
-    button.addEventListener("click", () => {
-      runtime.selectedProjectId = Number(button.dataset.projectId);
-      content.querySelectorAll("[data-project-id]").forEach((row) => {
-        const selected = Number(row.dataset.projectId) === runtime.selectedProjectId;
-        row.setAttribute("aria-selected", String(selected));
-        row.classList.toggle("is-selected", selected);
-      });
-      const project = data.projects.find((project) => project.id === runtime.selectedProjectId);
-      const detail = content.querySelector(".portfolio-detail-pane");
-      detail.innerHTML = renderProjectDetail(project, runtime);
-      detail.scrollTop = 0;
+    </section>`;
+  const selectProject = id => {
+    runtime.selectedProjectId = Number(id);
+    content.querySelectorAll("[data-project-id]").forEach(row => {
+      const selected = Number(row.dataset.projectId) === runtime.selectedProjectId;
+      row.setAttribute("aria-selected", String(selected));
+      row.classList.toggle("is-selected", selected);
     });
+    const project = projects.find(project => project.id === runtime.selectedProjectId);
+    const detail = content.querySelector(".portfolio-detail-pane");
+    detail.innerHTML = renderProjectDetail(project, runtime);
+    detail.scrollTop = 0;
+    content.querySelector(".portfolio-finder-layout").scrollTop = 0;
+    const picker = content.querySelector(".portfolio-project-picker");
+    picker.querySelector("[data-dropdown-trigger] span").textContent = project.title;
+    picker.querySelectorAll("[role=option]").forEach(option => option.setAttribute("aria-selected", String(Number(option.dataset.dropdownValue) === project.id)));
+  };
+  content.querySelectorAll("[data-project-id]").forEach(button => button.addEventListener("click", () => selectProject(button.dataset.projectId)));
+  const disposeDropdown = mountDropdown(content.querySelector(".portfolio-project-picker [data-dropdown]"), selectProject);
+  const popup = content.querySelector(".portfolio-filter-popover");
+  const trigger = content.querySelector("[data-project-filters]");
+  const lifetime = new AbortController();
+  const position = () => {
+    if (!popup.matches(":popover-open")) return;
+    const rect = trigger.getBoundingClientRect();
+    popup.style.left = `${Math.max(12, Math.min(rect.right - popup.offsetWidth, innerWidth - popup.offsetWidth - 12))}px`;
+    popup.style.top = `${Math.max(12, Math.min(rect.bottom + 8, innerHeight - popup.offsetHeight - 12))}px`;
+  };
+  popup.addEventListener("toggle", () => {
+    trigger.setAttribute("aria-expanded", String(popup.matches(":popover-open")));
+    position();
   });
-  content.querySelectorAll("[data-filter-type]").forEach((button) => {
-    button.addEventListener("click", () => {
-      runtime.projectFilter = {
-        type: button.dataset.filterType,
-        value: button.dataset.filterValue,
-      };
-      const nextProjects = filteredProjects(currentData(runtime).projects, runtime.projectFilter, runtime.projectQuery);
-      runtime.selectedProjectId = nextProjects[0]?.id || currentData(runtime).projects[0]?.id;
-      renderProjects(content, runtime);
-    });
-  });
-  const search = content.querySelector("[data-project-search]");
-  search?.addEventListener("input", () => {
-    runtime.projectQuery = search.value;
-    const nextProjects = filteredProjects(currentData(runtime).projects, runtime.projectFilter, runtime.projectQuery);
-    runtime.selectedProjectId = nextProjects[0]?.id || null;
+  window.addEventListener("resize", position, { signal: lifetime.signal });
+  content.querySelector("[data-filter-close]").addEventListener("click", () => { popup.hidePopover(); trigger.focus({ preventScroll: true }); });
+  const rerenderFilters = focusId => {
+    const scroll = popup.scrollTop;
+    const tagsScroll = content.querySelector(".portfolio-filter-tags").scrollTop;
     renderProjects(content, runtime);
-    content.querySelector("[data-project-search]")?.focus();
+    content.querySelector("[data-project-filters]").click();
+    content.querySelector(".portfolio-filter-popover").scrollTop = scroll;
+    content.querySelector(".portfolio-filter-tags").scrollTop = tagsScroll;
+    content.querySelector(`#${CSS.escape(focusId)}`)?.focus({ preventScroll: true });
+  };
+  content.querySelectorAll("[data-project-choice]").forEach(input => input.addEventListener("change", () => {
+    choices[input.dataset.projectChoice] = [...content.querySelectorAll(`[data-project-choice="${input.dataset.projectChoice}"]:checked`)].map(input => input.value);
+    runtime.projectFilter = { type: "all", value: "All" };
+    rerenderFilters(input.id);
+  }));
+  content.querySelector("[data-project-sort]").addEventListener("change", event => { choices.sort = event.target.value; rerenderFilters(event.target.id); });
+  content.querySelector("[data-project-search]").addEventListener("input", event => {
+    runtime.projectQuery = event.target.value;
+    renderProjects(content, runtime);
+    content.querySelector("[data-project-search]").focus();
   });
-  content.querySelector("[data-project-reset]")?.addEventListener("click", () => {
+  content.querySelectorAll("[data-project-reset]").forEach(button => button.addEventListener("click", () => {
     runtime.projectQuery = "";
     runtime.projectFilter = { type: "all", value: "All" };
-    runtime.selectedProjectId = currentData(runtime).projects[0]?.id || null;
+    runtime.projectChoices = { categories: [], tags: [], sort: "newest" };
     renderProjects(content, runtime);
-  });
+    content.querySelector("[data-project-filters]").focus({ preventScroll: true });
+  }));
+  projectControlCleanup.set(content, () => { disposeDropdown(); lifetime.abort(); });
   wireSidebar(content, runtime);
+  return () => { projectControlCleanup.get(content)?.(); projectControlCleanup.delete(content); };
 }
 
 function renderExperience(content, runtime) {
@@ -359,35 +399,6 @@ function renderSkills(content, runtime) {
   });
 }
 
-function renderSettings(content, runtime) {
-  content.innerHTML = `
-    <section class="portfolio-os-app portfolio-settings" data-locale="${escapeAttr(runtime.locale)}">
-      ${renderAppSidebar("settings", runtime)}
-      <main class="portfolio-main-pane">
-        <section class="portfolio-settings-list">
-          <div class="portfolio-setting-row">
-            <div>
-              <strong>Language</strong>
-            </div>
-            <div class="portfolio-segmented" role="group" aria-label="Language">
-              <button type="button" data-locale-choice="ko" class="${runtime.locale === "ko" ? "is-active" : ""}">한국어</button>
-              <button type="button" data-locale-choice="en" class="${runtime.locale === "en" ? "is-active" : ""}">English</button>
-            </div>
-          </div>
-        </section>
-      </main>
-    </section>
-  `;
-  wireSidebar(content, runtime);
-  content.querySelectorAll("[data-locale-choice]").forEach((button) => {
-    button.addEventListener("click", () => {
-      runtime.locale = persistLocale(button.dataset.localeChoice);
-      runtime.selectedProjectId = currentData(runtime).projects[0]?.id || runtime.selectedProjectId;
-      refreshViews(runtime);
-    });
-  });
-}
-
 function renderResume(content, runtime) {
   const copy = runtime.locale === "ko" ? {
     html: "HTML로 열기",
@@ -427,16 +438,12 @@ function renderAppSidebar(active, runtime) {
     ["experience", "경험"],
     ["skills", "기술"],
     ["resume", "이력서"],
-    ["settings", "설정"],
-    ["contact", "연락하기"],
   ] : [
     ["about", "Overview"],
     ["projects", "Projects"],
     ["experience", "Experience"],
     ["skills", "Skills"],
     ["resume", "Resume"],
-    ["settings", "Settings"],
-    ["contact", "Contact"],
   ];
   return `
     <aside class="portfolio-sidebar">
@@ -467,10 +474,8 @@ function wireSidebar(content, runtime) {
   content.querySelectorAll("[data-sidebar-target]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = button.dataset.sidebarTarget;
-      if (target === "contact") {
-        window.open(CONTACT_LINKS[0].href, "_blank", "noreferrer");
-        return;
-      }
+      projectControlCleanup.get(content)?.();
+      projectControlCleanup.delete(content);
       const view = runtime.views.get(target);
       if (view) {
         view.render(view.content, runtime);
@@ -484,6 +489,7 @@ function wireSidebar(content, runtime) {
       runtime.selectedProjectId = Number(button.dataset.profileProject);
       runtime.projectFilter = { type: "all", value: "All" };
       runtime.projectQuery = "";
+      runtime.projectChoices = { categories: [], tags: [], sort: "newest" };
       renderInlineView("projects", content, runtime);
     });
   });
@@ -496,7 +502,6 @@ function renderInlineView(target, content, runtime) {
     resume: renderResume,
     experience: renderExperience,
     skills: renderSkills,
-    settings: renderSettings,
   };
   const renderer = renderers[target];
   if (!renderer) return;
@@ -507,15 +512,6 @@ function renderInlineView(target, content, runtime) {
     }
   }
   renderer(content, runtime);
-}
-
-function renderFilterButton(type, value, activeFilter) {
-  const active = activeFilter.type === type && activeFilter.value === value;
-  return `
-    <button type="button" class="${active ? "is-active" : ""}" data-filter-type="${escapeAttr(type)}" data-filter-value="${escapeAttr(value)}">
-      ${escapeHtml(value)}
-    </button>
-  `;
 }
 
 function renderProjectRow(project, selectedId) {
@@ -640,26 +636,6 @@ function renderSkillGroup(title, values, filterType) {
       </div>
     </article>
   `;
-}
-
-function filteredProjects(projects, filter, query = "") {
-  let result = projects;
-  if (filter && filter.type !== "all") result = result.filter((project) => {
-    if (filter.type === "category") return project.categories.includes(filter.value);
-    if (filter.type === "language") return project.languages.includes(filter.value);
-    if (filter.type === "tech") return project.techStacks.includes(filter.value);
-    return true;
-  });
-  const normalizedQuery = String(query || "").trim().toLocaleLowerCase();
-  if (!normalizedQuery) return result;
-  return result.filter((project) => [
-    project.title,
-    project.role,
-    ...project.categories,
-    ...project.languages,
-    ...project.techStacks,
-    ...project.description,
-  ].join(" ").toLocaleLowerCase().includes(normalizedQuery));
 }
 
 function browserProvider(config) {
