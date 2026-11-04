@@ -1,0 +1,424 @@
+diff --git a/DESIGN.md b/DESIGN.md
+index 88c73ac..a9c1681 100644
+--- a/DESIGN.md
++++ b/DESIGN.md
+@@ -61,6 +61,19 @@ Avoid decorative dashboards, rainbow gradients, glass behind every paragraph, ex
+ 
+ Inspect actual desktop and mobile rendering, a narrow embedded desktop, light and dark appearances, active and inactive windows, keyboard focus, menus, long names and app errors. Observe motion while interacting; a still image cannot establish animation quality. Check two desktop instances and the surrounding page for style and event leakage. The design is complete only after the integrated screen follows these rules.
+ 
++## Mobile app navigation (2026-11-04)
++
++- Canvas library document: DindbOS · Portfolio Mobile Navigation, Page 1 (`page-0959dd44-73da-422d-8f68-016cc5dce6a7`). Component board `5b4132bd-0793-4508-9e4b-93c26ce41b96`, main `9135cb80-f7fa-48e9-9862-dc1c1b3cfa8b`, component record `component-e63836fc-600a-4006-b4fc-d42a9b4d5e4c`; mobile screen board `bfb5aa81-4d2b-44c9-930e-d67bf4869ea1`. Reopened from the library to verify persistence.
++- `.dos-mobile-tabbar` is a CSS component in `dindbos/styles.css`: a 32px frosted capsule, 6px inset, 4px gaps, 20px icons, 11px labels and 64×52px minimum buttons. The host reserves a bottom row; content never sits behind it. Many destinations scroll horizontally.
++- Activate against app container width ≤760px. Preserve desktop sidebars, semantic nav/buttons, keyboard focus, disabled state and opaque accessibility modes. Use existing glass/theme tokens; portfolio supplies its existing blue accent. Canvas reviewed at 390px; implementation checks include 320/390/430px and narrowed desktop windows.
++
++## Shared searchable selector (2026-11-04)
++
++- `renderSearchableSelect` / `mountSearchableSelect` in `src/sdk/searchable-select.js` are public SDK exports, paired with scoped `src/styles/searchable-select.css`. No portfolio code or data is embedded in the library.
++- Reuse the verified DindbOS · Portfolio Mobile Navigation canvas: Page 1, searchable board `38e37259-87b3-4278-bdaa-b42223b296fe`, main `8e89f635-69b2-48e5-85a5-0be13b87b5ac`. Updated the options with an always-available All choice. Host controls list/detail navigation and query state; pinned options are generic.
++- Controls are 44px high, field radius 12px, menu radius 20px and option radius 14px. Colors inherit desktop tokens with optional `--dos-select-*` overrides. The same component supports mobile and desktop, long names, empty results, keyboard navigation, native dismissal and explicit disposal.
++- The existing host rounded dropdown is reused for sorting, documented by board `c84956e2-bae4-4a83-aa34-fbf52556d233`, main `acae9829-f4aa-4e26-8c05-860ec2c3b73b`, component `component-1ec67bc4-8435-4e1d-911c-44f5dc32d959`. No native select popup styling is assumed.
++
+ ## Consumer Dock tokens
+ 
+ `theme.variables` exposes `--dock-background`, `--dock-border`, `--dock-radius`, `--dock-shadow`, `--dock-gap`, `--dock-padding` and `--dock-bottom`. Omitted values preserve the existing desktop and narrow-container defaults; glass and dark appearance honor the same overrides. Reduced transparency and forced colors retain opaque readable material. This API wiring and performance maintenance do not introduce a new visual design. Wallpaper and accent use the existing appearance API; full replacement uses `ui.slots.dock`.
+diff --git a/README.md b/README.md
+index 3c50c38..f4db521 100644
+--- a/README.md
++++ b/README.md
+@@ -201,3 +201,21 @@ Run the relevant smoke scripts for the area you change. The repository includes
+ ## License
+ 
+ [MIT](LICENSE). Original dindbOS icons and SVG artwork are included. Demo wallpaper artwork was generated for this project; see [artwork provenance](docs/assets/README.md). Third-party projects and linked materials retain their own licenses.
++
++## Searchable selection control
++
++`renderSearchableSelect` and `mountSearchableSelect` are exported from `dindbos` (0.2.2). Import `dindbos/styles.css` and mount the control inside a `.dindbos-host`.
++
++```js
++import { renderSearchableSelect, mountSearchableSelect } from "dindbos";
++container.innerHTML = renderSearchableSelect({ id: "projects", label: "Projects", placeholder: "Search projects" });
++const picker = mountSearchableSelect(container.firstElementChild, {
++  options: [{ value: "all", label: "View all", pinned: true }, { value: "example", label: "Example", searchText: "Example web app" }],
++  value: "all", empty: "No results", onSearch: query => filterProjects(query), onSelect: value => openProject(value),
++});
++// Call picker.destroy() when replacing or closing the view.
++```
++
++Values are unique strings. Pinned choices remain available during search; ordinary options match `searchText` or `label`. `picker.select(value)` commits a selection; `picker.setValue(value)` synchronizes the displayed selection without clearing the query or calling callbacks. Search leaves selection decisions to the host. The control supports Arrow/Home/End, Enter, Escape/Tab and native outside dismissal. Targets are at least 44px, menus use the top layer, and listeners are disposed by `destroy()`.
++
++The optional `--dos-select-{line,bg,text,muted,accent,soft}` properties override the desktop theme for this control. Check the exported types for the complete signature. Run `npm run smoke:searchable-select` to validate source and built exports; the portfolio integration exercises touch, keyboard, empty results and filtering against the packed package.
+diff --git a/docs/liquid-glass.md b/docs/liquid-glass.md
+index d5f1279..e2069d6 100644
+--- a/docs/liquid-glass.md
++++ b/docs/liquid-glass.md
+@@ -68,3 +68,18 @@ The browser check also counts map rebuilds over 24 animated resize frames and ex
+ With the showcase already running, `node scripts/smoke-liquid-glass-integrated-browser.js` checks the actual desktop at `http://127.0.0.1:5174` (`DINDBOS_BASE_URL` overrides this). It preserves that server. The check settles image decoding, compares Control Center and Dock in optical/baseline/baseline/optical order, asserts stable repeated frames, and tests foreground input, light/dark appearance and forced-color Dock opacity. Its temporary stylesheet baseline survives shell clock mutations that legitimately reapply the adapter's inline filter. Evidence goes to `internal/docs/qa/liquid-glass-integrated/`.
+ 
+ Run `node scripts/smoke-liquid-glass-integrated-browser.js` against the running showcase (default `http://127.0.0.1:5174`, override with `DINDBOS_QA_URL`) for real Control Center and Dock comparisons, including stable optical/baseline/baseline/optical captures and dark forced-colors behavior. `npm run verify:ui` includes both isolated and integrated optical checks.
++
++## Mobile app tab bar (0.2.1)
++
++`dindbos/styles.css` includes the `.dos-mobile-tabbar` component. Add it to an app's existing named `<nav>` with native buttons, SVG icons and visible labels. Mark the selected destination with `aria-current="page"`; retain your existing click handlers. The component activates at a containing width of 760 px or less, leaving desktop sidebar navigation to the host.
++
++```html
++<nav class="dos-mobile-tabbar" aria-label="App sections">
++  <button type="button" aria-current="page"><svg aria-hidden="true"><!-- icon --></svg><span>Overview</span></button>
++  <button type="button"><svg aria-hidden="true"><!-- icon --></svg><span>Projects</span></button>
++</nav>
++```
++
++The host must provide an inline-size container and reserve a bottom layout row for the bar so it never covers content. Targets are at least 64 × 52 px; long menus scroll horizontally without wrapping or shrinking targets. Native Tab focus scrolls destinations into view. Use scoped `--glass-*`, `--accent-soft`, `--accent` and `--text` tokens for appearance.
++
++Mobile browsers receive a frosted liquid-glass material with a refractive rim and selected capsule. This CSS component does not automatically opt into the desktop SVG refraction adapter. Reduced transparency and forced colors disable blur; forced colors also outlines the selected destination. No pointer handlers, framework, or positioning are installed.
+diff --git a/package-lock.json b/package-lock.json
+index 827ed9e..81ffad1 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+   "name": "dindbos",
+-  "version": "0.2.0",
++  "version": "0.2.3",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "dindbos",
+-      "version": "0.2.0",
++      "version": "0.2.3",
+       "license": "MIT",
+       "bin": {
+         "create-dindbos": "dist/create.js"
+diff --git a/package.json b/package.json
+index 7d89696..e55ba41 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "dindbos",
+-  "version": "0.2.0",
++  "version": "0.2.3",
+   "private": false,
+   "type": "module",
+   "description": "Embeddable browser-native OS runtime for web apps.",
+@@ -130,6 +130,7 @@
+     "smoke:editor-browser": "node scripts/smoke-editor-browser.js",
+     "smoke:productivity": "node scripts/smoke-productivity-apps.js",
+     "smoke:clock": "node scripts/smoke-clock.js",
++    "smoke:searchable-select": "npm run build:sdk && node scripts/smoke-searchable-select.js",
+     "smoke:nfc": "node scripts/smoke-nfc-paths.js",
+     "smoke:liquid-glass": "node scripts/smoke-liquid-glass.js && node scripts/smoke-liquid-glass-scheduling.js",
+     "smoke:customization-browser": "node scripts/smoke-customization-browser.js"
+diff --git a/scripts/smoke-mobile-tabbar.js b/scripts/smoke-mobile-tabbar.js
+new file mode 100644
+index 0000000..86184b0
+--- /dev/null
++++ b/scripts/smoke-mobile-tabbar.js
+@@ -0,0 +1,36 @@
++import assert from "node:assert/strict";
++import { readFileSync } from "node:fs";
++import { chromium, expect } from "@playwright/test";
++
++const css = ["theme", "mobile-tabbar"].map(name => readFileSync(`src/styles/${name}.css`, "utf8")).join("\n");
++const browser = await chromium.launch({ channel: "chrome", headless: true });
++try {
++  const page = await browser.newPage({ hasTouch: true, isMobile: true, viewport: { width: 430, height: 844 } });
++  await page.setContent(`<meta name="viewport" content="width=device-width, initial-scale=1"><style>${css}
++.host-nav > button { width: 100%; }</style><div class="dindbos-host" style="container-type:inline-size;width:300px"><nav class="dos-mobile-tabbar host-nav" aria-label="Sections">${["Overview", "Projects", "Media library", "Responsibilities", "Settings"].map((label, i) => `<button type="button" ${i === 0 ? 'aria-current="page"' : ""}>${label}</button>`).join("")}</nav></div><nav class="dos-mobile-tabbar" id="outside"><button>Outside</button></nav>`);
++  await page.locator(".dindbos-host button").evaluateAll(buttons => buttons.forEach(button => button.onclick = () => { buttons.forEach(el => el.removeAttribute("aria-current")); button.setAttribute("aria-current", "page"); }));
++  const nav = page.getByRole("navigation", { name: "Sections" });
++  await expect(nav).toHaveCSS("display", "flex");
++  assert.equal(await page.locator("#outside").evaluate(el => getComputedStyle(el).backdropFilter), "none", "component must not leak outside a desktop");
++  for (const button of await nav.locator("button").all()) {
++    await button.scrollIntoViewIfNeeded();
++    const bounds = await button.boundingBox();
++    assert(bounds.width >= 63.99 && bounds.height >= 51.99, `targets cannot shrink when the menu overflows: ${JSON.stringify(bounds)}`);
++    assert(bounds.width < 160, "host sidebar width rules must not stretch each tab across the bar");
++    await button.tap();
++    await expect(button).toHaveAttribute("aria-current", "page");
++  }
++  assert(await nav.evaluate(el => el.scrollLeft) > 0, "overflow destinations must remain reachable");
++  await page.emulateMedia({ forcedColors: "active" });
++  await expect(nav).toHaveCSS("backdrop-filter", "none");
++  await expect(nav.locator('[aria-current="page"]')).toHaveCSS("outline-style", "solid");
++  await page.emulateMedia({ forcedColors: "none" });
++  await nav.locator("button").first().focus();
++  await page.keyboard.press("Tab");
++  await expect(nav.locator("button").nth(1)).toBeFocused();
++  await page.locator(".dindbos-host").evaluate(el => el.style.width = "1000px");
++  await expect(nav).not.toHaveCSS("display", "flex");
++  console.log("PASS: mobile tab bar touch, overflow, keyboard, accessibility and host scoping");
++} finally {
++  await browser.close();
++}
+diff --git a/scripts/smoke-searchable-select.js b/scripts/smoke-searchable-select.js
+new file mode 100644
+index 0000000..9e23446
+--- /dev/null
++++ b/scripts/smoke-searchable-select.js
+@@ -0,0 +1,17 @@
++import assert from 'node:assert/strict';
++import { readFileSync } from 'node:fs';
++import { renderSearchableSelect, mountSearchableSelect } from '../src/sdk/index.js';
++const html = renderSearchableSelect({ id: 'picker"', label: '<Projects>', placeholder: 'Search & select' });
++assert.equal(typeof mountSearchableSelect, 'function');
++assert.ok(html.includes('role="combobox"'));
++assert.ok(html.includes('role="listbox"'));
++assert.ok(html.includes('aria-label="&lt;Projects&gt;"'));
++assert.ok(html.includes('aria-controls="picker&quot;"'));
++assert.ok(!html.includes('aria-label="<Projects>"'));
++const css = readFileSync('src/styles/searchable-select.css', 'utf8');
++assert.ok(css.includes('@scope (.dindbos-host) to (.dindbos-host)'));
++assert.ok(css.includes('min-height: 44px'));
++const packaged = await import('../dist/index.js');
++assert.equal(typeof packaged.mountSearchableSelect, 'function');
++assert.equal(packaged.renderSearchableSelect({ id: 'x', label: 'X', placeholder: 'Find' }), renderSearchableSelect({ id: 'x', label: 'X', placeholder: 'Find' }));
++console.log('searchable select smoke ok: public/package exports, escaping, semantics, scoped touch styles');
+diff --git a/src/sdk/index.d.ts b/src/sdk/index.d.ts
+index 2a4cdd9..f5cca4a 100644
+--- a/src/sdk/index.d.ts
++++ b/src/sdk/index.d.ts
+@@ -287,3 +287,21 @@ export function conformanceReport(runtime?: Record<string, unknown>): Record<str
+ export function isolationSnapshot(browser?: Record<string, unknown>): Record<string, unknown>;
+ 
+ export function applyDindbOSTheme(os: DindbOS, theme?: DindbOSThemeConfig): void;
++
++/** String values must be unique within a selector. Import dindbos/styles.css. */
++export interface SearchableSelectOption {
++  value: string;
++  label: string;
++  searchText?: string;
++  /** Keep a navigation/reset choice visible while searching. */
++  pinned?: boolean;
++}
++export function renderSearchableSelect(options: { id: string; label: string; placeholder: string }): string;
++export function mountSearchableSelect(root: HTMLElement, options: {
++  options: SearchableSelectOption[];
++  value: string;
++  query?: string;
++  empty: string;
++  onSearch: (query: string, value: string) => void;
++  onSelect: (value: string) => void;
++}): { select(value: string): void; setValue(value: string): void; destroy(): void };
+diff --git a/src/sdk/index.js b/src/sdk/index.js
+index 701a21f..5fa542f 100644
+--- a/src/sdk/index.js
++++ b/src/sdk/index.js
+@@ -138,3 +138,5 @@ function watchAbort(os, signal) {
+   os.lifecycleCleanups.push(() => signal.removeEventListener("abort", cancel));
+   if (signal.aborted) cancel();
+ }
++
++export { renderSearchableSelect, mountSearchableSelect } from "./searchable-select.js";
+diff --git a/src/sdk/searchable-select.js b/src/sdk/searchable-select.js
+new file mode 100644
+index 0000000..cfccfa3
+--- /dev/null
++++ b/src/sdk/searchable-select.js
+@@ -0,0 +1,97 @@
++const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
++
++export function renderSearchableSelect({ id, label, placeholder }) {
++  return `<div class="dos-searchable-select" data-dos-searchable-select>
++    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
++    <input type="search" role="combobox" aria-label="${escape(label)}" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="${escape(id)}" placeholder="${escape(placeholder)}" autocomplete="off">
++    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
++    <div id="${escape(id)}" class="dos-select-menu dos-searchable-select-menu" role="listbox" aria-label="${escape(label)}" popover="auto"></div>
++  </div>`;
++}
++
++export function mountSearchableSelect(root, { options, value, query = "", empty, onSearch, onSelect }) {
++  const input = root.querySelector("input");
++  const menu = root.querySelector("[role=listbox]");
++  const lifetime = new AbortController();
++  const listen = { signal: lifetime.signal };
++  let selected = value;
++  let active = 0;
++  let matches = [];
++  const opened = () => menu.matches(":popover-open");
++  const display = () => { input.value = query || options.find(option => option.value === selected)?.label || ""; };
++  const position = () => {
++    if (!opened()) return;
++    const rect = root.getBoundingClientRect();
++    menu.style.width = `${Math.min(rect.width, innerWidth - 24)}px`;
++    menu.style.maxHeight = `${Math.max(96, Math.min(320, innerHeight - rect.bottom - 24))}px`;
++    menu.style.left = `${Math.max(12, Math.min(rect.left, innerWidth - menu.offsetWidth - 12))}px`;
++    menu.style.top = `${Math.max(12, Math.min(rect.bottom + 8, innerHeight - menu.offsetHeight - 12))}px`;
++  };
++  const highlight = () => {
++    const rows = [...menu.querySelectorAll("[role=option]")];
++    rows.forEach((row, index) => row.classList.toggle("is-active", index === active));
++    if (opened() && rows[active]) {
++      input.setAttribute("aria-activedescendant", rows[active].id);
++      rows[active].scrollIntoView({ block: "nearest" });
++    } else input.removeAttribute("aria-activedescendant");
++  };
++  const render = () => {
++    const text = query.trim().toLocaleLowerCase();
++    matches = options.filter(option => option.pinned || (option.searchText || option.label).toLocaleLowerCase().includes(text));
++    active = Math.max(0, matches.findIndex(option => text ? !option.pinned : option.value === selected));
++    menu.innerHTML = matches.length ? matches.map((option, index) => `<button type="button" id="${escape(menu.id)}-option-${index}" class="dos-select-option" role="option" tabindex="-1" aria-selected="${option.value === selected}" data-select-value="${escape(option.value)}"><span>${escape(option.label)}</span></button>`).join("") : "";
++    if (!matches.length || (text && matches.every(option => option.pinned))) menu.insertAdjacentHTML("beforeend", `<p class="dos-searchable-select-empty">${escape(empty)}</p>`);
++    position();
++    highlight();
++  };
++  const close = () => {
++    if (opened()) menu.hidePopover();
++    input.setAttribute("aria-expanded", "false");
++    input.removeAttribute("aria-activedescendant");
++    display();
++  };
++  const open = () => {
++    input.value = query;
++    if (!opened()) menu.showPopover();
++    input.setAttribute("aria-expanded", "true");
++    render();
++  };
++  const select = next => {
++    selected = next;
++    query = "";
++    close();
++    render();
++    onSelect(next);
++  };
++  input.addEventListener("focus", open, listen);
++  input.addEventListener("click", () => { if (!opened()) open(); }, listen);
++  input.addEventListener("input", () => {
++    query = input.value;
++    render();
++    onSearch(query, selected);
++    if (!opened()) open();
++  }, listen);
++  input.addEventListener("keydown", event => {
++    if (event.isComposing) return;
++    if (["ArrowDown", "ArrowUp"].includes(event.key) || (opened() && ["Home", "End"].includes(event.key))) {
++      event.preventDefault();
++      if (!opened()) open();
++      else active = event.key === "Home" ? 0 : event.key === "End" ? matches.length - 1 : (active + (event.key === "ArrowDown" ? 1 : -1) + matches.length) % Math.max(1, matches.length);
++      highlight();
++    } else if (event.key === "Enter" && opened() && matches[active]) {
++      event.preventDefault();
++      select(matches[active].value);
++    } else if (event.key === "Escape") { event.preventDefault(); close(); }
++    else if (event.key === "Tab") close();
++  }, listen);
++  menu.addEventListener("click", event => {
++    const option = event.target.closest("[data-select-value]");
++    if (option) { input.focus({ preventScroll: true }); select(option.dataset.selectValue); }
++  }, listen);
++  menu.addEventListener("toggle", () => { if (!opened()) close(); }, listen);
++  window.addEventListener("resize", position, listen);
++  document.addEventListener("scroll", position, { ...listen, capture: true });
++  render();
++  display();
++  return { select, setValue: next => { selected = next; render(); if (!opened()) display(); }, destroy: () => { close(); lifetime.abort(); } };
++}
+diff --git a/src/styles/index.css b/src/styles/index.css
+index 37ac32b..27d9ef6 100644
+--- a/src/styles/index.css
++++ b/src/styles/index.css
+@@ -13,3 +13,5 @@
+ @import "./applications.css";
+ @import "./liquid-glass.css";
+ @import "./control-center.css";
++@import "./mobile-tabbar.css";
++@import "./searchable-select.css";
+diff --git a/src/styles/mobile-tabbar.css b/src/styles/mobile-tabbar.css
+new file mode 100644
+index 0000000..54de6a3
+--- /dev/null
++++ b/src/styles/mobile-tabbar.css
+@@ -0,0 +1,59 @@
++/* App-local navigation: the host owns placement; the bar owns touch geometry. */
++@scope (.dindbos-host) to (.dindbos-host) {
++  @container (max-width: 760px) {
++    :scope .dos-mobile-tabbar {
++      display: flex;
++      align-items: center;
++      gap: 4px;
++      min-width: 0;
++      padding: 6px;
++      overflow-x: auto;
++      overscroll-behavior-x: contain;
++      touch-action: pan-x;
++      scrollbar-width: none;
++      border: 1px solid var(--glass-border, rgb(255 255 255 / .65));
++      border-radius: 32px;
++      background: var(--glass-bg-strong, rgb(248 252 250 / .72));
++      color: var(--text, #202124);
++      -webkit-backdrop-filter: blur(20px) saturate(1.45);
++      backdrop-filter: blur(20px) saturate(1.45);
++      box-shadow: var(--shadow-soft, 0 8px 24px rgb(30 45 60 / .14));
++    }
++    :scope .dos-mobile-tabbar::-webkit-scrollbar { display: none; }
++    :scope .dos-mobile-tabbar > button {
++      display: flex;
++      flex: 1 0 auto;
++      flex-direction: column;
++      align-items: center;
++      justify-content: center;
++      gap: 4px;
++      width: auto;
++      min-width: 64px;
++      min-height: 52px;
++      padding: 6px 10px;
++      border: 0;
++      border-radius: 26px;
++      background: transparent;
++      color: inherit;
++      font: inherit;
++      font-size: 11px;
++      line-height: 1.2;
++      white-space: nowrap;
++      cursor: pointer;
++      touch-action: manipulation;
++    }
++    :scope .dos-mobile-tabbar > button > svg { width: 20px; height: 20px; flex: 0 0 20px; pointer-events: none; }
++    :scope .dos-mobile-tabbar > button > span { flex: 0 0 auto; font-size: inherit; line-height: inherit; pointer-events: none; }
++    :scope .dos-mobile-tabbar > button:is(:hover, :focus-visible) { background: var(--glass-bg-active, rgb(255 255 255 / .65)); }
++    :scope .dos-mobile-tabbar > button[aria-current="page"] { background: var(--accent-soft, #d5e3fc); color: var(--text, #202124); }
++    :scope .dos-mobile-tabbar > button:focus-visible { outline: 2px solid var(--accent, #287a58); outline-offset: -2px; }
++    :scope .dos-mobile-tabbar > button:disabled { opacity: .45; cursor: default; }
++    @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
++      :scope .dos-mobile-tabbar { background: var(--content-bg, Canvas); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
++    }
++    @media (forced-colors: active) {
++      :scope .dos-mobile-tabbar { background: Canvas; color: CanvasText; border-color: ButtonText; }
++      :scope .dos-mobile-tabbar > button[aria-current="page"] { outline: 2px solid Highlight; outline-offset: -2px; }
++    }
++  }
++}
+diff --git a/src/styles/searchable-select.css b/src/styles/searchable-select.css
+new file mode 100644
+index 0000000..1d7d7c3
+--- /dev/null
++++ b/src/styles/searchable-select.css
+@@ -0,0 +1,14 @@
++/* App-owned placement; selectors and popovers remain within their desktop. */
++@scope (.dindbos-host) to (.dindbos-host) {
++  .dos-searchable-select { position: relative; min-width: 0; }
++  .dos-searchable-select > input { box-sizing: border-box; width: 100%; min-width: 0; height: 44px; padding: 10px 36px; border: 1px solid var(--dos-select-line, var(--line)); border-radius: 12px; background: var(--dos-select-bg, var(--content-bg)); color: var(--dos-select-text, var(--text)); font: 13px var(--font-ui, sans-serif); text-overflow: ellipsis; }
++  .dos-searchable-select > svg { position: absolute; left: 12px; top: 13px; width: 18px; height: 18px; color: var(--dos-select-muted, var(--muted)); pointer-events: none; }
++  .dos-searchable-select > svg:last-of-type { left: auto; right: 12px; }
++  .dos-select-menu { box-sizing: border-box; position: fixed; inset: auto; margin: 0; padding: 6px; overflow: auto; overscroll-behavior: contain; border: 1px solid var(--dos-select-line, var(--line)); border-radius: 20px; background: var(--dos-select-bg, var(--content-bg)); color: var(--dos-select-text, var(--text)); box-shadow: var(--menu-shadow); font: 13px var(--font-ui, sans-serif); }
++  .dos-select-option { display: flex; align-items: center; width: 100%; min-height: 44px; padding: 9px 10px; border: 0; border-radius: 14px; background: transparent; color: inherit; cursor: pointer; font: inherit; text-align: left; }
++  .dos-select-option > span { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
++  .dos-select-option:hover, .dos-select-option.is-active, .dos-select-option:focus-visible { background: var(--dos-select-soft, var(--accent-soft)); }
++  .dos-select-option[aria-selected="true"] { background: var(--dos-select-accent, var(--accent)); color: white; }
++  .dos-searchable-select > input:focus-visible { outline: 2px solid var(--dos-select-accent, var(--accent)); outline-offset: 2px; }
++  .dos-searchable-select-empty { padding: 12px; margin: 0; font-size: 13px; color: var(--dos-select-muted, var(--muted)); }
++}
+diff --git a/vite.sdk.config.js b/vite.sdk.config.js
+index 9320927..2113044 100644
+--- a/vite.sdk.config.js
++++ b/vite.sdk.config.js
+@@ -37,7 +37,7 @@ function sdkArtifactsPlugin() {
+     name: "dindbos-sdk-artifacts",
+     closeBundle() {
+       mkdirSync("dist", { recursive: true });
+-      const styles = ["dindbos", "theme", "shell", "windows", "dock", "apps", "settings", "files", "browser", "productivity", "media", "clock", "applications", "liquid-glass", "control-center"];
++      const styles = ["dindbos", "theme", "shell", "windows", "dock", "apps", "settings", "files", "browser", "productivity", "media", "clock", "applications", "liquid-glass", "control-center", "mobile-tabbar", "searchable-select"];
+       writeFileSync("dist/styles.css", styles.map((name) => readFileSync(`src/styles/${name}.css`, "utf8")).join("\n"));
+       cpSync("src/styles/wallpapers", "dist/wallpapers", { recursive: true });
+       for (const name of Object.keys(entrypoints)) {
