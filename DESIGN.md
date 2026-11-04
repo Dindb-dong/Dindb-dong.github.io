@@ -171,3 +171,13 @@
 - On desktop, move only Leviosa-AI, Alus-Healthcare, NOI-LAB, SDP, YAI and YCC into a 3×2 lower-right group above the dock. The user's purple rectangle marks placement; do not render a border/container.
 - Remaining ten icons flow continuously in the existing left grid. Preserve SDK icons, desktop semantics, launch handlers and window stacking; no SDK patch.
 - Narrow desktop keeps a scrollable left column. Mobile keeps all icons in the scrollable desktop grid, ordering career launchers after other apps.
+
+## Mobile glass navigation (2026-11-04)
+
+- Canvas: DindbOS · Portfolio Mobile Navigation, Page 1 (`page-0959dd44-73da-422d-8f68-016cc5dce6a7`). Reviewed component board `5b4132bd-0793-4508-9e4b-93c26ce41b96` and mobile screen board `bfb5aa81-4d2b-44c9-930e-d67bf4869ea1`; component `component-e63836fc-600a-4006-b4fc-d42a9b4d5e4c` and linked instance survived library reopen.
+- DindbOS 0.2.1 provides `.dos-mobile-tabbar` in its shared styles: a frosted capsule with selected pill, icons and visible labels, 64×52px minimum targets, native keyboard focus and horizontal scrolling for long menus. Mobile uses the existing glass material's frosted fallback, not the desktop-only optical adapter.
+- At app widths ≤760px the same semantic navigation moves into a reserved bottom row. Portfolio removes the duplicate sidebar identity; career apps retain a compact company switcher above the independently scrolling content. No floating overlay may cover content or steal touch input.
+- Main/sub colors remain #7c9fe5/#2563eb. Desktop sidebars stay unchanged. Re-selecting a tab reveals the selected destination within the local horizontal bar only.
+- Projects collapse based on actual finder content width ≤722px, including narrowed desktop windows. Selecting a project resets detail scroll while retaining list/window scroll and focus.
+
+- Implementation comparison: reviewed actual Chrome screenshots `portfolio-touch-390.png` and `experience-touch-1.png` against the saved Canvas component/screen. The selected capsule, icon/label hierarchy, bottom row and content separation match; the runtime theme supplies the final neutral glass tint.

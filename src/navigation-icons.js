@@ -18,3 +18,11 @@ export function sidebarIcon(id) {
   const aliases = { overview: "about", gallery: "library", role: "responsibilities" };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[aliases[id] || id]}</svg>`;
 }
+
+export function revealActiveNavigation(content) {
+  const nav = content.querySelector(".portfolio-sidebar-nav");
+  const active = nav?.querySelector('[aria-current="page"]');
+  if (active && nav.scrollWidth > nav.clientWidth) {
+    nav.scrollLeft += active.getBoundingClientRect().left - nav.getBoundingClientRect().left - (nav.clientWidth - active.offsetWidth) / 2;
+  }
+}

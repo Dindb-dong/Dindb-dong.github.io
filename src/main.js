@@ -1,4 +1,4 @@
-import { sidebarIcon } from "./navigation-icons.js";
+import { revealActiveNavigation, sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
 import { renderExperienceApp } from "./experience-app.js";
 import { createAndBootDindbOS } from "dindbos";
@@ -444,7 +444,7 @@ function renderAppSidebar(active, runtime) {
         <img class="portfolio-avatar" src="/assets/images/kim-dong-wook.png" alt="Kim Dong Wook">
         <div class="portfolio-sidebar-person"><strong>Kim Dong Wook</strong><small>Full-Stack AI Engineer</small></div>
       </div>
-      <nav class="portfolio-sidebar-nav" aria-label="Portfolio sections">
+      <nav class="portfolio-sidebar-nav dos-mobile-tabbar" aria-label="Portfolio sections">
         ${items.map(([id, label]) => `
           <button type="button" class="${active === id ? "is-active" : ""}" data-sidebar-target="${escapeAttr(id)}" ${active === id ? 'aria-current="page"' : ""}>
             ${sidebarIcon(id)}<span>${escapeHtml(label)}</span>
@@ -460,6 +460,7 @@ function renderAppSidebar(active, runtime) {
 }
 
 function wireSidebar(content, runtime) {
+  revealActiveNavigation(content);
   content.querySelectorAll("[data-experience-open]").forEach((button) => {
     button.addEventListener("click", () => runtime.launchExperience(Number(button.dataset.experienceOpen)));
   });
