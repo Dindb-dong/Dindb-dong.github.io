@@ -1293,7 +1293,7 @@ input {
 .portfolio-result-count { margin: 0; text-align: right; }
 .portfolio-filter-popover { position: fixed; inset: auto; margin: 0; width: min(360px, calc(100vw - 24px)); max-height: min(560px, calc(100dvh - 24px)); overflow: auto; padding: 16px; border: 1px solid var(--brand-border); border-radius: 16px; background: var(--brand-paper); color: var(--brand-ink); box-shadow: var(--portfolio-shadow); font: 13px var(--portfolio-font); }
 .portfolio-filter-popover header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.portfolio-filter-popover button, .portfolio-filter-popover select { min-height: 44px; padding: 8px 12px; border: 1px solid var(--brand-border); border-radius: 8px; background: var(--brand-paper); color: var(--brand-ink); cursor: pointer; }
+.portfolio-filter-popover header button, .portfolio-filter-popover > button { min-height: 44px; padding: 8px 12px; border: 1px solid var(--brand-border); border-radius: 8px; background: var(--brand-paper); color: var(--brand-ink); cursor: pointer; }
 .portfolio-sort-field { display: grid; gap: 8px; }
 .portfolio-filter-popover fieldset { min-width: 0; margin: 16px 0; padding: 0; border: 0; }
 .portfolio-filter-popover legend { margin-bottom: 8px; font-weight: 600; }
@@ -1323,13 +1323,7 @@ input {
 }
 
 /* One reusable search-and-select field, paired with an icon-only filter. */
-.searchable-select { position: relative; min-width: 0; }
-.searchable-select > input { width: 100%; min-width: 0; height: 44px; padding: 10px 36px; border: 1px solid var(--brand-border); border-radius: 12px; background: var(--brand-paper); color: var(--brand-ink); font: inherit; font-size: 13px; text-overflow: ellipsis; }
-.searchable-select > svg { position: absolute; left: 12px; top: 13px; width: 18px; height: 18px; color: var(--brand-muted); pointer-events: none; }
-.searchable-select > svg:last-of-type { left: auto; right: 12px; }
-.searchable-select-menu .app-dropdown-option { grid-template-columns: minmax(0, 1fr); }
-.searchable-select-menu .app-dropdown-option.is-active:not([aria-selected="true"]) { background: var(--brand-accent-soft); }
-.searchable-select-empty { padding: 12px; margin: 0; font-size: 13px; color: var(--brand-muted); }
+.portfolio-projects { --dos-select-line: var(--brand-border); --dos-select-bg: var(--brand-paper); --dos-select-text: var(--brand-ink); --dos-select-muted: var(--brand-muted); --dos-select-accent: var(--brand-accent); --dos-select-soft: var(--brand-accent-soft); }
 .portfolio-finder { grid-template-rows: auto minmax(0, 1fr); }
 .portfolio-project-controls { grid-template-columns: minmax(0, 1fr) 44px; gap: 10px; }
 .portfolio-filter-trigger { width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 12px; }
@@ -1339,3 +1333,8 @@ input {
   .portfolio-finder { grid-template-rows: auto minmax(0, 1fr); }
   .portfolio-project-controls { grid-template-columns: minmax(0, 1fr) 44px; }
 }
+
+.portfolio-finder-layout.is-browsing { display: block; overflow: auto; }
+.portfolio-finder-layout.is-browsing > .portfolio-project-list { display: block; width: 100%; max-height: none; overflow: visible; }
+.portfolio-finder-layout.is-browsing > .portfolio-detail-pane { display: none; }
+.portfolio-sort-field .app-dropdown-trigger { border-radius: 16px; }

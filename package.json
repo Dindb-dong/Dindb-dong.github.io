@@ -14,7 +14,7 @@
     "dev:full": "node scripts/dev.mjs"
   },
   "dependencies": {
-    "dindbos": "file:vendor/dindbos-0.2.1.tgz",
+    "dindbos": "file:vendor/dindbos-0.2.2.tgz",
     "vite": "^5.4.21"
   },
   "devDependencies": {

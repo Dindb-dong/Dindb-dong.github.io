@@ -3,7 +3,7 @@ const escape = (value) => String(value ?? "").replace(/[&<>"']/g, char => ({ "&"
 export function renderDropdown({ id, label, value, options, placeholder = label }) {
   const current = options.find(option => option.value === value);
   return `<div class="app-dropdown" data-dropdown>
-    <button type="button" class="app-dropdown-trigger" data-dropdown-trigger aria-label="${escape(label)}" ${options.length ? "" : "disabled"} aria-haspopup="listbox" aria-expanded="false" aria-controls="${escape(id)}">
+    <button id="${escape(id)}-trigger" type="button" class="app-dropdown-trigger" data-dropdown-trigger aria-label="${escape(label)}" ${options.length ? "" : "disabled"} aria-haspopup="listbox" aria-expanded="false" aria-controls="${escape(id)}">
       <span>${escape(current?.label || placeholder)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
     <div id="${escape(id)}" class="app-dropdown-menu" data-dropdown-menu role="listbox" aria-label="${escape(label)}" popover="auto">

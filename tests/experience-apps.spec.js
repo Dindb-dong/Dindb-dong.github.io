@@ -124,8 +124,10 @@ test("an already-open experience menu stays styled with its previous markup", as
   await expect(selected).toHaveCSS("background-color", "rgb(124, 159, 229)");
   await expect(selected).toHaveCSS("border-radius", "12px");
   await expect(selected.locator("span")).toHaveCSS("font-size", "14px");
-  const first = await nav.locator("button").nth(0).boundingBox();
-  const second = await nav.locator("button").nth(1).boundingBox();
+  const [first, second] = await nav.locator("button").evaluateAll(buttons => buttons.slice(0, 2).map(button => {
+    const { y, height } = button.getBoundingClientRect();
+    return { y, height };
+  }));
   expect(second.y - first.y).toBeGreaterThan(first.height + 3);
   await page.screenshot({ path: testInfo.outputPath("existing-menu.png") });
   await nav.locator('[data-experience-tab="projects"]').click();

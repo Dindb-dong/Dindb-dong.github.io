@@ -1,4 +1,5 @@
-import { renderSearchableSelect, mountSearchableSelect } from "./searchable-select.js";
+import { renderDropdown, mountDropdown } from "./dropdown.js";
+import { renderSearchableSelect, mountSearchableSelect } from "dindbos";
 import { filteredProjects } from "./project-filters.js";
 import { revealActiveNavigation, sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
@@ -244,11 +245,11 @@ function renderProjects(content, runtime) {
   runtime.selectedProjectId = selected?.id || null;
   const ko = runtime.locale === "ko";
   const copy = ko ? {
-    search: "프로젝트 검색", placeholder: "제목, 역할, 기술 검색", empty: "검색 결과 없음",
+    search: "프로젝트 검색", placeholder: "제목, 역할, 기술 검색", empty: "검색 결과 없음", all: "전체 보기",
     filter: "필터", sort: "정렬", newest: "최신 등록순", oldest: "오래된 등록순", title: "이름순",
     category: "카테고리", tags: "기술 태그 · 모두 포함", reset: "초기화", close: "닫기",
   } : {
-    search: "Search projects", placeholder: "Search title, role, or technology", empty: "No matching projects",
+    search: "Search projects", placeholder: "Search title, role, or technology", empty: "No matching projects", all: "View all",
     filter: "Filters", sort: "Sort", newest: "Newest registered", oldest: "Oldest registered", title: "Name",
     category: "Categories", tags: "Technology tags · match all", reset: "Reset", close: "Close",
   };
@@ -266,13 +267,13 @@ function renderProjects(content, runtime) {
           ${renderSearchableSelect({ id: `${prefix}-project-picker`, label: copy.search, placeholder: copy.placeholder })}
           <button type="button" class="portfolio-filter-trigger" data-project-filters popovertarget="${escapeAttr(popupId)}" aria-label="${copy.filter}" aria-haspopup="dialog" aria-expanded="false" data-filter-active="${activeFilters > 0}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg></button>
         </div>
-        <section class="portfolio-finder-layout">
-          <div class="portfolio-project-list" role="listbox" aria-label="Projects">${projects.length ? projects.map(project => renderProjectRow(project, selected.id)).join("") : renderProjectListEmpty(runtime)}</div>
+        <section class="portfolio-finder-layout ${runtime.projectBrowse ? "is-browsing" : ""}">
+          <div class="portfolio-project-list" role="listbox" aria-label="Projects">${projects.length ? projects.map(project => renderProjectRow(project, runtime.projectBrowse ? null : selected.id)).join("") : renderProjectListEmpty(runtime)}</div>
           <article class="portfolio-detail-pane">${selected ? renderProjectDetail(selected, runtime) : renderEmptyDetail(runtime)}</article>
         </section>
         <div id="${escapeAttr(popupId)}" class="portfolio-filter-popover" popover="auto" role="dialog" aria-label="${copy.filter}">
           <header><strong>${copy.filter}</strong><button type="button" data-filter-close>${copy.close}</button></header>
-          <label class="portfolio-sort-field">${copy.sort}<select id="${escapeAttr(prefix)}-sort" aria-label="${copy.sort}" data-project-sort>${["newest", "oldest", "title"].map(value => `<option value="${value}" ${choices.sort === value ? "selected" : ""}>${copy[value]}</option>`).join("")}</select></label>
+          <div class="portfolio-sort-field"><span>${copy.sort}</span>${renderDropdown({ id: `${prefix}-sort`, label: copy.sort, value: choices.sort, options: ["newest", "oldest", "title"].map(value => ({ value, label: copy[value] })) })}</div>
           <fieldset><legend>${copy.category}</legend><div class="portfolio-filter-options">${checks(categories, "categories")}</div></fieldset>
           <fieldset><legend>${copy.tags}</legend><div class="portfolio-filter-options portfolio-filter-tags">${checks(tags, "tags")}</div></fieldset>
           <button type="button" data-project-reset>${copy.reset}</button>
@@ -280,6 +281,8 @@ function renderProjects(content, runtime) {
       </main>
     </section>`;
   const selectProject = id => {
+    runtime.projectBrowse = false;
+    content.querySelector(".portfolio-finder-layout").classList.remove("is-browsing");
     runtime.selectedProjectId = Number(id);
     content.querySelectorAll("[data-project-id]").forEach(row => {
       const selected = Number(row.dataset.projectId) === runtime.selectedProjectId;
@@ -296,17 +299,25 @@ function renderProjects(content, runtime) {
     projects = filteredProjects(data.projects, runtime.projectFilter, runtime.projectQuery, choices);
     const selected = projects.find(project => project.id === runtime.selectedProjectId) || projects[0];
     runtime.selectedProjectId = selected?.id || null;
-    content.querySelector(".portfolio-project-list").innerHTML = projects.length ? projects.map(project => renderProjectRow(project, selected.id)).join("") : renderProjectListEmpty(runtime);
+    content.querySelector(".portfolio-finder-layout").classList.toggle("is-browsing", Boolean(runtime.projectBrowse));
+    content.querySelector(".portfolio-project-list").innerHTML = projects.length ? projects.map(project => renderProjectRow(project, runtime.projectBrowse ? null : selected.id)).join("") : renderProjectListEmpty(runtime);
     const detail = content.querySelector(".portfolio-detail-pane");
     detail.innerHTML = selected ? renderProjectDetail(selected, runtime) : renderEmptyDetail(runtime);
     detail.scrollTop = 0;
     content.querySelector(".portfolio-finder-layout").scrollTop = 0;
   };
-  const picker = mountSearchableSelect(content.querySelector("[data-searchable-select]"), {
-    options: filteredProjects(data.projects, runtime.projectFilter, "", choices).map(project => ({ value: String(project.id), label: project.title, searchText: [project.title, project.role, ...project.categories, ...project.languages, ...project.techStacks, ...project.description].join(" ") })),
-    value: String(selected?.id), query: runtime.projectQuery, empty: copy.empty,
-    onSearch: (query, value) => { runtime.projectQuery = query; runtime.selectedProjectId = Number(value); renderResults(); },
-    onSelect: value => { const hadQuery = Boolean(runtime.projectQuery); runtime.projectQuery = ""; runtime.selectedProjectId = Number(value); if (hadQuery) renderResults(); selectProject(value); },
+  const picker = mountSearchableSelect(content.querySelector("[data-dos-searchable-select]"), {
+    options: [{ value: "all", label: copy.all, pinned: true }, ...filteredProjects(data.projects, runtime.projectFilter, "", choices).map(project => ({ value: String(project.id), label: project.title, searchText: [project.title, project.role, ...project.categories, ...project.languages, ...project.techStacks, ...project.description].join(" ") }))],
+    value: runtime.projectBrowse ? "all" : String(selected?.id), query: runtime.projectQuery, empty: copy.empty,
+    onSearch: query => { runtime.projectQuery = query; runtime.projectBrowse = true; picker.setValue("all"); renderResults(); },
+    onSelect: value => {
+      const hadQuery = Boolean(runtime.projectQuery);
+      runtime.projectQuery = "";
+      if (value === "all") { runtime.projectBrowse = true; renderResults(); return; }
+      runtime.selectedProjectId = Number(value);
+      if (hadQuery) renderResults();
+      selectProject(value);
+    },
   });
   content.querySelector(".portfolio-project-list").addEventListener("click", event => {
     const button = event.target.closest("[data-project-id]");
@@ -315,6 +326,7 @@ function renderProjects(content, runtime) {
   const popup = content.querySelector(".portfolio-filter-popover");
   const trigger = content.querySelector("[data-project-filters]");
   const lifetime = new AbortController();
+  trigger.addEventListener("click", () => picker.select("all"));
   const position = () => {
     if (!popup.matches(":popover-open")) return;
     const rect = trigger.getBoundingClientRect();
@@ -339,18 +351,21 @@ function renderProjects(content, runtime) {
   content.querySelectorAll("[data-project-choice]").forEach(input => input.addEventListener("change", () => {
     choices[input.dataset.projectChoice] = [...content.querySelectorAll(`[data-project-choice="${input.dataset.projectChoice}"]:checked`)].map(input => input.value);
     runtime.projectFilter = { type: "all", value: "All" };
+    runtime.projectQuery = "";
+    runtime.projectBrowse = true;
     rerenderFilters(input.id);
   }));
-  content.querySelector("[data-project-sort]").addEventListener("change", event => { choices.sort = event.target.value; rerenderFilters(event.target.id); });
+  const disposeSort = mountDropdown(content.querySelector(".portfolio-sort-field [data-dropdown]"), value => { choices.sort = value; runtime.projectBrowse = true; rerenderFilters(`${prefix}-sort-trigger`); });
   content.addEventListener("click", event => {
     if (!event.target.closest("[data-project-reset]")) return;
     runtime.projectQuery = "";
     runtime.projectFilter = { type: "all", value: "All" };
     runtime.projectChoices = { categories: [], tags: [], sort: "newest" };
+    runtime.projectBrowse = true;
     renderProjects(content, runtime);
     content.querySelector("[data-project-filters]").focus({ preventScroll: true });
   }, { signal: lifetime.signal });
-  projectControlCleanup.set(content, () => { picker.destroy(); lifetime.abort(); });
+  projectControlCleanup.set(content, () => { picker.destroy(); disposeSort(); lifetime.abort(); });
   wireSidebar(content, runtime);
   return () => { projectControlCleanup.get(content)?.(); projectControlCleanup.delete(content); };
 }
@@ -395,6 +410,8 @@ function renderSkills(content, runtime) {
         type: button.dataset.skillFilter,
         value: button.dataset.skillValue,
       };
+      runtime.projectBrowse = true;
+      runtime.projectQuery = "";
       const nextProjects = filteredProjects(currentData(runtime).projects, runtime.projectFilter);
       runtime.selectedProjectId = nextProjects[0]?.id || runtime.selectedProjectId;
       refreshViews(runtime);
@@ -489,6 +506,7 @@ function wireSidebar(content, runtime) {
   });
   content.querySelectorAll("[data-profile-project]").forEach((button) => {
     button.addEventListener("click", () => {
+      runtime.projectBrowse = false;
       runtime.selectedProjectId = Number(button.dataset.profileProject);
       runtime.projectFilter = { type: "all", value: "All" };
       runtime.projectQuery = "";
