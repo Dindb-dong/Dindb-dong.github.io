@@ -9,7 +9,7 @@ if (!existsSync("remote-browser/node_modules")) {
   process.exit(1);
 }
 
-processes.push(spawn("python3", ["-m", "http.server", "4173"], {
+processes.push(spawn("npm", ["run", "dev"], {
   stdio: "inherit",
 }));
 

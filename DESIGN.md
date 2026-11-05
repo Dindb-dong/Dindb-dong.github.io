@@ -5,7 +5,7 @@
 - Status: Active
 - Last refreshed: 2026-11-04
 - Primary product surfaces: DindbOS desktop, Portfolio app, Projects app, Resume app, six independent experience apps
-- Evidence reviewed: `src/main.js`, `src/portfolio.css`, `src/portfolio-data.js`, the installed `dindbos` runtime styles and APIs, legacy Korean/English portfolio data, and live screenshots at 1440×900 and 390×844
+- Evidence reviewed: `src/main.js`, `src/portfolio.css`, `src/portfolio-data.js`, the installed `dindbos` runtime styles and APIs, Korean/English portfolio data in `public/portfolio/data`, and live screenshots at 1440×900 and 390×844
 
 ## Brand
 

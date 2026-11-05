@@ -8,10 +8,12 @@
     "build": "vite build && node scripts/copy-static.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
     "test:e2e": "playwright test",
-    "qa": "npm run build && npm run test:e2e",
+    "qa": "npm run test:unit && npm run build && npm run test:preview",
     "browser:install": "npm --prefix remote-browser install",
     "browser:start": "npm --prefix remote-browser start",
-    "dev:full": "node scripts/dev.mjs"
+    "dev:full": "node scripts/dev.mjs",
+    "test:unit": "node --test scripts/*.test.mjs",
+    "test:preview": "playwright test --config playwright.preview.config.js"
   },
   "dependencies": {
     "dindbos": "file:vendor/dindbos-0.2.3.tgz",
