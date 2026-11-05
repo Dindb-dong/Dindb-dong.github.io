@@ -68,7 +68,7 @@ export function createPortfolioApps(runtime) {
       height: 760,
       manifest: appManifest(),
       render: ({ content, window }) => {
-        const state = { tab: "overview", projectId: app.projectIds[0] };
+        const state = { tab: "role", projectId: app.projectIds[0] };
         return registerView(runtime, app.appId, content, (element, currentRuntime) => renderExperienceApp(element, currentRuntime, app.id, state), window);
       },
     })),
@@ -340,7 +340,7 @@ function renderExperienceCard(experience, index, runtime) {
         <p class="experience-launcher-summary">${escapeHtml(app.summary)}</p>
         <div class="experience-launcher-focus">${app.focus.map((focus) => `<span>${escapeHtml(focus)}</span>`).join("")}</div>
         <button type="button" class="experience-primary" data-experience-open="${experience.id}">${escapeHtml(app.name)}.app ${ko ? "열기" : "Open"} ↗</button>
-        <details class="experience-launcher-details"><summary>${ko ? "담당 업무 요약" : "Responsibilities at a glance"}</summary><ul>${experience.description.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>
+        <details class="experience-launcher-details"><summary>${ko ? "담당 업무 요약" : "Responsibilities at a glance"}</summary><ul>${experience.description.flatMap(line => line.split("\n")).map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>
           <div class="portfolio-mini-projects">${experience.projects.map((project) => `<span>${escapeHtml(project)}</span>`).join("")}</div>
         </details>
       </div>

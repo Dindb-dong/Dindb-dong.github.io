@@ -8,8 +8,8 @@ export const EXPERIENCE_APPS = [
     id: 1, appId: "experience-leviosa", name: "Leviosa-AI",
     icon: "/assets/experience-icons/Leviosa-AI-symbol.svg",
     projectIds: [17, 19],
-    summary: pair("AI 서비스를 설계하고, 제품으로 만들고, 운영합니다.", "Building and operating AI products, from architecture to everyday use."),
-    focus: pair(["제품 전체 개발", "백엔드 아키텍처", "운영 자동화"], ["End-to-end products", "Backend architecture", "Workflow automation"]),
+    summary: pair("AI 생성 서비스·캔버스 편집기 개발, 백엔드·인프라 운영 및 개발 자동화", "AI product and canvas editor development, backend engineering, infrastructure operations, and development automation"),
+    focus: pair(["AI 서비스·편집기", "서버 설계·운영", "검증·배포 자동화"], ["AI products & editor", "Server architecture & operations", "Verification & deployment automation"]),
     media: [
       shot("proj_17_1.png", 17, pair("AI 상세페이지 생성·편집 서비스", "AI detail-page generation and editing"), pair("공개 서비스 화면", "Public service page")),
       shot("proj_19_2.png", 19, pair("Yomates 데스크톱 앱의 에이전트 대화", "An agent conversation in the Yomates desktop app"), pair("사용자 제공 앱 화면", "User-supplied app screenshot")),

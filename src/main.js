@@ -10,6 +10,7 @@ bootPortfolioOS();
 
 async function bootPortfolioOS() {
   const runtime = await loadPortfolioRuntime();
+  document.documentElement.lang = runtime.locale;
   const data = currentData(runtime);
 
   const os = await createAndBootDindbOS({

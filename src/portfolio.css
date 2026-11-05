@@ -992,9 +992,10 @@ input {
 .experience-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 .experience-links a { padding: 10px 14px; border: 1px solid var(--portfolio-line); border-radius: 5px; color: var(--experience-accent); text-decoration: none; font-size: 12px; }
 .experience-responsibilities { margin-bottom: 32px; }
-.experience-responsibilities article { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--portfolio-line); }
-.experience-responsibilities article > span { padding-top: 3px; font-size: 10px; color: var(--experience-accent); }
-.experience-responsibilities p { margin: 0; font-size: 13px; line-height: 1.9; color: var(--portfolio-ink); }
+.experience-responsibilities article { padding: 22px 0; border-bottom: 1px solid var(--portfolio-line); }
+.experience-contributions h2 { margin: 0 0 10px; font-size: 16px; }
+.experience-responsibilities :is(p, li) { margin: 0; font-size: 14px; line-height: 1.9; color: var(--portfolio-ink); }
+.experience-responsibilities ul { display: grid; gap: 10px; margin: 0; padding-left: 20px; }
 .experience-lightbox { width: min(1160px, calc(100vw - 40px)); max-width: none; height: min(860px, calc(100dvh - 40px)); max-height: none; box-sizing: border-box; padding: 18px; border: 1px solid var(--portfolio-line); border-radius: 10px; background: var(--portfolio-surface); color: var(--portfolio-ink); }
 .experience-lightbox[open] { display: flex; flex-direction: column; gap: 16px; }
 .experience-lightbox::backdrop { background: rgb(32 33 36 / 80%); }
@@ -1083,6 +1084,9 @@ input {
   .portfolio-sidebar-nav button small { display: none; }
   .experience-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
   .experience-main { grid-column: 1; grid-row: 2; min-height: 0; }
+  .experience-responsibilities :is(p, li),
+  .experience-contributions .experience-work-list { font-size: 13px; line-height: 1.65; }
+  .experience-contributions h2 { font-size: 15px; }
   .experience-sidebar > nav { grid-row: 3; }
   .experience-switch { grid-column: 1; grid-row: 1; display: block; margin: 0; padding: 10px 12px 0; }
   .experience-switch > span { display: none; }

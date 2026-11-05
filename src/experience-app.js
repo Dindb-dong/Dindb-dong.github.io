@@ -8,16 +8,16 @@ export function renderExperienceApp(content, runtime, id, state) {
   const app = experienceContent(runtime, id);
   const ko = runtime.locale === "ko";
   const copy = ko ? {
-    overview: "개요", projects: "프로젝트", gallery: "자료실", role: "담당 업무", change: "다른 경력 앱 열기",
+    overview: "둘러보기", projects: "프로젝트", gallery: "자료실", role: "기여와 성과", change: "다른 경력 앱 열기",
     work: "주요 작업", views: "화면과 자료", scope: "담당 범위", stack: "사용 기술", more: "프로젝트 살펴보기",
     responsibility: "어떤 일을 했나요", media: "화면 크게 보기", links: "관련 링크", deck: "발표 자료", close: "닫기", previous: "이전 이미지", next: "다음 이미지",
   } : {
-    overview: "Overview", projects: "Projects", gallery: "Media library", role: "Responsibilities", change: "Open another experience app",
+    overview: "Showcase", projects: "Projects", gallery: "Media", role: "Impact", change: "Open another experience app",
     work: "Selected work", views: "Screens & materials", scope: "Scope of work", stack: "Technologies", more: "Explore projects",
     responsibility: "My responsibilities", media: "Enlarge image", links: "Related links", deck: "Presentation", close: "Close image", previous: "Previous image", next: "Next image",
   };
-  const tabs = ["overview", ...(app.projects.length ? ["projects"] : []), ...(app.media.length ? ["gallery"] : []), "role"];
-  if (!tabs.includes(state.tab)) state.tab = "overview";
+  const tabs = ["role", "overview", ...(app.projects.length ? ["projects"] : []), ...(app.media.length ? ["gallery"] : [])];
+  if (!tabs.includes(state.tab)) state.tab = tabs[0];
   const selected = app.projects.find((project) => project.id === state.projectId) || app.projects[0];
   const images = (projectId) => app.media.map((media, index) => ({ ...media, index })).filter((media) => !projectId || media.projectId === projectId);
   const gallery = (items, className = "") => items.length ? `<div class="experience-gallery ${className}">${items.map((media) => `
@@ -61,9 +61,9 @@ export function renderExperienceApp(content, runtime, id, state) {
   } else if (state.tab === "gallery") {
     body = `<section class="experience-section experience-section--first"><div class="experience-section-heading"><h2>${copy.views}</h2><span>${app.media.length} ${ko ? "개 자료" : "items"}</span></div>${gallery(images())}</section>`;
   } else {
-    body = `<section class="experience-section experience-section--first"><h2>${copy.responsibility}</h2>
-      <div class="experience-responsibilities">${app.experience.description.map((line, index) => `<article><span>${String(index + 1).padStart(2, "0")}</span><p>${html(line)}</p></article>`).join("")}</div>
-      <h3>${copy.work}</h3><ul class="experience-work-list">${app.experience.projects.map((name) => `<li>${html(name)}</li>`).join("")}</ul>
+    body = `<section class="experience-contributions" aria-label="${copy.role}">
+      <div class="experience-responsibilities">${app.experience.description.map((line, index) => `<article>${app.experience.descriptionTitles?.[index] ? `<h2>${html(app.experience.descriptionTitles[index])}</h2><ul>${line.split("\n").map(item => `<li>${html(item)}</li>`).join("")}</ul>` : `<p>${html(line)}</p>`}</article>`).join("")}</div>
+      <h2>${copy.work}</h2><ul class="experience-work-list">${app.experience.projects.map((name) => `<li>${html(name)}</li>`).join("")}</ul>
     </section>`;
   }
   content.innerHTML = `<section class="portfolio-os-app experience-app" data-experience-app="${id}" data-experience-tab-active="${state.tab}">

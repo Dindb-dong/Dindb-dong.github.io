@@ -1,46 +1,47 @@
-# DindbOS portfolio
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/brand/dindbos-mark.png">
+    <img src="public/brand/dindbos-lockup.png" alt="DindbOS" height="96">
+  </picture>
+</p>
 
-The current site is a Vite host for the checked-in DindbOS SDK. Start at
-`index.html` → `src/main.js`; `legacy/` contains frozen previous implementations.
+<h1 align="center">Kim Dong Wook · Portfolio</h1>
+<p align="center">Explore my work as a desktop. Open a project, an experience, or a file.</p>
+<p align="center">Full-Stack AI &amp; SW Engineer · JavaScript + Vite · Powered by DindbOS</p>
+<p align="center"><a href="https://dindb-dong.github.io/">Live portfolio</a> · <a href="https://github.com/Dindb-dong/dindbos">DindbOS SDK</a> · <a href="https://dindb-dong.github.io/resume.pdf">Resume</a></p>
 
-| Location | Responsibility |
+<p align="center"><img src="docs/assets/portfolio.jpg" alt="Kim Dong Wook's portfolio overview running in a DindbOS desktop" width="1280"></p>
+
+My personal portfolio, built as a working desktop with [DindbOS](https://github.com/Dindb-dong/dindbos). Browse software and AI projects, open dedicated experience apps, read my resume, or explore the same content through Files and Terminal.
+
+## Explore the portfolio
+
+| Open | What you will find |
 | --- | --- |
-| `public/portfolio/data/` | Active Korean/English project, profile, and experience JSON |
-| `public/portfolio/media/` | Active project images/videos and capture provenance |
-| `assets/` | Profile images, app icons, and presentation files |
-| `src/main.js` | OS boot and SDK configuration |
-| `src/portfolio-app.js` | App registration, portfolio navigation, general views |
-| `src/apps/projects.js` | Project browser rendering, search, filters, selection |
-| `src/experience-content.js`, `src/experience-app.js` | Curated experience content and independent experience apps |
-| `src/view-lifecycle.js` | Render/dispose ownership per mounted view |
-| `src/portfolio-data.js` | Locale loading, project normalization, runtime state |
-| `src/portfolio-filesystem.js` | Portfolio VFS files and Markdown serialization |
-| `src/utils/` | Shared HTML escaping and value helpers |
-| `remote-browser/` | Active optional remote Chromium service |
-| `vendor/` | Reproducible SDK tarball and upstream source notes |
+| **Portfolio** | Education, languages, development tools, career, and AI interests |
+| **Projects** | Search by title, role, or technology; filter by category and tags; sort and inspect screenshots, videos, and source links |
+| **Experience** | Independent apps for Leviosa-AI, Alus-Healthcare, NOI-LAB, SDP, YAI, and YCC |
+| **Resume** | An in-app resume view and a downloadable PDF |
+| **Files & Terminal** | Portfolio content exposed as virtual files inside the desktop |
 
-## Development and checks
+Browse in Korean or English, with compact bottom navigation and a stacked project layout on narrow screens. DindbOS provides the windows, Dock, and built-in desktop apps.
 
-```sh
-npm ci
-npm run dev
-npm run test:unit
-npm run test:e2e
-npm run qa
-```
+<details>
+<summary>Project browser</summary>
 
-`qa` runs unit/content checks, builds, and runs the browser suite against a fresh
-production preview at port 4183. The development browser suite uses port 4173.
-Use `PLAYWRIGHT_CHANNEL=chrome` with an installed Chrome, or install the Playwright
-browser matching the lockfile. `npm run build && npm run test:preview` checks an
-existing production build without running the development server.
+![Searchable project archive in the portfolio app](docs/assets/projects.jpg)
 
-For the optional local browser service, first run `npm run browser:install`, then
-`npm run dev:full`. That command starts Vite and the existing browser service.
+</details>
 
-Change content under `public/portfolio/`, not the archive. Keep Korean/English IDs
-aligned. `src/portfolio-data.js` lists project media; `src/experience-content.js`
-selects and captions experience media. Tests check referenced IDs and files.
-Existing JSON schemas, app IDs, DOM classes, saved language keys, and VFS paths
-remain stable. The build creates `/legacy/public/{*.json,thumbnails/*}` aliases
-from active files for previously published URLs; it does not deploy the old apps.
+### On mobile
+
+<p align="center">
+  <img src="docs/assets/mobile.jpg" alt="Portfolio overview at a 390 by 844 CSS-pixel viewport with bottom navigation" width="300">
+  <img src="docs/assets/mobile-projects.jpg" alt="Project archive at a 390 by 844 CSS-pixel viewport" width="300">
+</p>
+
+Screenshots from the portfolio, with mobile views captured at 390×844. [Artwork and capture details](docs/assets/README.md).
+
+## Credits
+
+Built with [DindbOS](https://github.com/Dindb-dong/dindbos), an MIT-licensed desktop SDK. The logo and favicon use its [transparent brand artwork](https://github.com/Dindb-dong/dindbos/tree/main/docs/assets/brand). Linked projects and third-party materials retain their own licenses.
