@@ -1,0 +1,39 @@
+.portfolio-hello {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  background: #f5f7fc;
+  pointer-events: none;
+  animation: portfolio-hello-exit 350ms ease 1950ms both;
+}
+
+.portfolio-hello svg {
+  display: block;
+  width: min(400px, 76vw);
+  overflow: visible;
+}
+
+.portfolio-hello path {
+  stroke: #2563eb;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: portfolio-hello-write 1600ms cubic-bezier(.35, 0, .25, 1) both;
+}
+
+@keyframes portfolio-hello-write {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes portfolio-hello-exit {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-hello { display: none; animation: none; }
+  .portfolio-hello path { animation: none; }
+}

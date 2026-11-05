@@ -5,7 +5,9 @@ import { createPortfolioApps } from "./portfolio-app.js";
 import { EXPERIENCE_APPS } from "./experience-content.js";
 import { loadPortfolioRuntime, currentData, portfolioDataForBuiltin } from "./portfolio-data.js";
 import { buildPortfolioFileSystem } from "./portfolio-filesystem.js";
+import { showHello } from "./hello.js";
 
+showHello();
 bootPortfolioOS();
 
 async function bootPortfolioOS() {
