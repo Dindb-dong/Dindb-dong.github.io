@@ -1,6 +1,6 @@
 const pair = (ko, en) => ({ ko, en });
 const shot = (file, projectId, caption, kind) => ({
-  src: `/legacy/public/thumbnails/${file}`, projectId, caption, kind,
+  src: `/portfolio/media/${file}`, projectId, caption, kind,
 });
 
 export const EXPERIENCE_APPS = [

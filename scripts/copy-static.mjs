@@ -1,9 +1,13 @@
 import { cp, mkdir, copyFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname } from "node:path";
 
 const staticEntries = [
-  ["legacy/public", "dist/legacy/public"],
+  // Keep published data/media URLs working; active files are the only source.
+  ["public/portfolio/media", "dist/legacy/public/thumbnails"],
+  ...["projectDetails", "introduce", "experiences", "eng_projectDetails", "eng_introduce", "eng_experiences"].map(name => [
+    `public/portfolio/data/${name}.json`, `dist/legacy/public/${name}.json`,
+  ]),
   ["assets", "dist/assets"],
   [".nojekyll", "dist/.nojekyll"],
   ["remote-browser.config.json", "dist/remote-browser.config.json"],
@@ -19,9 +23,4 @@ for (const [from, to] of staticEntries) {
   } else {
     await cp(from, to, { recursive: true });
   }
-}
-
-await mkdir("dist/vendor", { recursive: true });
-if (existsSync("vendor/dindbos-0.1.0.tgz")) {
-  await copyFile("vendor/dindbos-0.1.0.tgz", join("dist/vendor", "dindbos-0.1.0.tgz"));
 }

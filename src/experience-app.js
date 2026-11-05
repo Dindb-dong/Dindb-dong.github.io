@@ -1,8 +1,7 @@
+import { escapeAttr as html } from "./utils/html.js";
 import { renderDropdown, mountDropdown } from "./dropdown.js";
 import { revealActiveNavigation, sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
-
-const html = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 
 export function renderExperienceApp(content, runtime, id, state) {
   state.disposeDropdown?.();

@@ -1,4 +1,4 @@
-const escape = (value) => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+import { escapeAttr as escape } from "./utils/html.js";
 
 export function renderDropdown({ id, label, value, options, placeholder = label }) {
   const current = options.find(option => option.value === value);
