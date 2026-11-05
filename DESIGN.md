@@ -202,3 +202,12 @@
 - Comparison: reviewed Chrome mobile `all-projects-390.png` and `rounded-sort-390.png` against the updated boards. The full-width results, pinned All choice and 20px/14px sort menu/option radii match; nested options retain their border-free shared styling.
 
 - Initial runtime state is All/list on mobile and desktop, including the Projects launcher. A project opens only after an explicit selection or a direct overview project link.
+
+## Experience contributions first (2026-11-05)
+
+- Experience apps open on the existing `role` destination, now labeled Contributions, followed by Showcase, Projects and Media. Preserve app IDs, independent state, company switching, and image viewing.
+- Lead with optional factual metrics and readable paragraphs. Leviosa groups work into company-wide contributions, frontend, backend and infrastructure. Other organizations use their existing descriptions without invented metrics. Remove decorative paragraph numbering.
+- Leviosa figures are supplied by the portfolio owner: roughly 40 repositories, around 15 with at least 80% contribution, a signup-rate increase of at least 200%, operations for 10+ servers, and CI/CD speed improved by at least 400%. Do not reinterpret speed as duration reduction or add measurement periods or denominators.
+- Canvas library document: DindbOS · Portfolio Mobile Navigation, Page 1 (`page-0959dd44-73da-422d-8f68-016cc5dce6a7`). Desktop board `b0865416-e838-46c6-86ef-1f8b3b139ec0`, mobile board `3c4f8385-7612-406e-9a93-68eaa6742fe8`. Metrics main `fe039500-4511-4ab2-9ea5-393af93b7613`, component `component-278c2b60-f8ee-41ab-8d08-39c4d942cecc`, linked mobile instance `component-40d40ee5-672e-414e-83ce-ea61e594c2d8`. Reopened from the library to confirm persistence.
+- Map to `src/experience-app.js` and `src/portfolio.css`; localized content stays in the active experience JSON files. Reuse the shared sidebar and mobile glass navigation. Neutral text, 22px metrics, 14px body, 16px section headings, plain separators; metrics wrap to two columns on narrow screens.
+- Review desktop and 390px Canvas boards against actual production-preview screenshots. Check 320px, 390px and 1024px layouts, English content, all six launchers, touch tabs, dropdowns, gallery keyboard interaction and reopen state with the existing browser suite.

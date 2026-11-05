@@ -22,11 +22,15 @@ for (const [id, name] of apps) {
     await expect(page.locator(`.dos-icon[aria-label="Open ${name}.app"]`)).toHaveCount(1);
     await expect(app.getByRole("navigation", { name: "Experience sections" }).getByRole("button")).toHaveCount(id === 5 ? 2 : 4);
     const navigation = app.getByRole("navigation", { name: "Experience sections" });
+    await expect(app).toHaveAttribute("data-experience-tab-active", "role");
+    await expect(navigation.locator("button").first()).toHaveAttribute("data-experience-tab", "role");
+    await expect(app.locator(".experience-responsibilities article").first()).toBeVisible();
     await expect(navigation.locator("button svg")).toHaveCount(id === 5 ? 2 : 4);
     await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("background-color", "rgb(124, 159, 229)");
     await expect(navigation.locator('button[aria-current="page"]')).toHaveCSS("color", "rgb(255, 255, 255)");
     await expect(navigation.locator("button span").first()).toHaveCSS("font-size", "14px");
     await expect(app.locator(".experience-identity strong")).toHaveCSS("color", "rgb(32, 33, 36)");
+    await navigation.locator('[data-experience-tab="overview"]').click();
     await expect(app.locator(".experience-intro h2")).toHaveCSS("color", "rgb(32, 33, 36)");
     const logo = app.locator(".experience-identity img");
     await expect(logo).toHaveJSProperty("complete", true);
@@ -84,13 +88,15 @@ test("experience viewer supports keyboard, state, and multiple apps", async ({ p
   await page.getByRole("button", { name: "Focus YAI.app", exact: true }).click();
   await yai.locator("[data-dropdown-trigger]").click();
   await yai.getByRole("option", { name: "Leviosa-AI.app", exact: true }).click();
-  await expect(app).toHaveAttribute("data-experience-tab-active", "overview");
+  await expect(app).toHaveAttribute("data-experience-tab-active", "role");
 });
 
-for (const width of [1024, 390]) {
+for (const width of [1024, 390, 320]) {
   test(`experience layout and gallery work at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 768 });
     const app = await openExperience(page, 1);
+    await expect(app.locator(".experience-metrics dd")).toHaveText(["약 40개", "약 15개", "+200% 이상", "10개 이상", "+400% 이상"]);
+    await expect(app.locator(".experience-responsibilities h2")).toHaveText(["공통", "프론트엔드", "백엔드", "인프라"]);
     await expect(app.getByRole("heading", { name: "Leviosa AI", exact: true })).toBeVisible();
     expect(await app.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
     const main = app.locator(".experience-main");
@@ -111,6 +117,17 @@ for (const width of [1024, 390]) {
     expect(await page.evaluate(() => document.body.scrollWidth <= document.body.clientWidth)).toBe(true);
   });
 }
+
+test("English contributions use the same metrics and remain readable on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => localStorage.setItem("dindbos-language", "en"));
+  const app = await openExperience(page, 1);
+  await expect(app).toHaveAttribute("data-experience-tab-active", "role");
+  await expect(app.locator(".experience-metrics dd")).toHaveText(["~40", "~15", "200%+", "10+", "400%+"]);
+  await expect(app.locator(".experience-responsibilities h2")).toHaveText(["Across the company", "Frontend", "Backend", "Infrastructure"]);
+  await expect(app.locator(".experience-responsibilities")).toContainText("AWS SSM");
+  expect(await app.locator(".experience-main").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+});
 
 
 test("an already-open experience menu stays styled with its previous markup", async ({ page }, testInfo) => {

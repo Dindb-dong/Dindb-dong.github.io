@@ -234,12 +234,12 @@ test("company projects remain accessible after removing the overview showcase", 
   }
 });
 
-test("Leviosa experience includes representative work and maintenance in both languages", async ({ page }, testInfo) => {
+test("Leviosa experience includes contributions and results in both languages", async ({ page }, testInfo) => {
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Portfolio sections" });
   await nav.locator('[data-sidebar-target="experience"]').click();
   const company = page.locator(".portfolio-timeline-card").filter({ hasText: "Leviosa AI" });
-  for (const text of ["AI 상세페이지 생성·편집", "Agency", "Yomates", "네이버 스마트스토어·톡톡", "대부분 단독", "어드민", "Telegram·Notion"]) {
+  for (const text of ["약 40개", "약 15개", "80%", "PostHog", "200%", "400%", "Terraform", "AWS SSM"]) {
     await expect(company).toContainText(text);
   }
   await page.screenshot({ path: testInfo.outputPath("leviosa-experience.png") });
@@ -249,7 +249,7 @@ test("Leviosa experience includes representative work and maintenance in both la
   await expect(page.locator(".profile-panel h2")).toHaveText(["Development tools", "Skills", "Experience", "AI"]);
   await expect(page.locator(".profile-languages dd")).toHaveText(["Native", "Advanced", "Advanced"]);
   await nav.locator('[data-sidebar-target="experience"]').click();
-  for (const text of ["AI Detail Page", "Agency", "Yomates", "Naver Smart Store", "Web & Admin", "Telegram & Notion"]) {
+  for (const text of ["40 repositories", "15 of them", "80%", "PostHog", "200%", "400%", "Terraform", "AWS SSM"]) {
     await expect(company).toContainText(text);
   }
 });

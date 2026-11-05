@@ -5,13 +5,10 @@
     "period": "2026.02 ~ 2026.10",
     "position": "AI Engineer & Founding Member",
     "description": [
-      "Owned the AI detail-page product end to end: custom editor/canvas engine, AI generation workflows, system architecture, infrastructure, deployment, and operations",
-      "Led Agency backend development across asynchronous generation jobs, credit settlement, per-job cost tracking, access control, and observability",
-      "Contributed to Yomates backend architecture design; implemented error handling and shared modules for every server task type and integrated monitoring",
-      "Contributed to most Leviosa web features, handled most maintenance independently, and built most of the admin interface",
-      "Maintained Naver Smart Store and TalkTalk integrations across product uploads, automated inspections, price updates, and product-context-aware replies",
-      "Built and operated internal agent workflows with Telegram and Notion; this experience informed the evolution of the Yomates product idea",
-      "Developed Cafe24 commerce automation flows including CS, app installation/OAuth, product sourcing/uploads, and storefront chat widgets"
+      "I contributed to all roughly 40 repositories maintained by the company, with a contribution share of at least 80% in around 15 of them. I built customer-support workflows for Naver and Cafe24, deployed and operated the AI detail-page generation service, and built its canvas editor.",
+      "I created PostHog dashboards and panels for feature usage, errors, and signups, then connected them to Claude and Codex to improve monitoring. Using drop-off, retention, and other user metrics, I revised onboarding and built tutorials that increased the signup rate by at least 200%. I also set up browser and mobile E2E verification loops and harnesses to reduce repeated fixes and improve development efficiency.",
+      "I improved the test suite to shorten verification time while improving the quality of its results. I helped write development conventions for server architecture, ADRs, and shared input/output modules. I oversaw operations for more than 10 servers and designed the system architecture.",
+      "I improved CI/CD speed by at least 400% and cut unnecessary build-resource usage in CI. I introduced infrastructure as code and managed the infrastructure with Terraform. Using AWS SSM, I automated monitoring and the creation of draft debugging PRs."
     ],
     "projects": [
       "AI Detail Page Generation & Editing — End-to-End Development & Operations",
@@ -21,6 +18,34 @@
       "Naver Smart Store & TalkTalk Integrations",
       "Internal Automation with Telegram & Notion",
       "Cafe24 Commerce Automation"
+    ],
+    "descriptionTitles": [
+      "Across the company",
+      "Frontend",
+      "Backend",
+      "Infrastructure"
+    ],
+    "metrics": [
+      {
+        "value": "~40",
+        "label": "All company repositories"
+      },
+      {
+        "value": "~15",
+        "label": "At least 80% contribution"
+      },
+      {
+        "value": "200%+",
+        "label": "Signup rate increase"
+      },
+      {
+        "value": "10+",
+        "label": "Servers operated"
+      },
+      {
+        "value": "400%+",
+        "label": "CI/CD speed increase"
+      }
     ]
   },
   {

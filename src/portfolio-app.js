@@ -68,7 +68,7 @@ export function createPortfolioApps(runtime) {
       height: 760,
       manifest: appManifest(),
       render: ({ content, window }) => {
-        const state = { tab: "overview", projectId: app.projectIds[0] };
+        const state = { tab: "role", projectId: app.projectIds[0] };
         return registerView(runtime, app.appId, content, (element, currentRuntime) => renderExperienceApp(element, currentRuntime, app.id, state), window);
       },
     })),
