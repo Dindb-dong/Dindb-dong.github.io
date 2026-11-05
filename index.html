@@ -9,9 +9,76 @@
       content="김동욱의 포트폴리오를 DindbOS 런타임 위에서 파일, 앱, 터미널처럼 탐색합니다."
     />
     <title>DindbOS | Kim Dong Wook Portfolio</title>
+    <style>
+      html, body { margin: 0; background: #080b0b; }
+      .portfolio-hello { position: fixed; inset: 0; z-index: 2147483647; display: grid; place-content: center; justify-items: center; gap: 24px; background: #080b0b; color: #b6c6cb; font: 13px/1.8 ui-monospace, SFMono-Regular, Consolas, monospace; padding: 24px; }
+      .boot-terminal { display: none; width: min(960px, calc(100vw - 48px)); }
+      [data-hello="write"] .boot-terminal { display: block; }
+      .boot-label { color: #748888; font-size: 11px; letter-spacing: .18em; margin: 0 0 32px; }
+      .boot-output { height: 260px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+      #boot-log { margin: 0; padding: 0; list-style: none; color: #9baeb4; font-size: clamp(10px, 1.25vw, 13px); overflow-wrap: anywhere; }
+      #boot-log li { animation: boot-line 120ms ease-out both; }
+      #boot-log li:last-child { color: #c1dfce; }
+      .boot-welcome { display: none; }
+      .boot-welcome svg { display: block; width: 100%; height: auto; }
+      #startup-enter { display: block; background: transparent; border: 0; color: #b6c6cb; padding: 16px 0; margin-top: 24px; font: inherit; font-size: clamp(15px, 1.4vw, 18px); cursor: pointer; text-align: left; }
+      #startup-enter span { animation: boot-prompt 1.4s steps(1, end) infinite; }
+      #startup-enter:focus-visible { outline: 1px solid #91baf0; outline-offset: 8px; }
+      [data-phase="welcome"] .boot-output { display: none; }
+      [data-phase="welcome"] .boot-welcome { display: block; }
+      .portfolio-hello.is-leaving { pointer-events: none; animation: portfolio-hello-exit 300ms ease both; }
+      #startup-message { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      .startup-recovery { display: none; }
+      [data-hello="skip"] #startup-message, [data-recovery] #startup-message { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0; max-width: 40ch; text-align: center; }
+      [data-recovery] .startup-recovery { display: flex; gap: 24px; }
+      [data-recovery] .boot-terminal { display: none; }
+      .portfolio-hello a { color: #91baf0; padding: 12px 0; }
+      .portfolio-hello a:focus-visible { outline: 2px solid #91baf0; outline-offset: 4px; }
+      @keyframes boot-prompt { 50% { opacity: .2; } }
+      @keyframes boot-line { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes portfolio-hello-exit { to { opacity: 0; visibility: hidden; } }
+      @media (prefers-reduced-motion: reduce) {
+        .portfolio-hello:not([data-phase="welcome"]) .boot-terminal { display: none; }
+        .portfolio-hello.is-leaving, #boot-log li, #startup-enter span { animation: none; }
+        #startup-message { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0; max-width: 40ch; text-align: center; }
+      }
+    </style>
+    <script>
+      (() => {
+        const html = document.documentElement;
+        html.dataset.helloStarted = performance.now();
+        html.dataset.hello = "skip";
+        const replay = new URLSearchParams(location.search).get("intro") === "1";
+        let firstVisit = false;
+        try {
+          firstVisit = !localStorage.getItem("portfolio-hello-seen");
+          if (!replay) localStorage.setItem("portfolio-hello-seen", "1");
+        } catch { firstVisit = false; }
+        if ((replay || firstVisit) && !matchMedia("(prefers-reduced-motion: reduce)").matches) html.dataset.hello = "write";
+        // The entry module itself can stall, so recovery must start in the HTML.
+        setTimeout(() => {
+          const startup = document.getElementById("portfolio-startup");
+          if (!startup || startup.hasAttribute("data-recovery") || startup.dataset.phase === "welcome" || startup.classList.contains("is-leaving")) return;
+          startup.setAttribute("data-recovery", "");
+          document.getElementById("startup-message").textContent = "Loading is taking longer than usual. You can retry or open the resume.";
+        }, 15000);
+      })();
+    </script>
   </head>
   <body>
-    <main id="app" aria-label="DindbOS portfolio runtime"></main>
-    <script type="module" src="/src/main.js?v=projects-all-3"></script>
+    <section id="portfolio-startup" class="portfolio-hello" aria-label="Loading portfolio" lang="en">
+      <div class="boot-terminal">
+        <p class="boot-label" aria-hidden="true">DINDBOS / WEB RUNTIME</p>
+        <div class="boot-output" aria-hidden="true"><ol id="boot-log"><li>[0.000s] Document received. Starting portfolio…</li></ol></div>
+        <div class="boot-welcome"><svg viewBox="0 0 43 9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" shape-rendering="crispEdges"><defs><linearGradient id="boot-gradient" x2="1" y2="0"><stop stop-color="#72b7f8"/><stop offset=".5" stop-color="#a49aee"/><stop offset="1" stop-color="#e796b7"/></linearGradient></defs><path d="M0 0h1v1h-1zM4 0h1v1h-1zM0 1h1v1h-1zM4 1h1v1h-1zM0 2h1v1h-1zM4 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM4 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM0 5h1v1h-1zM1 5h1v1h-1zM3 5h1v1h-1zM4 5h1v1h-1zM0 6h1v1h-1zM4 6h1v1h-1zM6 0h1v1h-1zM7 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM6 1h1v1h-1zM6 2h1v1h-1zM6 3h1v1h-1zM7 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM6 4h1v1h-1zM6 5h1v1h-1zM6 6h1v1h-1zM7 6h1v1h-1zM8 6h1v1h-1zM9 6h1v1h-1zM10 6h1v1h-1zM12 0h1v1h-1zM12 1h1v1h-1zM12 2h1v1h-1zM12 3h1v1h-1zM12 4h1v1h-1zM12 5h1v1h-1zM12 6h1v1h-1zM13 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM16 6h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM21 0h1v1h-1zM22 0h1v1h-1zM18 1h1v1h-1zM18 2h1v1h-1zM18 3h1v1h-1zM18 4h1v1h-1zM18 5h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM25 0h1v1h-1zM26 0h1v1h-1zM27 0h1v1h-1zM24 1h1v1h-1zM28 1h1v1h-1zM24 2h1v1h-1zM28 2h1v1h-1zM24 3h1v1h-1zM28 3h1v1h-1zM24 4h1v1h-1zM28 4h1v1h-1zM24 5h1v1h-1zM28 5h1v1h-1zM25 6h1v1h-1zM26 6h1v1h-1zM27 6h1v1h-1zM30 0h1v1h-1zM34 0h1v1h-1zM30 1h1v1h-1zM31 1h1v1h-1zM33 1h1v1h-1zM34 1h1v1h-1zM30 2h1v1h-1zM32 2h1v1h-1zM34 2h1v1h-1zM30 3h1v1h-1zM32 3h1v1h-1zM34 3h1v1h-1zM30 4h1v1h-1zM34 4h1v1h-1zM30 5h1v1h-1zM34 5h1v1h-1zM30 6h1v1h-1zM34 6h1v1h-1zM36 0h1v1h-1zM37 0h1v1h-1zM38 0h1v1h-1zM39 0h1v1h-1zM40 0h1v1h-1zM36 1h1v1h-1zM36 2h1v1h-1zM36 3h1v1h-1zM37 3h1v1h-1zM38 3h1v1h-1zM39 3h1v1h-1zM36 4h1v1h-1zM36 5h1v1h-1zM36 6h1v1h-1zM37 6h1v1h-1zM38 6h1v1h-1zM39 6h1v1h-1zM40 6h1v1h-1z" fill="#212332" transform="translate(.6 1)"/><path d="M0 0h1v1h-1zM4 0h1v1h-1zM0 1h1v1h-1zM4 1h1v1h-1zM0 2h1v1h-1zM4 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM4 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM0 5h1v1h-1zM1 5h1v1h-1zM3 5h1v1h-1zM4 5h1v1h-1zM0 6h1v1h-1zM4 6h1v1h-1zM6 0h1v1h-1zM7 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM6 1h1v1h-1zM6 2h1v1h-1zM6 3h1v1h-1zM7 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM6 4h1v1h-1zM6 5h1v1h-1zM6 6h1v1h-1zM7 6h1v1h-1zM8 6h1v1h-1zM9 6h1v1h-1zM10 6h1v1h-1zM12 0h1v1h-1zM12 1h1v1h-1zM12 2h1v1h-1zM12 3h1v1h-1zM12 4h1v1h-1zM12 5h1v1h-1zM12 6h1v1h-1zM13 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM16 6h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM21 0h1v1h-1zM22 0h1v1h-1zM18 1h1v1h-1zM18 2h1v1h-1zM18 3h1v1h-1zM18 4h1v1h-1zM18 5h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM25 0h1v1h-1zM26 0h1v1h-1zM27 0h1v1h-1zM24 1h1v1h-1zM28 1h1v1h-1zM24 2h1v1h-1zM28 2h1v1h-1zM24 3h1v1h-1zM28 3h1v1h-1zM24 4h1v1h-1zM28 4h1v1h-1zM24 5h1v1h-1zM28 5h1v1h-1zM25 6h1v1h-1zM26 6h1v1h-1zM27 6h1v1h-1zM30 0h1v1h-1zM34 0h1v1h-1zM30 1h1v1h-1zM31 1h1v1h-1zM33 1h1v1h-1zM34 1h1v1h-1zM30 2h1v1h-1zM32 2h1v1h-1zM34 2h1v1h-1zM30 3h1v1h-1zM32 3h1v1h-1zM34 3h1v1h-1zM30 4h1v1h-1zM34 4h1v1h-1zM30 5h1v1h-1zM34 5h1v1h-1zM30 6h1v1h-1zM34 6h1v1h-1zM36 0h1v1h-1zM37 0h1v1h-1zM38 0h1v1h-1zM39 0h1v1h-1zM40 0h1v1h-1zM36 1h1v1h-1zM36 2h1v1h-1zM36 3h1v1h-1zM37 3h1v1h-1zM38 3h1v1h-1zM39 3h1v1h-1zM36 4h1v1h-1zM36 5h1v1h-1zM36 6h1v1h-1zM37 6h1v1h-1zM38 6h1v1h-1zM39 6h1v1h-1zM40 6h1v1h-1z" fill="url(#boot-gradient)"/></svg>
+          <button id="startup-enter" type="button"><span>Press any key or tap to enter</span></button>
+        </div>
+      </div>
+      <p id="startup-message" role="status">Loading portfolio…</p>
+      <nav class="startup-recovery" aria-label="Loading recovery"><a href="">Try again</a><a href="/resume.html">Open resume</a></nav>
+      <noscript><style>.boot-terminal, #startup-message { display: none !important; }</style><p>JavaScript is required to open this portfolio.</p><a href="/resume.html">Open resume</a></noscript>
+    </section>
+    <main id="app" tabindex="-1" aria-label="DindbOS portfolio runtime" inert aria-busy="true"></main>
+    <script type="module" src="/src/hello.js"></script>
   </body>
 </html>

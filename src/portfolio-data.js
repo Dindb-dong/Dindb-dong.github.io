@@ -73,12 +73,12 @@ export const SKILLS = {
   interests: ["AI", "Computer Science", "Data Science", "Quantum Computing", "Web", "Mobile", "Game"],
 };
 
-export async function loadPortfolioRuntime() {
+export async function loadPortfolioRuntime(report = () => {}) {
   const [ko, en, presentations, browserConfig] = await Promise.all([
-    loadLocaleData("ko"),
-    loadLocaleData("en").catch(() => loadLocaleData("ko")),
-    fetchJson(PRESENTATIONS_MANIFEST).catch(() => []),
-    fetchJson("/remote-browser.config.json").catch(() => ({})),
+    loadLocaleData("ko", report),
+    loadLocaleData("en", report).catch(() => loadLocaleData("ko", report)),
+    fetchJson(PRESENTATIONS_MANIFEST, report).catch(() => []),
+    fetchJson("/remote-browser.config.json", report).catch(() => ({})),
   ]);
   const datasets = {
     ko: attachPresentations(ko, presentations),
@@ -140,12 +140,12 @@ export function portfolioDataForBuiltin(data) {
   };
 }
 
-async function loadLocaleData(locale) {
+async function loadLocaleData(locale, report) {
   const files = LOCALE_FILES[locale];
   const [projectsJson, introduce, experiences] = await Promise.all([
-    fetchJson(`${PORTFOLIO_BASE}/data/${files.projects}`),
-    fetchJson(`${PORTFOLIO_BASE}/data/${files.introduce}`),
-    fetchJson(`${PORTFOLIO_BASE}/data/${files.experiences}`),
+    fetchJson(`${PORTFOLIO_BASE}/data/${files.projects}`, report),
+    fetchJson(`${PORTFOLIO_BASE}/data/${files.introduce}`, report),
+    fetchJson(`${PORTFOLIO_BASE}/data/${files.experiences}`, report),
   ]);
 
   return {
@@ -189,10 +189,12 @@ function normalizeProjects(projectsJson) {
   }).sort((left, right) => right.id - left.id);
 }
 
-async function fetchJson(path) {
+async function fetchJson(path, report) {
   const response = await fetch(path);
   if (!response.ok) throw new Error(`Failed to load ${path}: ${response.status}`);
-  return response.json();
+  const data = await response.json();
+  report(`Loaded ${path}`);
+  return data;
 }
 
 function toArray(value) {

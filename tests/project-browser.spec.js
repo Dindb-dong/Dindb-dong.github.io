@@ -53,7 +53,7 @@ for (const width of [390, 1440]) {
 }
 
 test("mobile searchable selector replaces separate dropdown, search and count rows", async ({ browser }, testInfo) => {
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: "reduce" });
   const page = await context.newPage();
   try {
     await page.goto("/");

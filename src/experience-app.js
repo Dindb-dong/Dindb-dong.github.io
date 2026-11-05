@@ -1,4 +1,6 @@
 import { escapeAttr as html } from "./utils/html.js";
+import { renderEmphasis } from "./utils/emphasis.js";
+import { CONTENT_EMPHASIS } from "./content-emphasis.js";
 import { renderDropdown, mountDropdown } from "./dropdown.js";
 import { revealActiveNavigation, sidebarIcon } from "./navigation-icons.js";
 import { EXPERIENCE_APPS, experienceContent } from "./experience-content.js";
@@ -7,6 +9,8 @@ export function renderExperienceApp(content, runtime, id, state) {
   state.disposeDropdown?.();
   const app = experienceContent(runtime, id);
   const ko = runtime.locale === "ko";
+  const emphasize = text => renderEmphasis(text, CONTENT_EMPHASIS[runtime.locale]?.experiences[id]);
+  const projectEmphasis = text => renderEmphasis(text, CONTENT_EMPHASIS[runtime.locale]?.projects[selected?.id]);
   const copy = ko ? {
     overview: "둘러보기", projects: "프로젝트", gallery: "자료실", role: "기여와 성과", change: "다른 경력 앱 열기",
     work: "주요 작업", views: "화면과 자료", scope: "담당 범위", stack: "사용 기술", more: "프로젝트 살펴보기",
@@ -37,7 +41,7 @@ export function renderExperienceApp(content, runtime, id, state) {
   let body = "";
   if (state.tab === "overview") {
     body = `<section class="experience-intro">
-      <div><h2>${html(app.summary)}</h2><p>${html(app.experience.description[0])}</p>
+      <div><h2>${html(app.summary)}</h2><p>${emphasize(app.experience.description[0])}</p>
         <button type="button" class="experience-primary" data-experience-tab="${app.projects.length ? "projects" : "role"}">${app.projects.length ? copy.more : copy.role} <span aria-hidden="true">↗</span></button>
       </div>
       ${gallery(images().slice(0, 1), "experience-hero-media")}
@@ -45,25 +49,25 @@ export function renderExperienceApp(content, runtime, id, state) {
     <div class="experience-focus" aria-label="${copy.scope}">${app.focus.map((focus, index) => `<div><span>${String(index + 1).padStart(2, "0")}</span><strong>${html(focus)}</strong></div>`).join("")}</div>
     ${app.projects.length ? `<section class="experience-section"><div class="experience-section-heading"><h2>${copy.work}</h2><span>${app.projects.length} ${ko ? "프로젝트" : "projects"}</span></div>
       <div class="experience-project-grid">${app.projects.map(projectButton).join("")}</div>
-    </section>` : `<section class="experience-section"><h2>${copy.responsibility}</h2><ul class="experience-work-list">${app.experience.description.map(line => `<li>${html(line)}</li>`).join("")}</ul></section>`}
+    </section>` : `<section class="experience-section"><h2>${copy.responsibility}</h2><ul class="experience-work-list">${app.experience.description.map(line => `<li>${emphasize(line)}</li>`).join("")}</ul></section>`}
     ${app.media.length > 1 ? `<section class="experience-section"><div class="experience-section-heading"><h2>${copy.views}</h2><button type="button" data-experience-tab="gallery">${copy.gallery} ↗</button></div>${gallery(images().slice(1, 3))}</section>` : ""}`;
   } else if (state.tab === "projects") {
     body = `<section class="experience-section experience-section--first"><h2>${copy.work}</h2>
       <div class="experience-project-grid">${app.projects.map(projectButton).join("")}</div>
     </section>
     <article class="experience-case-study" data-experience-case="${selected.id}">
-      <header><span>${html(selected.role)}</span><h2>${html(selected.title)}</h2><p>${html(selected.description.join(" "))}</p></header>
+      <header><span>${renderEmphasis(selected.role, { bold: [selected.role] })}</span><h2>${html(selected.title)}</h2><p>${projectEmphasis(selected.description.join(" "))}</p></header>
       <div class="experience-tags" aria-label="${copy.stack}">${[...selected.languages, ...selected.techStacks].map((tag) => `<span>${html(tag)}</span>`).join("")}</div>
       ${gallery(images(selected.id))}
-      <section class="experience-section"><h3>${copy.scope}</h3><ul class="experience-work-list">${selected.extraDescription.map((line) => `<li>${html(line)}</li>`).join("")}</ul></section>
+      <section class="experience-section"><h3>${copy.scope}</h3><ul class="experience-work-list">${selected.extraDescription.map((line) => `<li>${projectEmphasis(line)}</li>`).join("")}</ul></section>
       ${selected.links.length || selected.deck ? `<nav class="experience-links" aria-label="${copy.links}">${selected.links.map((link) => `<a href="${html(link.url)}" target="_blank" rel="noreferrer">${html(link.name)} ↗</a>`).join("")}${selected.deck ? `<a href="/assets/presentations/${html(selected.deck.file)}" target="_blank" rel="noreferrer">${copy.deck} ↗</a>` : ""}</nav>` : ""}
     </article>`;
   } else if (state.tab === "gallery") {
     body = `<section class="experience-section experience-section--first"><div class="experience-section-heading"><h2>${copy.views}</h2><span>${app.media.length} ${ko ? "개 자료" : "items"}</span></div>${gallery(images())}</section>`;
   } else {
     body = `<section class="experience-contributions" aria-label="${copy.role}">
-      <div class="experience-responsibilities">${app.experience.description.map((line, index) => `<article>${app.experience.descriptionTitles?.[index] ? `<h2>${html(app.experience.descriptionTitles[index])}</h2><ul>${line.split("\n").map(item => `<li>${html(item)}</li>`).join("")}</ul>` : `<p>${html(line)}</p>`}</article>`).join("")}</div>
-      <h2>${copy.work}</h2><ul class="experience-work-list">${app.experience.projects.map((name) => `<li>${html(name)}</li>`).join("")}</ul>
+      <div class="experience-responsibilities">${app.experience.description.map((line, index) => `<article>${app.experience.descriptionTitles?.[index] ? `<h2>${html(app.experience.descriptionTitles[index])}</h2><ul>${line.split("\n").map(item => `<li>${emphasize(item)}</li>`).join("")}</ul>` : `<p>${emphasize(line)}</p>`}</article>`).join("")}</div>
+      <h2>${copy.work}</h2><ul class="experience-work-list">${app.experience.projects.map((name) => `<li>${emphasize(name)}</li>`).join("")}</ul>
     </section>`;
   }
   content.innerHTML = `<section class="portfolio-os-app experience-app" data-experience-app="${id}" data-experience-tab-active="${state.tab}">
@@ -76,7 +80,7 @@ export function renderExperienceApp(content, runtime, id, state) {
       })}</div>
     </aside>
     <main class="experience-main">
-      <header class="experience-app-header"><div><h1>${html(app.experience.groupName)}</h1><p>${html(app.experience.position)}</p></div><span>${html(app.experience.period)}</span></header>
+      <header class="experience-app-header"><div><h1>${html(app.experience.groupName)}</h1><p>${emphasize(app.experience.position)}</p></div><span>${html(app.experience.period)}</span></header>
       ${body}
     </main>
     <dialog class="experience-lightbox" aria-label="${copy.views}"><div class="experience-lightbox-toolbar"><p data-lightbox-caption></p><button type="button" data-lightbox-close aria-label="${copy.close}">${copy.close} ×</button></div><img data-lightbox-image alt=""><div class="experience-lightbox-controls"><button type="button" data-lightbox-previous>${copy.previous}</button><span data-lightbox-count></span><button type="button" data-lightbox-next>${copy.next}</button></div></dialog>

@@ -1,0 +1,17 @@
+.portfolio-emphasis {
+  color: #202124;
+  font-weight: 750;
+}
+
+.portfolio-highlight {
+  background: linear-gradient(transparent 57%, #dce8fb 57%, #dce8fb 91%, transparent 91%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.profile-career-list .portfolio-emphasis,
+.profile-research-row > span .portfolio-emphasis {
+  display: inline;
+  font-size: inherit;
+  line-height: inherit;
+}

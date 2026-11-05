@@ -64,7 +64,10 @@ test("both locales, experience references, media and VFS use active content cons
 
 test("English and optional resource failures preserve existing fallback behavior", async t => {
   mockLoading(t, path => path.includes("eng_") || !path.startsWith("/portfolio/"));
-  const runtime = await loadPortfolioRuntime();
+  const progress = [];
+  const runtime = await loadPortfolioRuntime(message => progress.push(message));
+  assert.ok(progress.includes("Loaded /portfolio/data/projectDetails.json"));
+  assert.equal(progress.some(message => message.includes("eng_") || message.includes("manifest.json") || message.includes("remote-browser.config.json")), false);
   assert.deepEqual(runtime.datasets.en.projects, runtime.datasets.ko.projects);
   assert.deepEqual(runtime.presentations, []);
   assert.deepEqual(runtime.browserConfig, {});
