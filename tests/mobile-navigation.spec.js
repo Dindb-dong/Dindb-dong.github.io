@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 test.use({ hasTouch: true, isMobile: true });
 
 async function assertTouchTarget(button, page) {
+  await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
   await button.scrollIntoViewIfNeeded();
   const bounds = await button.boundingBox();
   expect(bounds.width).toBeGreaterThanOrEqual(44);

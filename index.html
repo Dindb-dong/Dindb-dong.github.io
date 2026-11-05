@@ -18,13 +18,17 @@
       .portfolio-hello.is-leaving { pointer-events: none; animation: portfolio-hello-exit 350ms ease both; }
       #startup-message { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
       .startup-recovery { display: none; }
-      [data-recovery] #startup-message { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0; max-width: 34ch; padding: 0 24px; text-align: center; }
+      [data-hello="skip"] #startup-message, [data-recovery] #startup-message { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0; max-width: 34ch; padding: 0 24px; text-align: center; }
       [data-recovery] .startup-recovery { display: flex; gap: 24px; }
       .portfolio-hello a { color: #2563eb; padding: 12px 0; }
       .portfolio-hello a:focus-visible { outline: 2px solid #2563eb; outline-offset: 4px; }
       @keyframes portfolio-hello-write { to { stroke-dashoffset: 0; } }
       @keyframes portfolio-hello-exit { to { opacity: 0; visibility: hidden; } }
-      @media (prefers-reduced-motion: reduce) { [data-hello="write"] .portfolio-hello svg { display: none; } .portfolio-hello.is-leaving, .portfolio-hello path { animation: none; } }
+      @media (prefers-reduced-motion: reduce) {
+        [data-hello="write"] .portfolio-hello svg { display: none; }
+        .portfolio-hello.is-leaving, .portfolio-hello path { animation: none; }
+        #startup-message { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0; max-width: 34ch; padding: 0 24px; text-align: center; }
+      }
     </style>
     <script>
       (() => {
@@ -36,6 +40,11 @@
           localStorage.setItem("portfolio-hello-seen", "1");
           if (!seen && !matchMedia("(prefers-reduced-motion: reduce)").matches) html.dataset.hello = "write";
         } catch {}
+        const earlyInput = new AbortController();
+        const skip = () => { html.dataset.helloSkip = "true"; };
+        window.addEventListener("pointerdown", skip, { capture: true, signal: earlyInput.signal });
+        window.addEventListener("keydown", skip, { capture: true, signal: earlyInput.signal });
+        document.addEventListener("portfolio-entry-ready", () => earlyInput.abort(), { once: true });
         // The entry module itself can stall, so recovery must start in the HTML.
         setTimeout(() => {
           const startup = document.getElementById("portfolio-startup");

@@ -2,9 +2,10 @@ const startup = document.getElementById("portfolio-startup");
 const app = document.getElementById("app");
 const lifetime = new AbortController();
 const motion = matchMedia("(prefers-reduced-motion: reduce)");
+document.dispatchEvent(new Event("portfolio-entry-ready"));
 let writingTimeout;
 const writing = new Promise(resolve => {
-  const remaining = document.documentElement.dataset.hello === "write" && !motion.matches
+  const remaining = document.documentElement.dataset.hello === "write" && !document.documentElement.dataset.helloSkip && !motion.matches
     ? Math.max(0, 1600 - (performance.now() - Number(document.documentElement.dataset.helloStarted))) : 0;
   writingTimeout = setTimeout(resolve, remaining);
   window.addEventListener("pointerdown", resolve, { capture: true, signal: lifetime.signal });

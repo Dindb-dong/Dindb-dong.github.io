@@ -18,6 +18,15 @@ async function expectReady(page) {
   await expect(greeting(page)).toHaveCount(0);
 }
 
+async function expectVisibleLoadingMessage(page) {
+  const status = page.locator("#startup-message");
+  await expect(status).toHaveText("Loading portfolio…");
+  await expect(status).toHaveCSS("clip-path", "none");
+  const box = await status.boundingBox();
+  expect(box.width).toBeGreaterThan(100);
+  expect(box.height).toBeGreaterThan(10);
+}
+
 test("HTML paints and writes hello before external JavaScript or CSS arrives", async ({ page }, testInfo) => {
   const assets = barrier();
   await page.route("**/*", async route => {
@@ -28,6 +37,7 @@ test("HTML paints and writes hello before external JavaScript or CSS arrives", a
     await page.goto("/?ln=ko", { waitUntil: "commit" });
     await expect(greeting(page)).toBeVisible();
     await expect(greeting(page).locator("svg")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("#startup-message")).toHaveCSS("clip-path", "inset(50%)");
     await expect(page.locator('link[rel="stylesheet"]')).toHaveCount(0);
     await expect(page.locator("#app")).toHaveAttribute("inert", "");
     await expect(page.locator(".portfolio-about")).toHaveCount(0);
@@ -46,6 +56,38 @@ test("HTML paints and writes hello before external JavaScript or CSS arrives", a
   }
   await expectReady(page);
 });
+
+for (const input of ["pointer", "keyboard"]) {
+  test(`${input} before the entry script skips only handwriting and still waits for boot`, async ({ page }) => {
+    const entry = barrier();
+    const data = barrier();
+    await page.route("**/*", async route => {
+      if (route.request().resourceType() === "script") await entry.wait;
+      if (new URL(route.request().url()).pathname === "/portfolio/data/projectDetails.json") await data.wait;
+      await route.continue();
+    });
+    try {
+      await page.goto("/?ln=ko", { waitUntil: "commit" });
+      await expect(greeting(page)).toBeVisible();
+      if (input === "pointer") await page.mouse.click(20, 20);
+      else await page.keyboard.press("Enter");
+      await expect(page.locator("html")).toHaveAttribute("data-hello-skip", "true");
+      // An extended handwriting deadline makes a lost early input fail without a CPU-speed threshold.
+      await page.evaluate(() => { document.documentElement.dataset.helloStarted = performance.now() + 60_000; });
+      const requested = page.waitForRequest("**/portfolio/data/projectDetails.json");
+      entry.release();
+      await requested;
+      await expect(page.locator("#app")).toHaveAttribute("inert", "");
+      await expect(greeting(page)).not.toHaveClass(/is-leaving/);
+      data.release();
+      await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
+    } finally {
+      entry.release();
+      data.release();
+    }
+    await expectReady(page);
+  });
+}
 
 test("slow required data stays covered beyond the old timer and ignores premature input", async ({ page }, testInfo) => {
   const data = barrier();
@@ -102,9 +144,17 @@ test("fast boot finishes the first handwriting and skips repeat visits without c
   await page.goto("/?ln=ko", { waitUntil: "commit" });
   await expectReady(page);
   expect(await page.evaluate(() => performance.now() - Number(document.documentElement.dataset.helloStarted))).toBeGreaterThanOrEqual(1600);
-  await page.reload();
+  const data = barrier();
+  await page.route("**/portfolio/data/projectDetails.json", async route => { await data.wait; await route.continue(); });
+  try {
+    await page.reload({ waitUntil: "commit" });
+    await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+    await expect(greeting(page).locator("svg")).toBeHidden();
+    await expectVisibleLoadingMessage(page);
+  } finally {
+    data.release();
+  }
   await expectReady(page);
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
   const revisit = await context.newPage();
   await revisit.goto("/?ln=en");
   await expectReady(revisit);
@@ -114,7 +164,15 @@ test("fast boot finishes the first handwriting and skips repeat visits without c
 
 test("reduced motion skips handwriting and records the visit", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/?ln=en");
+  const data = barrier();
+  await page.route("**/portfolio/data/projectDetails.json", async route => { await data.wait; await route.continue(); });
+  try {
+    await page.goto("/?ln=en", { waitUntil: "commit" });
+    await expect(greeting(page).locator("svg")).toBeHidden();
+    await expectVisibleLoadingMessage(page);
+  } finally {
+    data.release();
+  }
   await expectReady(page);
   await expect(heading(page)).toHaveText("Kim Dong Wook");
   expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBe("1");
@@ -129,7 +187,15 @@ test("denied storage skips handwriting and preserves navigation", async ({ page 
   await page.addInitScript(() => {
     Object.defineProperty(window, "localStorage", { get() { throw new DOMException("Denied", "SecurityError"); } });
   });
-  await page.goto("/?ln=ko");
+  const data = barrier();
+  await page.route("**/portfolio/data/projectDetails.json", async route => { await data.wait; await route.continue(); });
+  try {
+    await page.goto("/?ln=ko", { waitUntil: "commit" });
+    await expect(greeting(page).locator("svg")).toBeHidden();
+    await expectVisibleLoadingMessage(page);
+  } finally {
+    data.release();
+  }
   await expectReady(page);
   await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
   await page.locator('[data-sidebar-target="projects"]').first().click();
@@ -159,6 +225,7 @@ test("changing motion preference waives handwriting but never readiness", async 
     await expect(greeting(page)).toBeVisible();
     await page.emulateMedia({ reducedMotion: "reduce" });
     await expect(greeting(page).locator("svg")).toBeHidden();
+    await expectVisibleLoadingMessage(page);
     await expect(greeting(page)).toBeVisible();
     await expect(page.locator("#app")).toHaveAttribute("inert", "");
   } finally {
