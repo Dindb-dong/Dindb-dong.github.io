@@ -103,11 +103,15 @@ export function currentData(runtime) {
 }
 
 export function loadLocale() {
-  for (const key of LANGUAGE_STORAGE_KEYS) {
-    const value = localStorage.getItem(key);
-    if (SUPPORTED_LOCALES.includes(value)) return value;
-  }
-  return "ko";
+  const requested = new URLSearchParams(globalThis.location?.search).get("ln");
+  if (SUPPORTED_LOCALES.includes(requested)) return requested;
+  try {
+    for (const key of LANGUAGE_STORAGE_KEYS) {
+      const value = globalThis.localStorage?.getItem(key);
+      if (SUPPORTED_LOCALES.includes(value)) return value;
+    }
+  } catch { /* Browser language still works when storage is unavailable. */ }
+  return globalThis.navigator?.language?.toLowerCase().split("-")[0] === "ko" ? "ko" : "en";
 }
 
 export function persistLocale(locale) {

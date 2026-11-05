@@ -125,7 +125,7 @@ test("English contributions keep results in prose and remain readable on mobile"
   await expect(app).toHaveAttribute("data-experience-tab-active", "role");
   await expect(app.locator(".experience-contributions dl")).toHaveCount(0);
   await expect(app.locator(".experience-responsibilities h2")).toHaveText(["AI product engineering", "Frontend & user experience", "Backend & system architecture", "Infrastructure & developer productivity"]);
-  for (const result of ["40 repositories", "80%", "200%", "10 or more servers", "400%"])
+  for (const result of ["40 company repositories", "80%", "200%", "10 or more servers", "400%"])
     await expect(app.locator(".experience-responsibilities")).toContainText(result);
   await expect(app.locator(".experience-responsibilities")).toContainText("AWS SSM");
   expect(await app.locator(".experience-main").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);

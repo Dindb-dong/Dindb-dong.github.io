@@ -206,8 +206,14 @@
 ## Experience contributions first (2026-11-05)
 
 - Experience apps open on the existing `role` destination, labeled Contributions, followed by Showcase, Projects and Media. Preserve app IDs, independent state, company switching, and image viewing.
-- The owner explicitly rejected the standalone metric strip. Lead with readable prose under four descriptive headings: AI product engineering, frontend and user experience, backend and system architecture, infrastructure and developer productivity. Keep figures within the relevant explanation; no metric cards, oversized number rows, or decorative paragraph numbering.
+- The owner explicitly rejected the standalone metric strip. Use concise noun-phrase bullets under four descriptive headings: AI product engineering, frontend and user experience, backend and system architecture, infrastructure and developer productivity. Keep figures within the relevant explanation; no metric cards, oversized number rows, or decorative paragraph numbering.
 - Leviosa copy connects scope, implementation and outcomes. Use owner-supplied work and existing project evidence for the canvas engine, AI generation workflow, job queues/workers, deployment interruptions and concurrent-save conflicts. Do not invent measurement periods, contribution denominators or additional results.
-- Canvas library document: DindbOS · Portfolio Mobile Navigation, Page 1 (`page-0959dd44-73da-422d-8f68-016cc5dce6a7`). Desktop board `b0865416-e838-46c6-86ef-1f8b3b139ec0`, mobile board `3c4f8385-7612-406e-9a93-68eaa6742fe8`. Removed the metrics main and mobile instance; retain the existing navigation components. Both boards use the revised prose.
+- Canvas library document: DindbOS · Portfolio Mobile Navigation, Page 1 (`page-0959dd44-73da-422d-8f68-016cc5dce6a7`). Desktop board `b0865416-e838-46c6-86ef-1f8b3b139ec0`, mobile board `3c4f8385-7612-406e-9a93-68eaa6742fe8`. Removed the metrics main and mobile instance; retain the existing navigation components. Both boards use the revised Korean bullet copy; native semantic list markers are provided by the implementation.
 - Map to `src/experience-app.js` and `src/portfolio.css`; localized content stays in the active experience JSON files. Reuse the shared sidebar and mobile glass navigation. Neutral text, 14px body, 16px section headings and plain separators.
 - Review desktop and 390px Canvas boards against actual production-preview screenshots. Check 320px, 390px and 1024px layouts and English content with the existing browser suite.
+
+## Visitor language (2026-11-05)
+
+- Language selection order: supported `ln` URL parameter (`en` or `ko`), existing saved preference, then primary browser language. Korean browser locales select Korean; all other browser languages default to English. Invalid URL/storage values fall through.
+- URL overrides are visit-specific and do not rewrite the saved preference. Denied browser-storage access still permits automatic selection. Set the document language to the selected locale at boot.
+- Keep both localized datasets and the same experience-app structure. Test explicit links in both directions, Korean/English/other browser locales, stored preferences and denied storage.

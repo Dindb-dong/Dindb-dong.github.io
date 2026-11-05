@@ -249,7 +249,7 @@ test("Leviosa experience includes contributions and results in both languages", 
   await expect(page.locator(".profile-panel h2")).toHaveText(["Development tools", "Skills", "Experience", "AI"]);
   await expect(page.locator(".profile-languages dd")).toHaveText(["Native", "Advanced", "Advanced"]);
   await nav.locator('[data-sidebar-target="experience"]').click();
-  for (const text of ["40 repositories", "15 of them", "80%", "PostHog", "200%", "400%", "Terraform", "AWS SSM"]) {
+  for (const text of ["40 company repositories", "15 of them", "80%", "PostHog", "200%", "400%", "Terraform", "AWS SSM"]) {
     await expect(company).toContainText(text);
   }
 });

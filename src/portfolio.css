@@ -994,7 +994,8 @@ input {
 .experience-responsibilities { margin-bottom: 32px; }
 .experience-responsibilities article { padding: 22px 0; border-bottom: 1px solid var(--portfolio-line); }
 .experience-contributions h2 { margin: 0 0 10px; font-size: 16px; }
-.experience-responsibilities p { margin: 0; font-size: 14px; line-height: 1.9; color: var(--portfolio-ink); }
+.experience-responsibilities :is(p, li) { margin: 0; font-size: 14px; line-height: 1.9; color: var(--portfolio-ink); }
+.experience-responsibilities ul { display: grid; gap: 10px; margin: 0; padding-left: 20px; }
 .experience-lightbox { width: min(1160px, calc(100vw - 40px)); max-width: none; height: min(860px, calc(100dvh - 40px)); max-height: none; box-sizing: border-box; padding: 18px; border: 1px solid var(--portfolio-line); border-radius: 10px; background: var(--portfolio-surface); color: var(--portfolio-ink); }
 .experience-lightbox[open] { display: flex; flex-direction: column; gap: 16px; }
 .experience-lightbox::backdrop { background: rgb(32 33 36 / 80%); }

@@ -8,7 +8,7 @@ export const EXPERIENCE_APPS = [
     id: 1, appId: "experience-leviosa", name: "Leviosa-AI",
     icon: "/assets/experience-icons/Leviosa-AI-symbol.svg",
     projectIds: [17, 19],
-    summary: pair("AI 생성 서비스와 자체 편집기를 개발하고, 백엔드·인프라 운영 및 개발 자동화를 담당했습니다.", "Developed AI generation products and a custom editor, alongside backend engineering, infrastructure operations, and development automation."),
+    summary: pair("AI 생성 서비스·캔버스 편집기 개발, 백엔드·인프라 운영 및 개발 자동화", "AI product and canvas editor development, backend engineering, infrastructure operations, and development automation"),
     focus: pair(["AI 서비스·편집기", "서버 설계·운영", "검증·배포 자동화"], ["AI products & editor", "Server architecture & operations", "Verification & deployment automation"]),
     media: [
       shot("proj_17_1.png", 17, pair("AI 상세페이지 생성·편집 서비스", "AI detail-page generation and editing"), pair("공개 서비스 화면", "Public service page")),
