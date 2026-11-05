@@ -4,6 +4,8 @@ import { filteredProjects } from "../project-filters.js";
 import { currentData } from "../portfolio-data.js";
 import { unique, firstText } from "../utils/values.js";
 import { escapeHtml, escapeAttr } from "../utils/html.js";
+import { renderEmphasis } from "../utils/emphasis.js";
+import { CONTENT_EMPHASIS } from "../content-emphasis.js";
 
 export function renderProjectBrowser(content, runtime, navigation) {
   const { renderAppSidebar, wireSidebar } = navigation;
@@ -162,6 +164,7 @@ function renderProjectRow(project, selectedId) {
 }
 
 function renderProjectDetail(project, runtime) {
+  const emphasize = text => renderEmphasis(text, CONTENT_EMPHASIS[runtime.locale]?.projects[project.id]);
   const previewMedia = [...project.media].sort((left, right) => Number(left.type === "video") - Number(right.type === "video")).slice(0, 3);
   const copy = runtime.locale === "ko" ? {
     introduction: "프로젝트 소개",
@@ -177,7 +180,7 @@ function renderProjectDetail(project, runtime) {
   return `
     <div class="portfolio-detail-header">
       <h2>${escapeHtml(project.title)}</h2>
-      <p>${escapeHtml(project.role)}</p>
+      <p>${renderEmphasis(project.role, { bold: [project.role] })}</p>
     </div>
     <div class="portfolio-tag-row">
       ${[...project.categories, ...project.languages, ...project.techStacks].map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
@@ -188,12 +191,12 @@ function renderProjectDetail(project, runtime) {
     </div>
     <section class="portfolio-detail-section">
       <h3>${copy.introduction}</h3>
-      ${project.description.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+      ${project.description.map((line) => `<p>${emphasize(line)}</p>`).join("")}
     </section>
     <section class="portfolio-detail-section">
       <h3>${copy.details}</h3>
       <ul>
-        ${project.extraDescription.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
+        ${project.extraDescription.map((line) => `<li>${emphasize(line)}</li>`).join("")}
       </ul>
     </section>
     ${project.links.length || project.deck ? `

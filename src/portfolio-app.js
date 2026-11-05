@@ -7,6 +7,9 @@ import { filteredProjects } from "./project-filters.js";
 import { mountView, updateView, refreshViews } from "./view-lifecycle.js";
 import { unique } from "./utils/values.js";
 import { escapeHtml, escapeAttr } from "./utils/html.js";
+import { renderEmphasis } from "./utils/emphasis.js";
+import { CONTENT_EMPHASIS } from "./content-emphasis.js";
+import "./emphasis.css";
 
 function renderProjects(content, runtime) {
   return renderProjectBrowser(content, runtime, {
@@ -128,7 +131,7 @@ function renderAbout(content, runtime) {
       ${renderAppSidebar("about", runtime)}
       <main class="portfolio-main-pane profile-overview">
         <header class="profile-header">
-          <div><h1>${ko ? "김동욱" : "Kim Dong Wook"}</h1><p>Full-Stack AI & SW Engineer</p></div>
+          <div><h1>${ko ? "김동욱" : "Kim Dong Wook"}</h1><p>Full-Stack <strong class="portfolio-emphasis">AI &amp; SW Engineer</strong></p></div>
           <img class="profile-mobile-portrait" src="/assets/images/kim-dong-wook.png" alt="Kim Dong Wook">
           <nav class="profile-links" aria-label="${ko ? "프로필 링크" : "Profile links"}">
             <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -139,7 +142,7 @@ function renderAbout(content, runtime) {
         <div class="profile-panels">
           <div class="profile-column">
             <section class="profile-panel profile-education" aria-label="${copy.education}">
-              <div class="profile-school"><h3>${copy.university}</h3><p>${copy.major}</p><div class="profile-school-meta"><time>2023.03–2028.02</time><span>GPA <strong>4.00</strong> / 4.3</span></div></div>
+              <div class="profile-school"><h3>${copy.university}</h3><p>${copy.major}</p><div class="profile-school-meta"><time>2023.03–2028.02</time><span>GPA <strong class="portfolio-emphasis portfolio-highlight">4.00 / 4.3</strong></span></div></div>
               <div class="profile-school"><h3>${copy.school}</h3><p>${copy.track} <span class="profile-date">· 2020.03–2023.01</span></p></div>
               <dl class="profile-languages">${languages.map(([name, level]) => `<div><dt>${name}</dt><dd>${level}</dd></div>`).join("")}</dl>
             </section>
@@ -157,13 +160,13 @@ function renderAbout(content, runtime) {
           <div class="profile-column">
             <section class="profile-panel profile-career" aria-label="${copy.career}">
               <h2>${copy.career}</h2>
-              <div class="profile-career-list">${careers.map(({app, experience}) => `<button type="button" data-experience-open="${app.id}"><img src="${escapeAttr(app.icon || `/assets/experience-icons/${app.name}-official.svg`)}" alt=""><span><span class="profile-career-title"><strong>${escapeHtml(app.name)}</strong><time>${escapeHtml(experience.period.replace(/\s*[~-]\s*/g, "–"))}</time></span><span>${escapeHtml(experience.position)}</span></span><span aria-hidden="true">↗</span></button>`).join("")}</div>
+              <div class="profile-career-list">${careers.map(({app, experience}) => `<button type="button" data-experience-open="${app.id}"><img src="${escapeAttr(app.icon || `/assets/experience-icons/${app.name}-official.svg`)}" alt=""><span><span class="profile-career-title"><strong>${escapeHtml(app.name)}</strong><time>${escapeHtml(experience.period.replace(/\s*[~-]\s*/g, "–"))}</time></span><span>${renderEmphasis(experience.position, CONTENT_EMPHASIS[runtime.locale]?.experiences[experience.id])}</span></span><span aria-hidden="true">↗</span></button>`).join("")}</div>
             </section>
             <section class="profile-panel profile-research" aria-label="${copy.research}">
               <h2>${copy.research}</h2>
-              <button type="button" class="profile-research-row" data-experience-open="3"><strong>${copy.leadership}</strong><span>2025.01–${ko ? "현재" : "present"}</span></button>
+              <button type="button" class="profile-research-row" data-experience-open="3"><strong class="portfolio-emphasis">${copy.leadership}</strong><span>2025.01–${ko ? "현재" : "present"}</span></button>
               <div class="profile-ai-interests"><h3>${copy.interests}</h3><dl><div><dt>CV</dt><dd>${copy.vision}</dd></div><div><dt>RL</dt><dd>${copy.rl}</dd></div></dl></div>
-              <button type="button" class="profile-research-row" data-profile-project="20"><strong>YAI-HUB<span aria-hidden="true">↗</span></strong><span>${copy.hub}</span></button>
+              <button type="button" class="profile-research-row" data-profile-project="20"><strong>YAI-HUB<span aria-hidden="true">↗</span></strong><span>${renderEmphasis(copy.hub, { mark: [ko ? "60명 넘는 학회원이 매일 사용" : "used daily by 60+ members"] })}</span></button>
             </section>
           </div>
         </div>
@@ -336,11 +339,11 @@ function renderExperienceCard(experience, index, runtime) {
     <article class="portfolio-timeline-card portfolio-experience-launcher">
       <div class="portfolio-timeline-index">${String(index + 1).padStart(2, "0")}</div>
       <div class="portfolio-timeline-body">
-        <header><h2 class="experience-launcher-name"><img src="${escapeAttr(app.icon)}" alt="">${escapeHtml(experience.groupName)}</h2><p>${escapeHtml([experience.position, experience.period].join(" · "))}</p></header>
+        <header><h2 class="experience-launcher-name"><img src="${escapeAttr(app.icon)}" alt="">${escapeHtml(experience.groupName)}</h2><p>${renderEmphasis(experience.position, CONTENT_EMPHASIS[runtime.locale]?.experiences[experience.id])} · ${escapeHtml(experience.period)}</p></header>
         <p class="experience-launcher-summary">${escapeHtml(app.summary)}</p>
         <div class="experience-launcher-focus">${app.focus.map((focus) => `<span>${escapeHtml(focus)}</span>`).join("")}</div>
         <button type="button" class="experience-primary" data-experience-open="${experience.id}">${escapeHtml(app.name)}.app ${ko ? "열기" : "Open"} ↗</button>
-        <details class="experience-launcher-details"><summary>${ko ? "담당 업무 요약" : "Responsibilities at a glance"}</summary><ul>${experience.description.flatMap(line => line.split("\n")).map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>
+        <details class="experience-launcher-details"><summary>${ko ? "담당 업무 요약" : "Responsibilities at a glance"}</summary><ul>${experience.description.flatMap(line => line.split("\n")).map((line) => `<li>${renderEmphasis(line, CONTENT_EMPHASIS[runtime.locale]?.experiences[experience.id])}</li>`).join("")}</ul>
           <div class="portfolio-mini-projects">${experience.projects.map((project) => `<span>${escapeHtml(project)}</span>`).join("")}</div>
         </details>
       </div>
