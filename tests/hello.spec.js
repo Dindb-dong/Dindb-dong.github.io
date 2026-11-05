@@ -27,7 +27,7 @@ async function expectVisibleLoadingMessage(page) {
   expect(box.height).toBeGreaterThan(10);
 }
 
-test("HTML paints and writes hello before external JavaScript or CSS arrives", async ({ page }, testInfo) => {
+test("HTML paints and writes welcome before external JavaScript or CSS arrives", async ({ page }, testInfo) => {
   const assets = barrier();
   await page.route("**/*", async route => {
     if (["script", "stylesheet"].includes(route.request().resourceType())) await assets.wait;
@@ -111,7 +111,7 @@ test("slow required data stays covered beyond the old timer and ignores prematur
   await expectReady(page);
 });
 
-test("the profile renders behind hello while its wallpaper is still loading", async ({ page }, testInfo) => {
+test("the profile renders behind welcome while its wallpaper is still loading", async ({ page }, testInfo) => {
   const wallpaper = barrier();
   await page.route(/\/meadow-[^/]+\.jpg$/, async route => { await wallpaper.wait; await route.continue(); });
   try {
@@ -203,7 +203,7 @@ test("denied storage skips handwriting and preserves navigation", async ({ page 
 });
 
 for (const width of [320, 390, 1440]) {
-  test(`hello fits ${width}px and ready navigation remains operable`, async ({ page }) => {
+  test(`welcome fits ${width}px and ready navigation remains operable`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/?ln=ko", { waitUntil: "commit" });
     await expect(greeting(page).locator("svg")).toBeVisible();
