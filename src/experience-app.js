@@ -12,7 +12,7 @@ export function renderExperienceApp(content, runtime, id, state) {
     work: "주요 작업", views: "화면과 자료", scope: "담당 범위", stack: "사용 기술", more: "프로젝트 살펴보기",
     responsibility: "어떤 일을 했나요", media: "화면 크게 보기", links: "관련 링크", deck: "발표 자료", close: "닫기", previous: "이전 이미지", next: "다음 이미지",
   } : {
-    overview: "Showcase", projects: "Projects", gallery: "Media library", role: "Contributions", change: "Open another experience app",
+    overview: "Showcase", projects: "Projects", gallery: "Media", role: "Impact", change: "Open another experience app",
     work: "Selected work", views: "Screens & materials", scope: "Scope of work", stack: "Technologies", more: "Explore projects",
     responsibility: "My responsibilities", media: "Enlarge image", links: "Related links", deck: "Presentation", close: "Close image", previous: "Previous image", next: "Next image",
   };

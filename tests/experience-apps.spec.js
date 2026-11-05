@@ -97,6 +97,9 @@ for (const width of [1024, 390, 320]) {
     const app = await openExperience(page, 1);
     await expect(app.locator(".experience-contributions dl")).toHaveCount(0);
     await expect(app.locator(".experience-responsibilities h2")).toHaveText(["AI 서비스 개발", "프론트엔드·사용자 경험", "백엔드·시스템 설계", "인프라·개발 생산성"]);
+    await expect(app.locator(".experience-responsibilities li").first()).toHaveCSS("font-size", width <= 760 ? "13px" : "14px");
+    await expect(app.locator(".experience-responsibilities li").first()).toHaveCSS("line-height", width <= 760 ? "21.45px" : "26.6px");
+    await expect(app.locator(".experience-contributions h2").first()).toHaveCSS("font-size", width <= 760 ? "15px" : "16px");
     await expect(app.getByRole("heading", { name: "Leviosa AI", exact: true })).toBeVisible();
     expect(await app.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
     const main = app.locator(".experience-main");
@@ -123,6 +126,12 @@ test("English contributions keep results in prose and remain readable on mobile"
   await page.addInitScript(() => localStorage.setItem("dindbos-language", "en"));
   const app = await openExperience(page, 1);
   await expect(app).toHaveAttribute("data-experience-tab-active", "role");
+  const nav = app.getByRole("navigation", { name: "Experience sections" });
+  await expect(nav.locator("button span")).toHaveText(["Impact", "Showcase", "Projects", "Media"]);
+  await expect(nav.locator("button").last()).toBeInViewport({ ratio: 1 });
+  await expect(app.locator(".experience-responsibilities li").first()).toHaveCSS("font-size", "13px");
+  await expect(app.locator(".experience-responsibilities li").first()).toHaveCSS("line-height", "21.45px");
+  await expect(app.locator(".experience-contributions h2").first()).toHaveCSS("font-size", "15px");
   await expect(app.locator(".experience-contributions dl")).toHaveCount(0);
   await expect(app.locator(".experience-responsibilities h2")).toHaveText(["AI product engineering", "Frontend & user experience", "Backend & system architecture", "Infrastructure & developer productivity"]);
   for (const result of ["40 company repositories", "80%", "200%", "10 or more servers", "400%"])

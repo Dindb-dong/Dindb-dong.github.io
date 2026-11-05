@@ -1084,6 +1084,9 @@ input {
   .portfolio-sidebar-nav button small { display: none; }
   .experience-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
   .experience-main { grid-column: 1; grid-row: 2; min-height: 0; }
+  .experience-responsibilities :is(p, li),
+  .experience-contributions .experience-work-list { font-size: 13px; line-height: 1.65; }
+  .experience-contributions h2 { font-size: 15px; }
   .experience-sidebar > nav { grid-row: 3; }
   .experience-switch { grid-column: 1; grid-row: 1; display: block; margin: 0; padding: 10px 12px 0; }
   .experience-switch > span { display: none; }
