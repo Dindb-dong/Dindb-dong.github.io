@@ -362,4 +362,3 @@ function renderSkillGroup(title, values, filterType) {
     </article>
   `;
 }
-

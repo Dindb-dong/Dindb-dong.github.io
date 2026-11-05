@@ -6,4 +6,3 @@ export function firstText(value) {
   if (Array.isArray(value)) return String(value.find(Boolean) || "");
   return String(value || "");
 }
-

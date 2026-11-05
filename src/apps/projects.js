@@ -233,4 +233,3 @@ function renderMedia(item, title, compact) {
   }
   return `<img class="${compact ? "is-compact" : ""}" src="${escapeAttr(item.src)}" alt="${escapeAttr(title)}">`;
 }
-
