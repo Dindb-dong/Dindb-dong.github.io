@@ -18,6 +18,6 @@ Open the preview in a browser, capture the initial Portfolio overview, then choo
 
 - `experience-ko-before.jpg` and `experience-en-before.jpg`: actual 390×844 CSS-pixel browser captures before the final mobile typography and English tab-label adjustment.
 - `experience-ko-mobile.jpg` and `experience-en-mobile.jpg`: actual 390×844 captures of the final local production preview on 2026-11-05, showing the contribution bullets at 13px / 1.65, 15px section headings, and Impact / Media tabs in English.
-- `language-experience.webm`: actual 390×844 Chrome recording of the existing `tests/language.spec.js` English URL-override test, including opening the experience app. Recorded against the final production build on 2026-11-05; no browser UI is composited.
+- `language-experience.webm`: actual 390×844 Chrome recording of English URL selection and opening the experience app, captured with the repository's Playwright runner and a brief final-state hold. Recorded against the final production build on 2026-11-05; no browser UI is composited.
 
 These captures verify browser viewport behavior, not physical mobile hardware.
