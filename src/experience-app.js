@@ -62,7 +62,6 @@ export function renderExperienceApp(content, runtime, id, state) {
     body = `<section class="experience-section experience-section--first"><div class="experience-section-heading"><h2>${copy.views}</h2><span>${app.media.length} ${ko ? "개 자료" : "items"}</span></div>${gallery(images())}</section>`;
   } else {
     body = `<section class="experience-contributions" aria-label="${copy.role}">
-      ${app.experience.metrics?.length ? `<dl class="experience-metrics">${app.experience.metrics.map((metric) => `<div><dt>${html(metric.label)}</dt><dd>${html(metric.value)}</dd></div>`).join("")}</dl>` : ""}
       <div class="experience-responsibilities">${app.experience.description.map((line, index) => `<article>${app.experience.descriptionTitles?.[index] ? `<h2>${html(app.experience.descriptionTitles[index])}</h2>` : ""}<p>${html(line)}</p></article>`).join("")}</div>
       <h2>${copy.work}</h2><ul class="experience-work-list">${app.experience.projects.map((name) => `<li>${html(name)}</li>`).join("")}</ul>
     </section>`;

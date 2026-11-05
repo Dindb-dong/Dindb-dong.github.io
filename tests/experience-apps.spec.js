@@ -95,8 +95,8 @@ for (const width of [1024, 390, 320]) {
   test(`experience layout and gallery work at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 768 });
     const app = await openExperience(page, 1);
-    await expect(app.locator(".experience-metrics dd")).toHaveText(["약 40개", "약 15개", "+200% 이상", "10개 이상", "+400% 이상"]);
-    await expect(app.locator(".experience-responsibilities h2")).toHaveText(["공통", "프론트엔드", "백엔드", "인프라"]);
+    await expect(app.locator(".experience-contributions dl")).toHaveCount(0);
+    await expect(app.locator(".experience-responsibilities h2")).toHaveText(["AI 서비스 개발", "프론트엔드·사용자 경험", "백엔드·시스템 설계", "인프라·개발 생산성"]);
     await expect(app.getByRole("heading", { name: "Leviosa AI", exact: true })).toBeVisible();
     expect(await app.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
     const main = app.locator(".experience-main");
@@ -118,13 +118,15 @@ for (const width of [1024, 390, 320]) {
   });
 }
 
-test("English contributions use the same metrics and remain readable on mobile", async ({ page }) => {
+test("English contributions keep results in prose and remain readable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => localStorage.setItem("dindbos-language", "en"));
   const app = await openExperience(page, 1);
   await expect(app).toHaveAttribute("data-experience-tab-active", "role");
-  await expect(app.locator(".experience-metrics dd")).toHaveText(["~40", "~15", "200%+", "10+", "400%+"]);
-  await expect(app.locator(".experience-responsibilities h2")).toHaveText(["Across the company", "Frontend", "Backend", "Infrastructure"]);
+  await expect(app.locator(".experience-contributions dl")).toHaveCount(0);
+  await expect(app.locator(".experience-responsibilities h2")).toHaveText(["AI product engineering", "Frontend & user experience", "Backend & system architecture", "Infrastructure & developer productivity"]);
+  for (const result of ["40 repositories", "80%", "200%", "10 or more servers", "400%"])
+    await expect(app.locator(".experience-responsibilities")).toContainText(result);
   await expect(app.locator(".experience-responsibilities")).toContainText("AWS SSM");
   expect(await app.locator(".experience-main").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
 });

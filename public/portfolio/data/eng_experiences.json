@@ -5,10 +5,10 @@
     "period": "2026.02 ~ 2026.10",
     "position": "AI Engineer & Founding Member",
     "description": [
-      "I contributed to all roughly 40 repositories maintained by the company, with a contribution share of at least 80% in around 15 of them. I built customer-support workflows for Naver and Cafe24, deployed and operated the AI detail-page generation service, and built its canvas editor.",
-      "I created PostHog dashboards and panels for feature usage, errors, and signups, then connected them to Claude and Codex to improve monitoring. Using drop-off, retention, and other user metrics, I revised onboarding and built tutorials that increased the signup rate by at least 200%. I also set up browser and mobile E2E verification loops and harnesses to reduce repeated fixes and improve development efficiency.",
-      "I improved the test suite to shorten verification time while improving the quality of its results. I helped write development conventions for server architecture, ADRs, and shared input/output modules. I oversaw operations for more than 10 servers and designed the system architecture.",
-      "I improved CI/CD speed by at least 400% and cut unnecessary build-resource usage in CI. I introduced infrastructure as code and managed the infrastructure with Terraform. Using AWS SSM, I automated monitoring and the creation of draft debugging PRs."
+      "I developed and operated AI commerce products, contributing to all roughly 40 repositories maintained by the company and accounting for at least 80% of contributions in around 15 of them. For the AI detail-page service, I designed and implemented the workflow from product and brand inputs through AI generation, editing, and saving, and handled deployment and operations. I built the canvas engine and editor so users could revise generated content, including AI-assisted editing, document storage, HTML and shape conversion, and mobile touch interactions. I also developed customer-support automation workflows for Naver and Cafe24.",
+      "I built PostHog dashboards and panels for feature usage, error rates, and signup metrics, then connected them to Claude and Codex to bring product usage and errors into the monitoring workflow. Using drop-off, retention, and other usage data, I reworked onboarding and developed a tutorial system that increased the signup rate by at least 200%. I also built E2E verification loops and test harnesses for key user journeys across browser and mobile environments. Checking UI changes during development reduced repeated fixes and the time spent verifying them again.",
+      "I designed the system architecture and job queues and workers for AI generation, and oversaw operations for 10 or more servers. I resolved generation jobs being interrupted during deployments and save conflicts during concurrent editing. For Yomates, I contributed to backend architecture and implemented shared error-handling modules connected to monitoring. I also helped establish development conventions for server architecture, ADRs, and shared input/output modules. Improving the test suite shortened verification time while improving the quality of its results.",
+      "I improved CI/CD verification and deployment speed by at least 400%, reducing unnecessary builds and resource usage in CI. I introduced infrastructure as code and managed the infrastructure with Terraform, making configuration and changes reviewable in code. I also built operational automation with AWS SSM, automating checks used in server monitoring and debugging and connecting them to the creation of draft PRs with proposed fixes. This reduced repetitive operational work."
     ],
     "projects": [
       "AI Detail Page Generation & Editing — End-to-End Development & Operations",
@@ -20,32 +20,10 @@
       "Cafe24 Commerce Automation"
     ],
     "descriptionTitles": [
-      "Across the company",
-      "Frontend",
-      "Backend",
-      "Infrastructure"
-    ],
-    "metrics": [
-      {
-        "value": "~40",
-        "label": "All company repositories"
-      },
-      {
-        "value": "~15",
-        "label": "At least 80% contribution"
-      },
-      {
-        "value": "200%+",
-        "label": "Signup rate increase"
-      },
-      {
-        "value": "10+",
-        "label": "Servers operated"
-      },
-      {
-        "value": "400%+",
-        "label": "CI/CD speed increase"
-      }
+      "AI product engineering",
+      "Frontend & user experience",
+      "Backend & system architecture",
+      "Infrastructure & developer productivity"
     ]
   },
   {
