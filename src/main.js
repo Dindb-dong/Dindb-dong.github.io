@@ -5,12 +5,7 @@ import { createPortfolioApps } from "./portfolio-app.js";
 import { EXPERIENCE_APPS } from "./experience-content.js";
 import { loadPortfolioRuntime, currentData, portfolioDataForBuiltin } from "./portfolio-data.js";
 import { buildPortfolioFileSystem } from "./portfolio-filesystem.js";
-import { showHello } from "./hello.js";
-
-showHello();
-bootPortfolioOS();
-
-async function bootPortfolioOS() {
+export async function bootPortfolioOS() {
   const runtime = await loadPortfolioRuntime();
   document.documentElement.lang = runtime.locale;
   const data = currentData(runtime);
@@ -51,6 +46,18 @@ async function bootPortfolioOS() {
     const app = EXPERIENCE_APPS.find((entry) => entry.id === id);
     if (app) os.launch(app.appId);
   };
+  if (!document.querySelector("#app .portfolio-about")) throw new Error("Portfolio did not render");
+  const shell = document.querySelector("#app .dos-shell");
+  const wallpaper = getComputedStyle(shell).backgroundImage.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+  if (wallpaper) {
+    const image = new Image();
+    image.src = wallpaper;
+    let timeout;
+    // A stalled decorative image must not block an otherwise usable portfolio.
+    await Promise.race([image.decode().catch(() => {}), new Promise(resolve => { timeout = setTimeout(resolve, 1500); })]);
+    clearTimeout(timeout);
+  }
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 }
 
 function browserProvider(config) {

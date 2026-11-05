@@ -9,9 +9,51 @@
       content="김동욱의 포트폴리오를 DindbOS 런타임 위에서 파일, 앱, 터미널처럼 탐색합니다."
     />
     <title>DindbOS | Kim Dong Wook Portfolio</title>
+    <style>
+      html, body { margin: 0; background: #f5f7fc; }
+      .portfolio-hello { position: fixed; inset: 0; z-index: 2147483647; display: grid; place-content: center; justify-items: center; gap: 24px; background: #f5f7fc; color: #202124; font: 14px/1.6 system-ui, sans-serif; }
+      .portfolio-hello svg { display: none; width: min(400px, 76vw); overflow: visible; }
+      [data-hello="write"] .portfolio-hello svg { display: block; }
+      .portfolio-hello path { stroke: #2563eb; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: .999; animation: portfolio-hello-write 1600ms cubic-bezier(.35, 0, .25, 1) both; }
+      .portfolio-hello.is-leaving { pointer-events: none; animation: portfolio-hello-exit 350ms ease both; }
+      #startup-message { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      .startup-recovery { display: none; }
+      [data-recovery] #startup-message { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0; max-width: 34ch; padding: 0 24px; text-align: center; }
+      [data-recovery] .startup-recovery { display: flex; gap: 24px; }
+      .portfolio-hello a { color: #2563eb; padding: 12px 0; }
+      .portfolio-hello a:focus-visible { outline: 2px solid #2563eb; outline-offset: 4px; }
+      @keyframes portfolio-hello-write { to { stroke-dashoffset: 0; } }
+      @keyframes portfolio-hello-exit { to { opacity: 0; visibility: hidden; } }
+      @media (prefers-reduced-motion: reduce) { [data-hello="write"] .portfolio-hello svg { display: none; } .portfolio-hello.is-leaving, .portfolio-hello path { animation: none; } }
+    </style>
+    <script>
+      (() => {
+        const html = document.documentElement;
+        html.dataset.helloStarted = performance.now();
+        html.dataset.hello = "skip";
+        try {
+          const seen = localStorage.getItem("portfolio-hello-seen");
+          localStorage.setItem("portfolio-hello-seen", "1");
+          if (!seen && !matchMedia("(prefers-reduced-motion: reduce)").matches) html.dataset.hello = "write";
+        } catch {}
+        // The entry module itself can stall, so recovery must start in the HTML.
+        setTimeout(() => {
+          const startup = document.getElementById("portfolio-startup");
+          if (!startup || startup.hasAttribute("data-recovery")) return;
+          startup.setAttribute("data-recovery", "");
+          document.getElementById("startup-message").textContent = "Loading is taking longer than usual. You can retry or open the resume.";
+        }, 15000);
+      })();
+    </script>
   </head>
   <body>
-    <main id="app" aria-label="DindbOS portfolio runtime"></main>
-    <script type="module" src="/src/main.js?v=projects-all-3"></script>
+    <section id="portfolio-startup" class="portfolio-hello" aria-label="Loading portfolio" lang="en">
+      <svg viewBox="0 0 244 126" fill="none" aria-hidden="true"><path pathLength="1" d="M18 103 C42 83 71 13 53 17 C35 20 23 101 30 103 C36 88 48 66 57 75 C64 83 43 108 62 103 C73 100 86 83 87 76 C89 62 65 69 68 89 C70 112 96 103 107 85 C121 64 142 16 130 16 C114 16 99 93 109 103 C119 116 143 79 153 52 C165 19 157 10 150 22 C137 44 128 100 142 104 C152 108 164 95 170 81 C176 66 192 65 195 79 C198 93 182 111 172 103 C160 92 173 71 190 74 C204 78 209 93 226 81"/></svg>
+      <p id="startup-message" role="status">Loading portfolio…</p>
+      <nav class="startup-recovery" aria-label="Loading recovery"><a href="">Try again</a><a href="/resume.html">Open resume</a></nav>
+      <noscript><style>.portfolio-hello svg, #startup-message { display: none; }</style><p>JavaScript is required to open this portfolio.</p><a href="/resume.html">Open resume</a></noscript>
+    </section>
+    <main id="app" aria-label="DindbOS portfolio runtime" inert aria-busy="true"></main>
+    <script type="module" src="/src/hello.js"></script>
   </body>
 </html>
