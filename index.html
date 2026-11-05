@@ -12,9 +12,9 @@
     <style>
       html, body { margin: 0; background: #f5f7fc; }
       .portfolio-hello { position: fixed; inset: 0; z-index: 2147483647; display: grid; place-content: center; justify-items: center; gap: 24px; background: #f5f7fc; color: #202124; font: 14px/1.6 system-ui, sans-serif; }
-      .portfolio-hello svg { display: none; width: min(400px, 76vw); overflow: visible; }
+      .portfolio-hello svg { display: none; width: min(560px, 90vw); overflow: visible; }
       [data-hello="write"] .portfolio-hello svg { display: block; }
-      .portfolio-hello path { stroke: #2563eb; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: .999; animation: portfolio-hello-write 1600ms cubic-bezier(.35, 0, .25, 1) both; }
+      .portfolio-hello path { stroke: #2563eb; stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: .999; animation: portfolio-hello-write 1600ms cubic-bezier(.35, 0, .25, 1) both; }
       .portfolio-hello.is-leaving { pointer-events: none; animation: portfolio-hello-exit 350ms ease both; }
       #startup-message { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
       .startup-recovery { display: none; }
@@ -35,11 +35,13 @@
         const html = document.documentElement;
         html.dataset.helloStarted = performance.now();
         html.dataset.hello = "skip";
+        const replay = new URLSearchParams(location.search).get("intro") === "1";
+        let firstVisit = false;
         try {
-          const seen = localStorage.getItem("portfolio-hello-seen");
-          localStorage.setItem("portfolio-hello-seen", "1");
-          if (!seen && !matchMedia("(prefers-reduced-motion: reduce)").matches) html.dataset.hello = "write";
-        } catch {}
+          firstVisit = !localStorage.getItem("portfolio-hello-seen");
+          if (!replay) localStorage.setItem("portfolio-hello-seen", "1");
+        } catch { firstVisit = false; }
+        if ((replay || firstVisit) && !matchMedia("(prefers-reduced-motion: reduce)").matches) html.dataset.hello = "write";
         const earlyInput = new AbortController();
         const skip = () => { html.dataset.helloSkip = "true"; };
         window.addEventListener("pointerdown", skip, { capture: true, signal: earlyInput.signal });
@@ -57,7 +59,7 @@
   </head>
   <body>
     <section id="portfolio-startup" class="portfolio-hello" aria-label="Loading portfolio" lang="en">
-      <svg viewBox="0 0 404 126" fill="none" aria-hidden="true"><path pathLength="1" d="M12 94 C22 88 30 62 33 67 C37 73 18 106 32 103 C43 100 54 69 55 69 C53 79 47 106 59 103 C70 100 85 75 81 71 C76 68 76 84 90 84 C106 82 111 68 103 68 C91 66 83 87 91 98 C100 114 120 102 132 85 C147 61 165 17 151 17 C137 17 119 91 133 102 C143 110 156 99 166 84 C173 72 190 65 193 76 C181 61 160 80 169 97 C176 112 195 105 207 85 C213 68 230 66 233 79 C236 93 220 111 210 103 C198 92 211 71 228 74 C241 79 248 84 251 80 C254 75 262 63 263 70 L254 101 C263 80 280 62 283 72 C287 78 273 99 280 103 C288 99 302 69 311 70 C321 73 300 104 316 103 C326 102 337 88 345 82 C360 78 365 67 357 67 C345 67 335 86 344 98 C355 111 378 101 387 91"/></svg>
+      <svg viewBox="0 0 444 126" fill="none" aria-hidden="true"><path pathLength="1" d="M12 41 C28 15 49 7 44 25 C37 49 22 101 36 104 C48 105 72 37 77 22 C68 60 58 105 74 104 C91 103 114 41 110 26 C107 15 96 32 102 49 C108 67 117 81 130 84 C146 82 151 68 143 68 C131 66 123 87 131 98 C140 114 160 102 172 85 C187 61 205 17 191 17 C177 17 159 91 173 102 C183 110 196 99 206 84 C213 72 230 65 233 76 C221 61 200 80 209 97 C216 112 235 105 247 85 C253 68 270 66 273 79 C276 93 260 111 250 103 C238 92 251 71 268 74 C281 79 288 84 291 80 C294 75 302 63 303 70 L294 101 C303 80 320 62 323 72 C327 78 313 99 320 103 C328 99 342 69 351 70 C361 73 340 104 356 103 C366 102 377 88 385 82 C400 78 405 67 397 67 C385 67 375 86 384 98 C395 111 418 101 427 91"/></svg>
       <p id="startup-message" role="status">Loading portfolio…</p>
       <nav class="startup-recovery" aria-label="Loading recovery"><a href="">Try again</a><a href="/resume.html">Open resume</a></nav>
       <noscript><style>.portfolio-hello svg, #startup-message { display: none; }</style><p>JavaScript is required to open this portfolio.</p><a href="/resume.html">Open resume</a></noscript>

@@ -284,3 +284,41 @@ test("JavaScript-disabled visitors can open the existing static resume", async (
     await context.close();
   }
 });
+
+test("intro=1 replays on every reload without changing an existing visit flag", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("portfolio-hello-seen", "existing"));
+  await page.goto("/?ln=en&intro=1");
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
+  await expectReady(page);
+  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBe("existing");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
+  await expectReady(page);
+  await page.goto("/?intro=0");
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+  await expectReady(page);
+});
+
+test("intro=1 does not consume a fresh first visit", async ({ page }) => {
+  await page.goto("/?intro=1");
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
+  await expectReady(page);
+  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBeNull();
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
+  await expectReady(page);
+  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBe("1");
+});
+
+test("intro=1 works without storage and still respects reduced motion", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "localStorage", { get() { throw new DOMException("Denied", "SecurityError"); } });
+  });
+  await page.goto("/?intro=1");
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
+  await expectReady(page);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+  await expectReady(page);
+});
