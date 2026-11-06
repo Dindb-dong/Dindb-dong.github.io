@@ -8,6 +8,7 @@
       content="One-page English resume for Kim Dong Wook, styled as a traditional academic and professional resume."
     />
     <title>Kim Dong Wook | Resume</title>
+    <script>document.documentElement.classList.toggle("portfolio-preview", new URLSearchParams(location.search).get("view") === "portfolio");</script>
     <style>
       :root { color-scheme: light; font-family: "Times New Roman", Times, serif; color: #000; background: #fff; }
       * { box-sizing: border-box; }
@@ -37,6 +38,14 @@
         .contact { margin-left: auto; }
         .entry-header { flex-wrap: wrap; gap: 2px 12px; }
         .skills-table th { white-space: normal; }
+      }
+      @media screen {
+        html.portfolio-preview .resume-emphasis {
+          font-weight: 700;
+          background: linear-gradient(transparent 57%, #dce8fb 57%, #dce8fb 91%, transparent 91%);
+          -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+        }
       }
       @page { size: A4; margin: 0; }
       @media print {
@@ -70,6 +79,14 @@
             <div class="entry-date">| Mar 2023 - Present</div>
           </div>
           <p class="entry-role">Candidate for Bachelor of Science in Applied Statistics and Computer Science</p>
+          <ul><li>GPA: 4.0/4.3</li></ul>
+        </article>
+        <article class="entry compact">
+          <div class="entry-header">
+            <h3 class="entry-title">Gwacheon Foreign Language High School, Gwacheon, Korea</h3>
+            <div class="entry-date">| Mar 2020 - Jan 2023</div>
+          </div>
+          <p class="entry-role">Japanese Major</p>
         </article>
       </section>
 
@@ -84,10 +101,10 @@
           </div>
           <p class="entry-role">AI Engineer &amp; Founding Member</p>
           <ul>
-            <li>Contributed across <strong>~40 repositories</strong>, with <strong>80%+ contribution in ~15</strong>; built and operated an AI detail-page service, custom canvas editor with AI editing and mobile touch UI, and Naver/Cafe24 CS automation.</li>
-            <li>Redesigned onboarding and tutorials using PostHog drop-off and retention analysis, increasing signup rate by <strong>200%+</strong>; built browser/mobile E2E verification loops and test harnesses.</li>
-            <li>Designed AI generation queues/workers and operated <strong>10+ servers</strong>; resolved deployment interruptions and concurrent-save conflicts; contributed to Yomates backend architecture, shared error handling, monitoring, and engineering conventions.</li>
-            <li>Improved CI/CD processing speed by <strong>400%+</strong> and reduced redundant builds; unified infrastructure management with Terraform and automated AWS SSM diagnostics and draft fix PRs.</li>
+            <li>Contributed across <span class="resume-emphasis">~40 repositories</span>, with <span class="resume-emphasis">80%+ contribution in ~15</span>; built and operated an AI detail-page service, custom canvas editor with AI editing and mobile touch UI, and Naver/Cafe24 CS automation.</li>
+            <li>Redesigned onboarding and tutorials using PostHog drop-off and retention analysis, increasing signup rate by <span class="resume-emphasis">200%+</span>; built browser/mobile E2E verification loops and test harnesses.</li>
+            <li>Designed AI generation queues/workers and operated <span class="resume-emphasis">10+ servers</span>; resolved deployment interruptions and concurrent-save conflicts; contributed to Yomates backend architecture, shared error handling, monitoring, and engineering conventions.</li>
+            <li>Improved CI/CD processing speed by <span class="resume-emphasis">400%+</span> and reduced redundant builds; unified infrastructure management with Terraform and automated AWS SSM diagnostics and draft fix PRs.</li>
           </ul>
         </article>
 
@@ -116,11 +133,10 @@
           </div>
           <p class="entry-role">Research Member &amp; Vice President (18th Cohort)</p>
           <ul>
-            <li>Built <strong>YAI-HUB for 60+ daily members</strong>, unifying attendance, reports, member operations, recruitment, and collaborative documents with Next.js, TypeScript, FastAPI, Supabase, Yjs/Hocuspocus, and Capacitor.</li>
+            <li>Built <span class="resume-emphasis">YAI-HUB for 60+ daily members</span>, unifying attendance, reports, member operations, recruitment, and collaborative documents with Next.js, TypeScript, FastAPI, Supabase, Yjs/Hocuspocus, and Capacitor.</li>
             <li>Designed traffic distribution across Cloudflare and Cloud Run, with caching and bounded database pools to accommodate frontend/backend free-tier limits.</li>
-            <li>Automated <strong>60-user</strong> attendance load tests using <strong>3 database connections</strong>, with a <strong>15-second p95</strong> pass/fail gate.</li>
+            <li>Automated <span class="resume-emphasis">60-user</span> attendance load tests using <span class="resume-emphasis">3 database connections</span>, with a <span class="resume-emphasis">15-second p95</span> pass/fail gate.</li>
             <li>Automated web/iOS build and release pipelines and Notion-based error triage and bug-fix workflows; implemented monitoring, role-based access, audit logs, and backups.</li>
-            <li>Fine-tuned EfficientFace and AdaIN models for emotion classification and style transfer workflows.</li>
             <li>Built a CLIP + BLIP2 text-to-image retrieval pipeline to locate video scenes from natural language queries.</li>
             <li>Developed a Dueling DDQN Pokemon battle agent trained on a self-developed battle simulator.</li>
             <li>Built web-shadow-boxing, a webcam-based AI sparring partner using pose estimation and GRU trajectory prediction.</li>
