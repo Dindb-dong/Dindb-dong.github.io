@@ -3,9 +3,9 @@
     "id": 1,
     "groupName": "Leviosa AI",
     "period": "2026.02 ~ 2026.10",
-    "position": "AI Engineer & Founding Member",
+    "position": "AI·SW Engineer & Founding Member",
     "description": [
-      "Development and maintenance contributions across all roughly 40 company repositories, with at least 80% contribution in around 15 of them\nDesign, development, deployment, and operation of the AI detail-page service, from product and brand inputs through generation, editing, and saving\nCustom canvas engine and editor development, including AI-assisted editing, document storage, HTML and shape conversion, and mobile touch UI\nDesign and implementation of customer-support automation workflows for Naver and Cafe24",
+      "Development and maintenance contributions across all roughly 40 company repositories, with at least 80% contribution in around 15 of them\nDesign, development, deployment, and operation of the AI detail-page service, from product and brand inputs through generation, editing, and saving\nCustom canvas engine and editor development, including AI-assisted editing, document storage, HTML and shape conversion, and mobile touch UI\nDesign and implementation of customer-support automation workflows for Naver and Cafe24\nOptimized token usage and execution time for the highest-revenue service, reducing the API cost ratio by 70%+ and task time by 50%+",
       "PostHog dashboards and panels for feature usage, errors, and signup metrics, with Claude and Codex integration for monitoring\nData-informed onboarding redesign and tutorial development using drop-off and retention analysis, with a signup-rate increase of at least 200%\nBrowser and mobile E2E verification loops and test harnesses, reducing repeated fixes and verification effort",
       "System architecture and AI generation queue/worker design, with operational oversight of 10 or more servers\nResolution of long-running generation interruptions during deployment and save conflicts during concurrent editing\nContributions to Yomates backend architecture, shared error-handling modules, and monitoring integration\nContributions to development conventions for server architecture, ADRs, and shared input/output modules\nTest-suite improvements for shorter verification time and higher-quality results",
       "CI/CD pipeline improvements delivering at least 400% faster processing and lower unnecessary build-resource usage\nInfrastructure-as-code adoption and centralized infrastructure configuration and change management with Terraform\nAWS SSM automation for server monitoring, debugging checks, and draft PRs with proposed fixes"
@@ -52,13 +52,10 @@
     "period": "2025.01 ~",
     "position": "Research Member & Vice President (18th Cohort)",
     "description": [
-      "Designed, built, and operate YAI-HUB, a web and mobile platform used daily by more than 60 members.",
-      "Unified membership and team operations, attendance, points, reports, live Q&A, notices, schedules, and finance workflows.",
-      "Built real-time collaborative documents and recruitment workflows for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.",
-      "Developed the public society website, role-based access, monitoring, audit logs, and backup workflows.",
-      "Researched EfficientFace/AdaIN emotion classification and style transfer, and CLIP/BLIP2 video retrieval.",
-      "Built Yakemon as a YAI web battle-simulator project and trained a Dueling DDQN agent in a custom Python environment.",
-      "Contributed to AI shadowboxing using webcam pose estimation and GRU-based punch trajectory prediction."
+      "Designed, built, and operate YAI-HUB, a web and mobile platform used daily by more than 60 members.\nUnified membership and team operations, attendance, points, reports, live Q&A, notices, schedules, and finance workflows.\nBuilt real-time collaborative documents and recruitment workflows for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.\nBuilt the web/iOS platform with Next.js, TypeScript, FastAPI, Supabase, Yjs/Hocuspocus, and Capacitor.",
+      "Designed Cloudflare/Cloud Run traffic distribution, caching, and bounded database pools around frontend/backend free-tier limits.\nAutomated 60-member attendance load tests with 3 database connections.",
+      "Developed the public society website, role-based access, monitoring, audit logs, and backup workflows.\nAutomated web/iOS build and release pipelines and Notion-based error triage and bug-fix workflows.",
+      "Researched EfficientFace/AdaIN emotion classification and style transfer, and CLIP/BLIP2 video retrieval.\nBuilt Yakemon as a YAI web battle-simulator project and trained a Dueling DDQN agent in a custom Python environment.\nContributed to AI shadowboxing using webcam pose estimation and GRU-based punch trajectory prediction."
     ],
     "projects": [
       "YAI-HUB — Society Web, Mobile & Public Website",
@@ -67,6 +64,12 @@
       "Yakemon: Dueling DDQN based Pokemon Game Agent Project (Self-Developed)",
       "Yakemon: Self-Developed Web Battle Simulator",
       "AI Shadowboxing"
+    ],
+    "descriptionTitles": [
+      "Platform & product engineering",
+      "Infrastructure & load testing",
+      "Deployment & operations automation",
+      "AI research & projects"
     ]
   },
   {

@@ -425,7 +425,10 @@
       "Brought attendance, individual and team reports, announcements, member and team management, activity points, live Q&A, calendars, archives and finance into one place.",
       "Built Yjs/Hocuspocus-based real-time collaborative documents and recruitment tools for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.",
       "Developed the public society website covering research, programs, achievements, alumni, and recruitment.",
-      "Implemented role-based access, operational monitoring, audit logs, backups, and Capacitor-based mobile integration."
+      "Implemented role-based access, operational monitoring, audit logs, backups, and Capacitor-based mobile integration.",
+      "Designed Cloudflare/Cloud Run traffic distribution, caching, and bounded database pools around frontend/backend free-tier limits.",
+      "Automated 60-member attendance load tests with 3 database connections.",
+      "Automated web/iOS build and release pipelines and Notion-based error triage and bug-fix workflows."
     ],
     "links": [
       {

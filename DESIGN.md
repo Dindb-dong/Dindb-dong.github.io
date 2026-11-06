@@ -239,3 +239,16 @@
 - Errors override the terminal with current-URL retry and static resume links. The parser-installed 15-second watchdog covers a stalled entry and permits late recovery, but does not time out a ready screen waiting for input. JavaScript-disabled visitors keep the static resume path.
 - Code mapping: `index.html` owns first paint, pixel artwork, recovery and styling; `src/hello.js` owns progress presentation and input gating; `src/main.js` reports verified boot stages; `src/portfolio-data.js` reports completed JSON reads. The existing Canvas main and linked mobile instance include loading and ready previews, mapped to the same tokens and artwork. Original board/component IDs remain stable; the library autosaves changes.
 - Verify real withheld-script first paint, delayed required data with no premature completion log, profile rendering behind a pending wallpaper, indefinite ready hold, keyboard and mobile touch entry, focus handoff, 320/390/1440px bounds, replay/storage/motion preferences, recovery, and ordinary navigation.
+
+
+## Traditional resume (2026-11-06)
+
+- Standalone `resume.html` and its matching A4 PDF use white paper, black Times New Roman, a regular 34px name, 16px uppercase ruled headings, 14px body text, italic roles, and native bullets. The OS portfolio retains its existing identity.
+- Print layout: 210 × 297mm, 10mm vertical and 14mm horizontal padding, 1.12 body line height, 10px header margin, 9px section gaps, and 7px entry gaps. Narrow screens reflow contact information and dates without horizontal overflow.
+- Embedded `?view=portfolio` mode adds bold to topic/ownership phrases and #dce8fb underline highlights to selected numeric outcomes. Standalone HTML and print have plain body text; headings retain their hierarchy. The sole resume action downloads the PDF.
+- Resume content includes GPA 4.0/4.3, Japanese-major high-school education (Mar 2020–Jan 2023), updated Leviosa impact and role, YAI-HUB operations, and global NotchNote feedback. SDP and the EfficientFace/AdaIN resume bullet are omitted.
+- Leviosa position is “AI·SW Engineer & Founding Member” in resume and both experience locales. Its cost/time outcomes use the existing experience highlight renderer.
+- YAI contributions reuse the existing experience renderer with four bilingual sections: platform/product, infrastructure/load testing, deployment/operations, and AI research/projects. Load-test counts describe test conditions; the p95 detail is omitted.
+- Editable canvas: “Kim Dong Wook · Traditional Resume”, Page 1; A4 board `314f5bb9-ab10-4ad2-9d4c-6af47c342cf1`, organization/date component `component-c37e2559-8313-43fe-b1b7-dae125a5ede7`, and preview/download state board `f1f5459a-8099-4527-80ad-41b4fc9cf724`. Header and date rows map to `.resume-header` and `.entry-header`.
+- Canvas rows use explicit positions because its importer did not retain flex rows; production uses responsive flex. The state board documents separate emphasis and grouped YAI contributions. The document was reopened from its library to verify persistence.
+- Validation: rendered one-page A4 PDF, Chromium screen/print/download and bilingual YAI checks, content-emphasis checks, and 320/390/794px overflow assertions. Browser checks use reduced motion so resume behavior does not depend on the optional boot introduction. No new dependency is required.

@@ -226,24 +226,21 @@ function renderSkills(content, runtime) {
 
 function renderResume(content, runtime) {
   const copy = runtime.locale === "ko" ? {
-    html: "HTML로 열기",
-    pdf: "PDF로 열기",
+    pdf: "PDF 다운로드",
   } : {
-    html: "Open HTML",
-    pdf: "Open PDF",
+    pdf: "Download PDF",
   };
   content.innerHTML = `
     <section class="portfolio-os-app portfolio-resume-app" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("resume", runtime)}
       <main class="portfolio-main-pane">
         <div class="portfolio-link-list portfolio-resume-actions">
-            <a href="/resume.html" target="_blank" rel="noreferrer">${copy.html}</a>
-            <a href="/resume.pdf" target="_blank" rel="noreferrer">${copy.pdf}</a>
+            <a href="/resume.pdf" download="Kim-Dong-Wook-Resume.pdf">${copy.pdf}</a>
         </div>
         <section class="portfolio-resume-frame-shell">
           <iframe
             class="portfolio-resume-frame"
-            src="/resume.html"
+            src="/resume.html?view=portfolio"
             title="Kim Dong Wook Resume"
             loading="lazy"
             referrerpolicy="no-referrer"

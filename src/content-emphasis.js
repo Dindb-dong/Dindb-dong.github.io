@@ -24,11 +24,11 @@ export const CONTENT_EMPHASIS = {
     },
     experiences: {
       1: {
-        bold: ["AI Engineer & Founding Member", "상세페이지 제작 서비스 설계·개발·배포·운영", "캔버스 엔진·편집기 자체 개발", "자동화 워크플로우 설계·구현", "PostHog 기반 기능 사용률·오류율·회원가입 지표 대시보드 및 패널 구축", "E2E 검증 루프와 테스트 하네스 구축", "AI 생성 작업 큐·워커 및 시스템 아키텍처 설계", "장시간 생성 작업 중단 및 동시 편집 저장 충돌 해결", "Yomates 백엔드 아키텍처 설계 참여", "사내 개발 컨벤션 수립 기여", "검증 시간 단축 및 검증 품질 개선", "Terraform 기반 전체 인프라 구성·변경 관리 일원화", "서버 모니터링·디버깅 점검 및 수정안 초안 PR 작성 자동화", "전체 개발·운영", "백엔드 총괄"],
-        mark: ["약 15개 레포에서 기여율 80% 이상", "회원가입률 200% 이상 향상", "10개 이상 서버의 운영·관리 총괄", "처리 속도 400% 이상 향상"],
+        bold: ["AI·SW Engineer & Founding Member", "상세페이지 제작 서비스 설계·개발·배포·운영", "캔버스 엔진·편집기 자체 개발", "자동화 워크플로우 설계·구현", "PostHog 기반 기능 사용률·오류율·회원가입 지표 대시보드 및 패널 구축", "E2E 검증 루프와 테스트 하네스 구축", "AI 생성 작업 큐·워커 및 시스템 아키텍처 설계", "장시간 생성 작업 중단 및 동시 편집 저장 충돌 해결", "Yomates 백엔드 아키텍처 설계 참여", "사내 개발 컨벤션 수립 기여", "검증 시간 단축 및 검증 품질 개선", "Terraform 기반 전체 인프라 구성·변경 관리 일원화", "서버 모니터링·디버깅 점검 및 수정안 초안 PR 작성 자동화", "전체 개발·운영", "백엔드 총괄"],
+        mark: ["API 원가 비율 70%+ 절감", "작업 시간 50%+ 단축", "약 15개 레포에서 기여율 80% 이상", "회원가입률 200% 이상 향상", "10개 이상 서버의 운영·관리 총괄", "처리 속도 400% 이상 향상"],
       },
       2: { bold: ["Researcher", "데이터 분석", "카페24 기반 쇼핑몰 개발", "물류 관리 자동화 시스템 개발", "브랜드 게임 개발 (개발 중단)"] },
-      3: { bold: ["연구부원 및 18기 부학회장", "YAI-HUB 웹·모바일 플랫폼 설계·개발·운영", "실시간 협업 문서", "리크루팅 시스템 개발", "권한 관리·모니터링·감사로그·백업 구축", "감정 분류·스타일 전이", "CLIP·BLIP2 영상 검색 연구", "Dueling DDQN 에이전트 학습", "AI 섀도우복싱 프로젝트 참여"], mark: ["60명이 넘는 학회원이 매일 사용"] },
+      3: { bold: ["연구부원 및 18기 부학회장", "YAI-HUB 웹·모바일 플랫폼 설계·개발·운영", "실시간 협업 문서", "리크루팅 시스템 개발", "권한 관리·모니터링·감사로그·백업 구축", "감정 분류·스타일 전이", "CLIP·BLIP2 영상 검색 연구", "Dueling DDQN 에이전트 학습", "AI 섀도우복싱 프로젝트 참여", "트래픽 분산, 캐싱 및 DB 연결 풀 제한 설계", "부하 테스트 자동화", "웹·iOS 빌드·배포 파이프라인", "Notion 기반 오류 분류·버그 수정 워크플로우 자동화"], mark: ["60명이 넘는 학회원이 매일 사용"] },
       4: { bold: ["소프트웨어 엔지니어 겸 리서처", "스타트업 행사 및 부스 운영 경험", "두뇌 능력 측정을 위한 지표 체계화", "뇌지컬 리포트 자동 생성 스크립트 개발"] },
       5: { bold: ["React Native 스터디 팀장", "Unity 스터디 팀장"] },
       6: { bold: ["14기 테크팀 팀장", "중고 의류 거래 플랫폼 개발", "테크팀장으로서", "다양한 팀과 협업"] },
@@ -58,11 +58,11 @@ export const CONTENT_EMPHASIS = {
     },
     experiences: {
       1: {
-        bold: ["AI Engineer & Founding Member", "Design, development, deployment, and operation of the AI detail-page service", "Custom canvas engine and editor development", "customer-support automation workflows", "PostHog dashboards and panels", "E2E verification loops and test harnesses", "System architecture and AI generation queue/worker design", "Resolution of long-running generation interruptions during deployment and save conflicts during concurrent editing", "Contributions to Yomates backend architecture", "Contributions to development conventions", "shorter verification time and higher-quality results", "centralized infrastructure configuration and change management with Terraform", "AWS SSM automation", "End-to-End Development & Operations", "Backend Lead"],
-        mark: ["at least 80% contribution in around 15 of them", "signup-rate increase of at least 200%", "operational oversight of 10 or more servers", "at least 400% faster processing"],
+        bold: ["AI·SW Engineer & Founding Member", "Design, development, deployment, and operation of the AI detail-page service", "Custom canvas engine and editor development", "customer-support automation workflows", "PostHog dashboards and panels", "E2E verification loops and test harnesses", "System architecture and AI generation queue/worker design", "Resolution of long-running generation interruptions during deployment and save conflicts during concurrent editing", "Contributions to Yomates backend architecture", "Contributions to development conventions", "shorter verification time and higher-quality results", "centralized infrastructure configuration and change management with Terraform", "AWS SSM automation", "End-to-End Development & Operations", "Backend Lead"],
+        mark: ["API cost ratio by 70%+", "task time by 50%+", "at least 80% contribution in around 15 of them", "signup-rate increase of at least 200%", "operational oversight of 10 or more servers", "at least 400% faster processing"],
       },
       2: { bold: ["Researcher", "data analysis", "Cafe24-based shopping mall development", "Logistics management automation system development", "brand game development (discontinued)"] },
-      3: { bold: ["Research Member & Vice President (18th Cohort)", "Designed, built, and operate YAI-HUB", "real-time collaborative documents", "recruitment workflows", "role-based access, monitoring, audit logs, and backup workflows", "emotion classification and style transfer", "CLIP/BLIP2 video retrieval", "Dueling DDQN agent", "Contributed to AI shadowboxing"], mark: ["used daily by more than 60 members"] },
+      3: { bold: ["Research Member & Vice President (18th Cohort)", "Designed, built, and operate YAI-HUB", "real-time collaborative documents", "recruitment workflows", "role-based access, monitoring, audit logs, and backup workflows", "emotion classification and style transfer", "CLIP/BLIP2 video retrieval", "Dueling DDQN agent", "Contributed to AI shadowboxing", "traffic distribution, caching, and bounded database pools", "attendance load tests", "web/iOS build and release pipelines", "Notion-based error triage and bug-fix workflows"], mark: ["used daily by more than 60 members"] },
       4: { bold: ["Software Engineer & Researcher", "startup events and booth operations", "Systematization of indicators", "Brain report auto-generation script development"] },
       5: { bold: ["React Native study team leader", "Unity study team leader", "React Native Study Group Lead", "Unity Study Group Lead"] },
       6: { bold: ["14th Tech Team Leader", "secondhand clothing trading platform development", "as tech team leader", "Collaboration with marketing, design, research teams"] },
