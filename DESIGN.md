@@ -251,3 +251,5 @@
 - Validation: Chromium desktop and 320/390/794px overflow assertions; A4 PDF rendered and visually inspected, one page. No added packages or remote deployment.
 
 - Resume revision: body metrics use neutral spans; only the embedded `?view=portfolio` screen applies bold and the experience apps’ #dce8fb underline highlight. Print and standalone HTML retain normal-weight body text. Headings retain the traditional hierarchy. The sole action downloads the PDF. Added GPA 4.0/4.3 and Japanese-major high-school education (Mar 2020–Jan 2023); removed the EfficientFace/AdaIN bullet. Editable state board: `f1f5459a-8099-4527-80ad-41b4fc9cf724`.
+
+- Leviosa content revision: added PostHog dashboards, CloudWatch → Lambda → OpenSearch log integration verified in local monitoring/infra sources, canvas MCP delivery, Yomates backend ownership, ADRs, and shared I/O conventions. Preserve 14px body size; fit A4 with 10mm vertical padding, 1.16 line height, 16px header spacing, and 11px section spacing. Final PDF is one page; preview/print/download tests pass.
