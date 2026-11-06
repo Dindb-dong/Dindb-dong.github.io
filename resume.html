@@ -12,17 +12,17 @@
     <style>
       :root { color-scheme: light; font-family: "Times New Roman", Times, serif; color: #000; background: #fff; }
       * { box-sizing: border-box; }
-      body { margin: 0; font-size: 14px; line-height: 1.16; }
+      body { margin: 0; font-size: 14px; line-height: 1.12; }
       .resume-page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 10mm 14mm; }
-      .resume-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 16px; }
+      .resume-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 10px; }
       .identity h1 { margin: 0; font-size: 34px; font-weight: 400; line-height: 1.1; }
       .contact { font-size: 13px; font-style: normal; text-align: right; line-height: 1.2; }
       a { color: inherit; text-decoration: none; }
       a:focus-visible { outline: 1px solid; outline-offset: 2px; }
-      .resume-section { margin-top: 11px; }
+      .resume-section { margin-top: 9px; }
       .section-heading { border-bottom: 1px solid #555; margin-bottom: 5px; }
       h2 { margin: 0; font-size: 16px; text-transform: uppercase; }
-      .entry { margin-bottom: 9px; }
+      .entry { margin-bottom: 7px; }
       .entry-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
       .entry-title { margin: 0; font-size: 14px; }
       .entry-date { font-weight: 700; white-space: nowrap; }
@@ -64,7 +64,7 @@
         <address class="contact">
           Seoul, Republic of Korea<br />
           <a href="mailto:dongwook443@yonsei.ac.kr">dongwook443@yonsei.ac.kr</a><br />
-          <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">github.com/Dindb-dong</a><br />
+          <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">github.com/Dindb-dong</a> |
           <a href="https://dindb-dong.github.io/">dindb-dong.github.io</a>
         </address>
       </header>
@@ -101,13 +101,15 @@
           </div>
           <p class="entry-role">AI Engineer &amp; Founding Member</p>
           <ul>
-            <li>Contributed across <span class="resume-emphasis">~40 repositories</span>, with <span class="resume-emphasis">80%+ contribution in ~15</span>; built and operated an AI detail-page service and Naver/Cafe24 CS automation.</li>
-            <li>Shipped a shared canvas editor used across multiple services, with <span class="resume-emphasis">MCP integration for AI agents</span>, AI-assisted editing, document persistence, HTML/shape conversion, and mobile touch interactions.</li>
-            <li>Built PostHog usage/error/signup dashboards and integrated <span class="resume-emphasis">CloudWatch, Lambda, and OpenSearch</span> for log collection and search; connected Claude/Codex to monitoring workflows.</li>
-            <li>Redesigned onboarding and tutorials using drop-off and retention analysis, increasing signup rate by <span class="resume-emphasis">200%+</span>; built browser/mobile E2E verification loops and test harnesses.</li>
-            <li>Co-designed Yomates backend architecture and shared error handling; contributed to the design and implementation of <span class="resume-emphasis">agent memory and execution harnesses</span> for context management and tool-driven workflows.</li>
+            <li>Built and operated an AI product-page service and Naver/Cafe24 customer-support automation; contributed across <span class="resume-emphasis">~40 repositories</span>, with <span class="resume-emphasis">80%+ contribution in ~15</span>.</li>
             <li>Established conventions for <span class="resume-emphasis">ADRs, architecture documentation, and README indexes</span> across company repositories; built shared input/output and error-handling modules to standardize development across services.</li>
+            <li>Optimized token usage and execution time for the company’s highest-revenue service, reducing its <span class="resume-emphasis">API cost ratio by 70%+</span> and <span class="resume-emphasis">task time by 50%+</span>.</li>
+            <li>Fixed defects in shared payment logic across company services, restored reliable monthly recurring billing, and built safe payment canary tests.</li>
+            <li>Built PostHog usage/error/signup dashboards and integrated <span class="resume-emphasis">CloudWatch, Lambda, and OpenSearch</span> for log collection and search; enabled Claude/Codex-assisted log investigation.</li>
             <li>Improved CI/CD processing speed by <span class="resume-emphasis">400%+</span> and reduced redundant builds; unified infrastructure management with Terraform and automated AWS SSM diagnostics and draft fix PRs.</li>
+            <li>Redesigned onboarding and tutorials using drop-off and retention analysis, increasing signup rate by <span class="resume-emphasis">200%+</span>; built browser/mobile E2E verification loops and test harnesses.</li>
+            <li>Contributed to Yomates backend architecture and shared error handling, and to the design and implementation of <span class="resume-emphasis">agent memory and execution harnesses</span>.</li>
+            <li>Shipped a shared canvas editor across multiple services, integrating AI agents via <span class="resume-emphasis">MCP</span> and supporting AI-assisted editing, document persistence, HTML/shape conversion, and mobile touch.</li>
           </ul>
         </article>
 
@@ -119,8 +121,7 @@
           <p class="entry-role">Researcher</p>
           <ul>
             <li>Conducted data analysis for new business development and executive decision support while supporting OEM meetings, product launch preparation, brand promotion, and C-level operational tasks.</li>
-            <li>Developed and operated a Cafe24-based shopping mall after an external vendor became inactive.</li>
-            <li>Built a logistics management automation system with React, Node.js, Supabase, and Cafe24 API integration.</li>
+            <li>Took over Cafe24 shopping mall development and operations after vendor inactivity, and built logistics automation.</li>
           </ul>
         </article>
       </section>
@@ -136,13 +137,13 @@
           </div>
           <p class="entry-role">Research Member &amp; Vice President (18th Cohort)</p>
           <ul>
-            <li>Built <span class="resume-emphasis">YAI-HUB for 60+ daily members</span>, unifying attendance, reports, member operations, recruitment, and collaborative documents with Next.js, TypeScript, FastAPI, Supabase, Yjs/Hocuspocus, and Capacitor.</li>
+            <li>Built YAI-HUB, <span class="resume-emphasis">used daily by 60+ members</span>, unifying attendance, reports, member operations, recruitment, and collaborative documents with Next.js, TypeScript, FastAPI, Supabase, Yjs/Hocuspocus, and Capacitor.</li>
             <li>Designed traffic distribution across Cloudflare and Cloud Run, with caching and bounded database pools to accommodate frontend/backend free-tier limits.</li>
-            <li>Automated <span class="resume-emphasis">60-user</span> attendance load tests using <span class="resume-emphasis">3 database connections</span>, with a <span class="resume-emphasis">15-second p95</span> pass/fail gate.</li>
             <li>Automated web/iOS build and release pipelines and Notion-based error triage and bug-fix workflows; implemented monitoring, role-based access, audit logs, and backups.</li>
+            <li>Automated <span class="resume-emphasis">60-user</span> attendance load tests with <span class="resume-emphasis">3 database connections</span> to validate resource-constrained check-in flows.</li>
             <li>Built a CLIP + BLIP2 text-to-image retrieval pipeline to locate video scenes from natural language queries.</li>
             <li>Developed a Dueling DDQN Pokemon battle agent trained on a self-developed battle simulator.</li>
-            <li>Built web-shadow-boxing, a webcam-based AI sparring partner using pose estimation and GRU trajectory prediction.</li>
+            <li>Built web-shadow-boxing, an AI sparring partner using webcam pose estimation and GRU trajectory prediction.</li>
           </ul>
         </article>
 
