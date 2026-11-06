@@ -9,376 +9,40 @@
     />
     <title>Kim Dong Wook | Resume</title>
     <style>
-      /* Document color and typography tokens */
-      :root {
-        --paper: #ffffff;
-        --ink: #050505;
-        --muted-ink: #1d1d1d;
-        --rule: #050505;
-        --desk: #8f8f8f;
-        --font-serif: "Times New Roman", Times, serif;
+      :root { color-scheme: light; font-family: "Times New Roman", Times, serif; color: #000; background: #fff; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-size: 14px; line-height: 1.18; }
+      .resume-page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 12mm 14mm; }
+      .resume-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 20px; }
+      .identity h1 { margin: 0; font-size: 34px; font-weight: 400; line-height: 1.1; }
+      .contact { font-size: 13px; font-style: normal; text-align: right; line-height: 1.2; }
+      a { color: inherit; text-decoration: none; }
+      a:focus-visible { outline: 1px solid; outline-offset: 2px; }
+      .resume-section { margin-top: 13px; }
+      .section-heading { border-bottom: 1px solid #555; margin-bottom: 5px; }
+      h2 { margin: 0; font-size: 16px; text-transform: uppercase; }
+      .entry { margin-bottom: 9px; }
+      .entry-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+      .entry-title { margin: 0; font-size: 14px; }
+      .entry-date { font-weight: 700; white-space: nowrap; }
+      .entry-role { margin: 2px 0 0; font-style: italic; }
+      .entry ul { margin: 3px 0 0; padding-left: 15px; }
+      .entry li { margin: 2px 0; padding-left: 1px; }
+      .skills-table { width: 100%; border-collapse: collapse; }
+      .skills-table th { padding-right: 14px; text-align: left; vertical-align: top; white-space: nowrap; }
+      .skills-table td { vertical-align: top; }
+      @media screen and (max-width: 794px) {
+        .resume-page { width: 100%; min-height: 0; padding: 28px 18px; }
+        .resume-header { flex-wrap: wrap; gap: 12px; }
+        .contact { margin-left: auto; }
+        .entry-header { flex-wrap: wrap; gap: 2px 12px; }
+        .skills-table th { white-space: normal; }
       }
-
-      /* Universal box sizing */
-      * {
-        box-sizing: border-box;
-      }
-
-      /* Browser page foundation */
-      html {
-        min-height: 100%;
-        background: var(--desk);
-      }
-
-      /* Browser canvas */
-      body {
-        min-height: 100%;
-        margin: 0;
-        padding: 20px;
-        background: var(--desk);
-        color: var(--ink);
-        font-family: var(--font-serif);
-        font-size: 16px;
-        line-height: 1.1;
-        letter-spacing: 0;
-      }
-
-      /* Printable resume page */
-      .resume-page {
-        width: min(100%, 210mm);
-        min-height: 297mm;
-        margin: 0 auto;
-        padding: 12mm 14mm 10mm;
-        background: var(--paper);
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22), 0 3px 18px rgba(0, 0, 0, 0.35);
-      }
-
-      /* Top identity row */
-      .resume-header {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        align-items: center;
-        gap: 24px;
-        margin-bottom: 24px;
-      }
-
-      /* Name block with reference-like density */
-      .identity {
-        display: inline-block;
-        justify-self: start;
-        min-width: 238px;
-        width: max-content;
-        padding: 9px 16px 10px;
-        background: var(--ink);
-        color: var(--paper);
-      }
-
-      /* Candidate name */
-      .identity h1 {
-        margin: 0;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: 0;
-      }
-
-      /* Candidate tagline */
-      .identity p {
-        margin: 4px 0 0;
-        font-size: 14px;
-        letter-spacing: 0;
-      }
-
-      /* Contact block */
-      .contact {
-        justify-self: end;
-        margin-top: 0;
-        color: var(--ink);
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: 1.32;
-        text-align: right;
-        white-space: nowrap;
-      }
-
-      /* Contact links */
-      .contact a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      /* Major resume section */
-      .resume-section {
-        margin-top: 12px;
-      }
-
-      /* First resume section adjustment */
-      .resume-section:first-of-type {
-        margin-top: 0;
-      }
-
-      /* Section title row */
-      .section-heading {
-        display: flex;
-        align-items: flex-end;
-        gap: 0;
-        margin: 0 0 3px;
-      }
-
-      /* Section heading text */
-      .section-heading h2 {
-        margin: 0;
-        padding-right: 8px;
-        border-bottom: 2px solid var(--rule);
-        font-size: 20px;
-        line-height: 0.92;
-        text-transform: uppercase;
-        white-space: nowrap;
-      }
-
-      /* Section horizontal rule */
-      .section-heading::after {
-        display: block;
-        flex: 1 1 auto;
-        min-width: 24px;
-        border-bottom: 2px solid var(--rule);
-        content: "";
-      }
-
-      /* Section entry */
-      .entry {
-        margin: 0 0 9px 22px;
-      }
-
-      /* Compact section entry */
-      .entry.compact {
-        margin-bottom: 7px;
-      }
-
-      /* Entry title row */
-      .entry-header {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) max-content;
-        align-items: baseline;
-        column-gap: 14px;
-      }
-
-      /* Entry organization or award name */
-      .entry-title {
-        min-width: 0;
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        line-height: 1.14;
-      }
-
-      /* Entry links */
-      .entry a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      /* Entry date range */
-      .entry-date {
-        font-size: 15px;
-        font-weight: 700;
-        white-space: nowrap;
-      }
-
-      /* Italic role line */
-      .entry-role {
-        margin: 2px 0 0;
-        color: var(--muted-ink);
-        font-size: 15px;
-        font-style: italic;
-      }
-
-      /* Bullet list */
-      .entry ul {
-        margin: 2px 0 0 24px;
-        padding: 0;
-      }
-
-      /* Bullet item */
-      .entry li {
-        margin: 1px 0;
-        padding-left: 7px;
-      }
-
-      /* Bullet marker */
-      .entry li::marker {
-        font-size: 18px;
-        line-height: 0;
-      }
-
-      /* Skills table */
-      .skills-table {
-        width: calc(100% - 22px);
-        margin: 0 0 0 22px;
-        border-collapse: collapse;
-        font-size: 15px;
-      }
-
-      /* Skills row label */
-      .skills-table th {
-        width: 106px;
-        padding: 1px 18px 1px 0;
-        font-weight: 700;
-        text-align: left;
-        vertical-align: top;
-        white-space: nowrap;
-      }
-
-      /* Skills row body */
-      .skills-table td {
-        padding: 1px 0;
-        vertical-align: top;
-      }
-
-      /* Small screen page scaling */
-      @media (max-width: 760px) {
-        /* Mobile body breathing room */
-        body {
-          padding: 0;
-          background: var(--paper);
-          font-size: 14px;
-        }
-
-        /* Mobile page shell */
-        .resume-page {
-          width: 100%;
-          min-height: 0;
-          padding: 28px 18px;
-          box-shadow: none;
-        }
-
-        /* Mobile header stack */
-        .resume-header {
-          grid-template-columns: auto minmax(0, 1fr);
-          gap: 12px;
-          margin-bottom: 22px;
-        }
-
-        /* Mobile contact alignment */
-        .contact {
-          max-width: 100%;
-          margin-top: 0;
-          font-size: 10px;
-          text-align: right;
-          white-space: normal;
-        }
-
-        /* Mobile date width */
-        .entry-date {
-          font-size: 12px;
-        }
-      }
-
-      /* Print configuration */
+      @page { size: A4; margin: 0; }
       @media print {
-        /* Printed page dimensions */
-        @page {
-          size: A4;
-          margin: 0;
-        }
-
-        /* Print body reset */
-        body {
-          padding: 0;
-          background: var(--paper);
-          font-size: 17px;
-          line-height: 1.08;
-        }
-
-        /* Print page without browser shadow */
-        .resume-page {
-          width: 210mm;
-          min-height: 297mm;
-          padding: 9mm 10mm 7mm;
-          margin: 0;
-          box-shadow: none;
-        }
-
-        /* Print header balance */
-        .resume-header {
-          margin-bottom: 18px;
-        }
-
-        /* Print name block */
-        .identity {
-          min-width: 250px;
-        }
-
-        /* Print name */
-        .identity h1 {
-          font-size: 24px;
-        }
-
-        /* Print tagline */
-        .identity p {
-          font-size: 15px;
-        }
-
-        /* Print contact */
-        .contact {
-          font-size: 15px;
-        }
-
-        /* Print section spacing */
-        .resume-section {
-          margin-top: 9px;
-        }
-
-        /* Print section title */
-        .section-heading h2 {
-          font-size: 19px;
-        }
-
-        /* Print entry spacing */
-        .entry {
-          margin-bottom: 6px;
-        }
-
-        /* Print compact entry spacing */
-        .entry.compact {
-          margin-bottom: 5px;
-        }
-
-        /* Print entry title */
-        .entry-title {
-          font-size: 17px;
-        }
-
-        /* Print entry date */
-        .entry-date {
-          font-size: 15px;
-        }
-
-        /* Print role */
-        .entry-role {
-          font-size: 15px;
-        }
-
-        /* Print bullet list spacing */
-        .entry ul {
-          margin-left: 20px;
-        }
-
-        /* Print bullets */
-        .entry li::marker {
-          font-size: 19px;
-        }
-
-        /* Print skills */
-        .skills-table {
-          font-size: 16px;
-        }
-
-        /* Print link cleanup */
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
+        .resume-page { margin: 0; }
+        .entry, .skills-table { break-inside: avoid; }
+        .section-heading { break-after: avoid; }
       }
     </style>
   </head>
@@ -387,12 +51,12 @@
       <header class="resume-header">
         <div class="identity" aria-label="Candidate">
           <h1>Kim Dong Wook</h1>
-          <p>Full-Stack AI Engineer</p>
         </div>
         <address class="contact">
           Seoul, Republic of Korea<br />
           <a href="mailto:dongwook443@yonsei.ac.kr">dongwook443@yonsei.ac.kr</a><br />
-          <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">github.com/Dindb-dong</a>
+          <a href="https://github.com/Dindb-dong" target="_blank" rel="noreferrer">github.com/Dindb-dong</a><br />
+          <a href="https://dindb-dong.github.io/">dindb-dong.github.io</a>
         </address>
       </header>
 
@@ -416,13 +80,14 @@
         <article class="entry">
           <div class="entry-header">
             <h3 class="entry-title">Leviosa AI, Seoul, Korea</h3>
-            <div class="entry-date">| Mar 2026 - Present</div>
+            <div class="entry-date">| Feb 2026 - Oct 2026</div>
           </div>
-          <p class="entry-role">Full Stack AI Engineer & Founding Member</p>
+          <p class="entry-role">AI Engineer &amp; Founding Member</p>
           <ul>
-            <li>Built Cafe24 commerce automation workflows across CS automation, sourcing, upload, chat, and AI detail page generation.</li>
-            <li>Developed production AI workflow infrastructure with TypeScript, React, Node.js, Python/FastAPI, Supabase/RDS, Redis, S3, Docker, and AWS.</li>
-            <li>Implemented Chat MCP workspace and controlled AI tool-call flows for sourcing, products, orders, CS, and content operations.</li>
+            <li>Contributed across <strong>~40 repositories</strong>, with <strong>80%+ contribution in ~15</strong>; built and operated an AI detail-page service, custom canvas editor with AI editing and mobile touch UI, and Naver/Cafe24 CS automation.</li>
+            <li>Redesigned onboarding and tutorials using PostHog drop-off and retention analysis, increasing signup rate by <strong>200%+</strong>; built browser/mobile E2E verification loops and test harnesses.</li>
+            <li>Designed AI generation queues/workers and operated <strong>10+ servers</strong>; resolved deployment interruptions and concurrent-save conflicts; contributed to Yomates backend architecture, shared error handling, monitoring, and engineering conventions.</li>
+            <li>Improved CI/CD processing speed by <strong>400%+</strong> and reduced redundant builds; unified infrastructure management with Terraform and automated AWS SSM diagnostics and draft fix PRs.</li>
           </ul>
         </article>
 
@@ -442,31 +107,23 @@
 
       <section class="resume-section" aria-labelledby="activities-heading">
         <div class="section-heading">
-          <h2 id="activities-heading">Extracurricular Activities</h2>
+          <h2 id="activities-heading">Selected Projects &amp; Activities</h2>
         </div>
         <article class="entry">
           <div class="entry-header">
             <h3 class="entry-title">Yonsei University AI Club YAI, Seoul, Korea</h3>
-            <div class="entry-date">| Mar 2025 - Present</div>
+            <div class="entry-date">| Jan 2025 - Present</div>
           </div>
-          <p class="entry-role">Research Member & Vice President</p>
+          <p class="entry-role">Research Member &amp; Vice President (18th Cohort)</p>
           <ul>
+            <li>Built <strong>YAI-HUB for 60+ daily members</strong>, unifying attendance, reports, member operations, recruitment, and collaborative documents with Next.js, TypeScript, FastAPI, Supabase, Yjs/Hocuspocus, and Capacitor.</li>
+            <li>Designed traffic distribution across Cloudflare and Cloud Run, with caching and bounded database pools to accommodate frontend/backend free-tier limits.</li>
+            <li>Automated <strong>60-user</strong> attendance load tests using <strong>3 database connections</strong>, with a <strong>15-second p95</strong> pass/fail gate.</li>
+            <li>Automated web/iOS build and release pipelines and Notion-based error triage and bug-fix workflows; implemented monitoring, role-based access, audit logs, and backups.</li>
             <li>Fine-tuned EfficientFace and AdaIN models for emotion classification and style transfer workflows.</li>
             <li>Built a CLIP + BLIP2 text-to-image retrieval pipeline to locate video scenes from natural language queries.</li>
             <li>Developed a Dueling DDQN Pokemon battle agent trained on a self-developed battle simulator.</li>
             <li>Built web-shadow-boxing, a webcam-based AI sparring partner using pose estimation and GRU trajectory prediction.</li>
-          </ul>
-        </article>
-
-        <article class="entry">
-          <div class="entry-header">
-            <h3 class="entry-title">UN Youth Sustainable Development Society SDP, Seoul, Korea</h3>
-            <div class="entry-date">| Mar 2024 - Feb 2025</div>
-          </div>
-          <p class="entry-role">14th Tech Team Leader</p>
-          <ul>
-            <li>Led React Native development for UPCY, a secondhand clothing trading platform for reformers and upcyclers.</li>
-            <li>Coordinated implementation with design, marketing, and research teams through TestFlight-stage validation.</li>
           </ul>
         </article>
 
@@ -479,7 +136,7 @@
           </div>
           <p class="entry-role">Founder</p>
           <ul>
-            <li>Built a context-aware macOS memo app with quick overlay capture, pinned notes, library/calendar workspaces, GitHub Releases distribution, and a live landing page at <a href="https://notchnote.com/" target="_blank" rel="noreferrer">notchnote.com</a>.</li>
+            <li>Built a lightweight macOS quick-note app; attracted global users and improved features through direct communication and user feedback.</li>
           </ul>
         </article>
 
@@ -497,7 +154,7 @@
             </tr>
             <tr>
               <th scope="row">Frameworks</th>
-              <td>React, React Native, Flutter, Node.js, Supabase, AWS, Docker, Kubernetes</td>
+              <td>React, Next.js, React Native, Flutter, Node.js, FastAPI, Supabase, AWS, Docker, Terraform</td>
             </tr>
             <tr>
               <th scope="row">AI / Data</th>

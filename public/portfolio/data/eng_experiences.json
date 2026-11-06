@@ -56,6 +56,10 @@
       "Unified membership and team operations, attendance, points, reports, live Q&A, notices, schedules, and finance workflows.",
       "Built real-time collaborative documents and recruitment workflows for applications, coding tests, reviewer assignments, interview scheduling, and evaluations.",
       "Developed the public society website, role-based access, monitoring, audit logs, and backup workflows.",
+      "Built the web/iOS platform with Next.js, TypeScript, FastAPI, Supabase, Yjs/Hocuspocus, and Capacitor.",
+      "Designed Cloudflare/Cloud Run traffic distribution, caching, and bounded database pools around frontend/backend free-tier limits.",
+      "Automated 60-member attendance load tests with 3 database connections and a 15-second full-flow p95 pass/fail gate.",
+      "Automated web/iOS build and release pipelines and Notion-based error triage and bug-fix workflows.",
       "Researched EfficientFace/AdaIN emotion classification and style transfer, and CLIP/BLIP2 video retrieval.",
       "Built Yakemon as a YAI web battle-simulator project and trained a Dueling DDQN agent in a custom Python environment.",
       "Contributed to AI shadowboxing using webcam pose estimation and GRU-based punch trajectory prediction."

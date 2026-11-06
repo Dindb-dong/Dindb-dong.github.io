@@ -239,3 +239,13 @@
 - Errors override the terminal with current-URL retry and static resume links. The parser-installed 15-second watchdog covers a stalled entry and permits late recovery, but does not time out a ready screen waiting for input. JavaScript-disabled visitors keep the static resume path.
 - Code mapping: `index.html` owns first paint, pixel artwork, recovery and styling; `src/hello.js` owns progress presentation and input gating; `src/main.js` reports verified boot stages; `src/portfolio-data.js` reports completed JSON reads. The existing Canvas main and linked mobile instance include loading and ready previews, mapped to the same tokens and artwork. Original board/component IDs remain stable; the library autosaves changes.
 - Verify real withheld-script first paint, delayed required data with no premature completion log, profile rendering behind a pending wallpaper, indefinite ready hold, keyboard and mobile touch entry, focus handoff, 320/390/1440px bounds, replay/storage/motion preferences, recovery, and ordinary navigation.
+
+
+## Traditional resume (2026-11-06)
+
+- Scope: standalone `resume.html` and matching A4 PDF. The OS portfolio keeps its existing visual identity.
+- Reference: user-supplied traditional resume; white paper, black Times New Roman, regular 34px name, right-aligned contact information/dates, 16px uppercase headings with thin full-width rules, 14px body, italic roles, and native bullets.
+- Layout: 210 × 297mm with 12mm vertical and 14mm horizontal padding; narrow screens reflow header and dates without horizontal overflow. Native headings, lists, table and visible link focus remain accessible.
+- Editable canvas: “Kim Dong Wook · Traditional Resume”, Page 1; A4 board `314f5bb9-ab10-4ad2-9d4c-6af47c342cf1`; reusable organization/date component `component-c37e2559-8313-43fe-b1b7-dae125a5ede7`. Header and date rows map to `.resume-header` and `.entry-header`.
+- Canvas comparison: document typography and alignment reviewed against the running HTML. Canvas uses explicit positioning for the reference rows because its inline-layout importer did not retain flex rows; production uses responsive flex. Resume retains all four AI research bullets; the canvas summarizes them.
+- Validation: Chromium desktop and 320/390/794px overflow assertions; A4 PDF rendered and visually inspected, one page. No added packages or remote deployment.
