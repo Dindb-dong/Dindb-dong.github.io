@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+test.use({ reducedMotion: "reduce" });
+
 test("standalone and printed resume keep body metrics plain", async ({ page }) => {
   await page.goto("/resume.html");
   await expect(page.getByText("GPA: 4.0/4.3")).toBeVisible();
@@ -25,7 +27,7 @@ test("standalone and printed resume keep body metrics plain", async ({ page }) =
 
 test("resume app embeds highlighted preview and downloads PDF", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Press any key or tap to enter", exact: true }).click();
+  await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
   await page.locator('.dos-icon[aria-label="Open Resume.app"]').dblclick();
   const app = page.locator(".portfolio-resume-app");
   await expect(app.locator(".portfolio-resume-actions a")).toHaveCount(1);
@@ -39,15 +41,13 @@ test("resume app embeds highlighted preview and downloads PDF", async ({ page })
   expect((await pending).suggestedFilename()).toBe("Kim-Dong-Wook-Resume.pdf");
 });
 
-
 test("YAI contributions use grouped sections in both languages", async ({ page }) => {
   for (const [locale, headings] of [
     ["ko", ["플랫폼·제품 개발", "인프라·부하 검증", "배포·운영 자동화", "AI 연구·프로젝트"]],
     ["en", ["Platform & product engineering", "Infrastructure & load testing", "Deployment & operations automation", "AI research & projects"]],
   ]) {
-    await page.goto(`/?ln=${locale}&intro=1`);
-    const enter = page.getByRole("button", { name: "Press any key or tap to enter", exact: true });
-    await enter.click();
+    await page.goto(`/?ln=${locale}`);
+    await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
     await page.locator("#portfolio-startup").waitFor({ state: "hidden" });
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="experience"]').click();
     await page.locator('[data-experience-open="3"]').first().click();
