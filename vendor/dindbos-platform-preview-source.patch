@@ -1,8 +1,8 @@
 diff --git a/DESIGN.md b/DESIGN.md
-index 88c73ac..f35cdaf 100644
+index 88c73ac..914e489 100644
 --- a/DESIGN.md
 +++ b/DESIGN.md
-@@ -64,3 +64,31 @@ Inspect actual desktop and mobile rendering, a narrow embedded desktop, light an
+@@ -64,3 +64,49 @@ Inspect actual desktop and mobile rendering, a narrow embedded desktop, light an
  ## Consumer Dock tokens
  
  `theme.variables` exposes `--dock-background`, `--dock-border`, `--dock-radius`, `--dock-shadow`, `--dock-gap`, `--dock-padding` and `--dock-bottom`. Omitted values preserve the existing desktop and narrow-container defaults; glass and dark appearance honor the same overrides. Reduced transparency and forced colors retain opaque readable material. This API wiring and performance maintenance do not introduce a new visual design. Wallpaper and accent use the existing appearance API; full replacement uses `ui.slots.dock`.
@@ -34,6 +34,24 @@ index 88c73ac..f35cdaf 100644
 +The evaluation fixture in `scripts/fixtures/platform-apps.html` supplies isolated memory-backed documents, notes, reminders, events, and media. `npm run smoke:platform-apps` exercises every app in each platform at desktop/mobile widths, captures light and dark UI with the existing glass engine, verifies narrow host containment, and records actual app workflows. Browser captures supplement the Canvas review and code review; neither replaces real-device evaluation.
 +
 +Original platform SVG artwork replaces the shared macOS icon silhouettes on Windows, iOS and Android. The icon renderer follows the nearest desktop host, including responsive changes, while preserving host-provided React and image icons. Desktop, Dock/taskbar, launcher, Applications and in-app registered-app icons use the same renderer. Windows keeps one taskbar material; its inner app strip is transparent even while the existing glass adapter decorates other shell surfaces.
++
++
++### Reference-driven mobile home and recent apps
++
++The **Mobile reference correction / Home and Recents** board in **DindbOS · Platform Shells**, Page 1, supersedes the earlier mobile home compositions. The shared **Mobile / Recent app card** main defines the rounded preview surface. Android uses a four-column grid (five at 440px), wallpaper-first status/navigation, a full-width search capsule, and four Dock apps. iOS retains four columns with 60px icons, a translucent Dock and an Experience folder with a 2×2 miniature app preview. No workspace heading or unrelated dashboard is added. Existing wallpapers and app artwork remain authoritative; reference photos and vendor assets are not bundled.
++
++`desktop-view.js` composes app/folder entries, `platform-android.css` and `platform-ios.css` define home geometry, and `recent-apps.js` plus `platform-recents.css` provide horizontal card dragging, snapping, restore, and upward guarded dismissal. iOS uses its bottom Home region for short Home swipes and recent-app swipes/holds. Reduced motion, keyboard close/restore, trusted prompts, drafts, and nested host boundaries remain required. External frames receive labeled placeholders rather than fabricated previews. Local board IDs and runtime evidence are retained in the private evaluation record.
++
++
++### Mobile reference geometry and measured motion
++
++The earlier **Mobile reference correction / Home and Recents** board is superseded by four reviewed boards in the same **DindbOS · Platform Shells** document: **Mobile / Native geometry and motion / Components**, **Mobile / Samsung recents / Reference geometry**, **Mobile / iOS switcher / Reference geometry**, and **Mobile / iOS home and folder / Reference geometry**. The reusable **Mobile / Recent card / Rest** main has linked screen instances; **Mobile / Home icon / Notes** has a bound Label property and a linked Home instance using the real project SVG artwork. Private evaluation records retain stable IDs, saved/reopened revision, screenshots and motion traces. Canvas uses a flat wallpaper-color backing to isolate geometry; the runtime retains the consumer's existing wallpaper. Peeking adjacent cards intentionally extend beyond the board edges.
++
++Samsung uses 64%-width cards, centered app icons, Close all and four pinned-app suggestions. iOS uses 76%-width overlapping cards with icon/name headings. Previews retain the source app aspect ratio and named container layout; height-constrained cards narrow the preview instead of clipping its bottom navigation. Both remove dialog-like overview headers, persistent close badges and desktop selected-icon tiles. The Samsung Dock and Home status area have no inherited glass surface; iOS keeps its translucent Dock. Folder titles sit above a 342px frosted square.
++
++`recent-apps.js` tracks touch movement directly, projects bounded release velocity and eases to a card center over 360ms. Cancelled upward pulls return over 320ms; approved dismissals leave the stage over 240ms. Entrance/resume interpolate the preview/app geometry over 380ms. `ios.js` tracks actual app geometry during swipes and recognizes a pause after movement. `desktop-view.js` interpolates the folder from its icon over 360ms and reverses over 240ms. Existing window-manager lifecycle, close guards and draft state remain authoritative. Reduced motion removes spatial interpolation; pending navigation cancels owned animation work.
++
++`smoke-platform-motion-browser.js` verifies Android/iOS with and without reduced motion using real browser touch events, sampled frame geometry, app state and actual Home/Back hit testing. Coordinate traces and recordings supplement settled-screen comparison; declarations and reduced-motion-only tests are insufficient evidence for natural motion.
 diff --git a/README.md b/README.md
 index 44d7266..b2617f4 100644
 --- a/README.md
@@ -122,10 +140,10 @@ index 6d16aba..95a6d30 100644
  Pass the initial appearance in `theme`:
 diff --git a/docs/platform-android.md b/docs/platform-android.md
 new file mode 100644
-index 0000000..92b3a43
+index 0000000..660556e
 --- /dev/null
 +++ b/docs/platform-android.md
-@@ -0,0 +1,58 @@
+@@ -0,0 +1,65 @@
 +# Android mobile shell
 +
 +The `android` preset is a Samsung One UI-inspired browser shell designed for compact hosts. Automatic selection defaults to it for narrow macOS hosts and portrait iOS visitors, then Windows in iOS landscape. Consumers can force a preset or change these defaults through `ui.autoStyles`; see [customization](customization.md). It preserves DindbOS apps, files, permissions and running windows. It is not Samsung software or an Android emulator.
@@ -136,9 +154,9 @@ index 0000000..92b3a43
 +
 +| Official reference | Verified guidance | DindbOS adaptation |
 +| --- | --- | --- |
-+| [Samsung: Basic layout](https://developer.samsung.com/one-ui/layout/basic.html) | Separate an upper viewing area from a lower interaction area; group related actions. | A quiet workspace heading, grouped app content, and reachable primary controls. App handlers and data remain the existing DindbOS implementations. |
-+| [Samsung: Grid system](https://developer.samsung.com/one-ui/layout/grid.html) | Use at least 24 dp side margins, account for cutouts, and adapt to different screen sizes. | 24 CSS px home margins, responsive icon columns and safe-area environment insets. CSS pixels approximate the web layout, not physical Android dp calibration. |
-+| [Samsung: Navigation bar](https://www.samsung.com/us/support/answer/ANS10002427/) | The classic order is Recents, Home, Back. Recents displays recently opened apps; Home returns to the home screen; Back returns to a prior screen. | Three persistent controls in that order. Recents lists real running windows. Home minimizes windows without closing them. Back dismisses shell panels, offers an app navigation event, then returns Home. |
++| [Samsung: Basic layout](https://developer.samsung.com/one-ui/layout/basic.html) | Separate an upper viewing area from a lower interaction area; group related actions. | A wallpaper home without a workspace heading, grouped app content, and reachable primary controls. App handlers and data remain the existing DindbOS implementations. |
++| [Samsung: Grid system](https://developer.samsung.com/one-ui/layout/grid.html) | Use at least 24 dp side margins, account for cutouts, and adapt to different screen sizes. | 20 CSS px home margins, responsive icon columns and safe-area environment insets. CSS pixels approximate the web layout, not physical Android dp calibration. |
++| [Samsung: Navigation bar](https://www.samsung.com/us/support/answer/ANS10002427/) | The classic order is Recents, Home, Back. Recents displays recently opened apps; Home returns to the home screen; Back returns to a prior screen. | Three persistent controls in that order. Recents presents cards for real running windows. Home minimizes windows without closing them. Back dismisses shell panels, offers an app navigation event, then returns Home. |
 +| [Android: Accessible controls](https://developer.android.com/guide/topics/ui/accessibility/views/apps-views) | Recommend at least 48 × 48 dp touch areas and meaningful descriptions. | At least 48 CSS px navigation targets, named controls, visible keyboard focus and a host-scoped dialog. |
 +| [Android: Edge-to-edge layouts](https://developer.android.com/develop/ui/views/layout/edge-to-edge) | System bars can overlap content; account for insets and visual overlap. | Reserve top and bottom space with CSS safe-area insets so app content and navigation remain separate. |
 +
@@ -172,9 +190,9 @@ index 0000000..92b3a43
 +## Interaction contract
 +
 +- Home preserves process and component state by minimizing every visible window.
-+- Recents shows window titles rather than fabricated screenshots. Selecting a task restores its existing window. A nonmodal `dialog` contains keyboard Tab focus while active, supports Escape dismissal and returns focus to its trigger. Other embedded desktops remain usable.
++- Recents shows horizontally draggable, snapping cards with inert snapshots of the actual running app content. Tap a card to restore its existing window, swipe it up to close through the guarded window lifecycle, or use Close all. Keyboard arrows navigate cards; each card has an accessible close action. A nonmodal `dialog` contains keyboard Tab focus, supports Escape dismissal and returns focus to its trigger. Other embedded desktops remain usable. External embedded frames show a labeled placeholder because their content cannot be safely cloned.
 +- Back first closes an open shell panel. Otherwise the active app content receives a bubbling, cancelable `dindbos:back` event. Calling `preventDefault()` signals that the app handled its internal navigation. Without an app handler, Back goes Home without closing or discarding the app.
-+- Apps and Quick settings reuse the existing searchable launcher and appearance controls.
++- The wallpaper home uses four icon columns (five from 440px), a search bar, four pinned Dock apps and transparent Back/Home/Recents navigation. Search and status controls reuse the existing launcher and appearance controls.
 +- Active app windows fill the available mobile workspace. Desktop caption controls are replaced by system navigation.
 +
 +The mobile preset is selected by the host configuration; it does not detect the visitor's operating system. Native Android predictive-back animation, OS app switching, hardware keys, notification permissions, and device status are outside this browser shell's scope.
@@ -184,33 +202,40 @@ index 0000000..92b3a43
 +`node scripts/smoke-platform-android.js` checks Home state preservation, shell-panel dismissal, cancelable app Back handling, and the safe fallback. Browser rendering and real-device accessibility require the integration checks recorded with the platform-shell change.
 +
 +`CHROME_PATH=/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome node scripts/smoke-platform-android-apps.js` uses a temporary local Vite server and the existing Playwright dependency. It captures all 16 app surfaces, checks calculator arithmetic, Notes editing/Home restoration/Back navigation, Settings navigation, browser errors, and selected 320 px dark layouts. `DINDBOS_QA_URL` can target an existing server. Real Galaxy hardware, regional Samsung app packages, TalkBack, IME and media codec coverage remain outside this local-browser check.
++
++
++## Reference geometry and motion correction
++
++The [official Samsung Recent apps guide](https://www.samsung.com/us/support/answer/ANS10001359/) confirms horizontal browsing, upward dismissal, Close all and recommended app shortcuts. The reference-aligned overview uses a centered icon above a 64%-width app preview, adjacent cards, Close all and four real pinned-app suggestions. Web-dialog headings and permanent close badges are absent; keyboard focus exposes close controls. Bottom Recents/Home/Back remain clickable above the overview.
++
++Motion follows direct touch input. Release projects a bounded velocity to the nearest card, then settles over 360ms; an incomplete upward pull returns over 320ms. Guarded dismissal retains the card while approval is pending, then animates beyond the viewport over 240ms. Entrance and resume use the app/card geometry over 380ms. These durations and easing are DindbOS implementation choices, not Samsung-published parameters. Reduced motion removes spatial interpolation. The bare home Dock and status area clear inherited glass treatments, and mobile selection uses press/focus feedback instead of desktop selection tiles.
 diff --git a/docs/platform-ios.md b/docs/platform-ios.md
 new file mode 100644
-index 0000000..25141e0
+index 0000000..c984e3e
 --- /dev/null
 +++ b/docs/platform-ios.md
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,78 @@
 +# iOS-inspired mobile shell
 +
 +Select `ui: { style: "ios" }` to force an iOS-inspired shell, or combine a desktop style with `mobileStyle: "ios"`. Automatic selection defaults to iOS for narrow Windows hosts and portrait Android visitors, then macOS in Android landscape. Consumers can change these rules through `ui.autoStyles`; see [customization](customization.md). This is a DindbOS browser interface, not Apple's operating system.
 +
 +## Official research and implementation decisions
 +
-+Sources were reviewed on November 10, 2026. Apple's public HIG describes application design; it does not prescribe a third-party Home screen clone. The app grid, horizontally scrollable Dock, and clickable Home indicator below are DindbOS design choices. They use original iOS-style SVG app artwork and the project wallpaper, with no Apple logo, bundled font, status indicators, or system artwork.
++Sources were reviewed on November 10, 2026. Apple's public HIG describes application design; it does not prescribe a third-party Home screen clone. The app grid, four-app Dock, and clickable Home indicator below are DindbOS web adaptations. They use original iOS-style SVG app artwork and the project wallpaper, with no Apple logo, bundled font, battery telemetry, or system artwork. Original status glyphs provide access to existing controls.
 +
 +| Official source | Guidance used | DindbOS adaptation |
 +| --- | --- | --- |
 +| [Apple HIG: Layout](https://developer.apple.com/design/human-interface-guidelines/layout) | Preserve visual hierarchy, group related controls, adapt to available size, and protect important controls from hardware and system overlays. | Four-column Home grid, full-width foreground app, safe-area insets around top and bottom chrome, and scrolling where content exceeds the host. |
 +| [Apple HIG: Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons) | Make actions identifiable and give them sufficient surrounding space; general guidance recommends a 44 × 44 point hit region. | Shell actions and Home use at least 44 × 44 CSS pixels, with visible keyboard focus and accessible names. CSS pixels are a web adaptation, not a physical-point equivalence guarantee. |
 +| [Apple HIG: Accessibility](https://developer.apple.com/design/human-interface-guidelines/accessibility) | Support adequate contrast, readable text, and reduced motion; do not rely exclusively on visual effects. | Reuse light/dark semantic surfaces, labeled native buttons, accessible search, and `prefers-reduced-motion`. No gesture is the only route to an action. |
-+| [Apple HIG: Motion](https://developer.apple.com/design/human-interface-guidelines/motion) | Motion should explain state and remain optional. | Reuse existing app opening/minimizing, disable spatial shell transitions with reduced motion, and avoid an extra Home animation system. |
++| [Apple HIG: Motion](https://developer.apple.com/design/human-interface-guidelines/motion) | Motion should explain state and remain optional. | Preserve app lifecycle while interpolating Home/card/folder geometry; disable spatial transitions with reduced motion. |
 +
 +## Behavior and compatibility
 +
 +- Home dismisses the current shell panel and minimizes every visible window, preserving the app process, component state, and unsaved drafts. Reopen an app through the grid, Dock, or Search.
 +- One foreground app occupies the content area. Background frames stay mounted. The bottom Home button remains reachable; the Dock and Home Search pill appear on Home.
 +- Search opens the existing application launcher. Control Center, calendar, system menu, and compact application menus retain their existing behavior. The titlebar close action still uses the window manager's existing close and unsaved-change handling.
-+- Pinned apps remain reachable through a horizontally scrollable Dock rather than being silently dropped after the fourth item. Desktop filesystem entries remain available alongside installed applications.
++- The Dock holds four pinned apps; all installed applications remain reachable through Home and Search. Desktop filesystem entries remain available alongside installed applications.
 +- Supplied desktop and menubar slot renderers are retained. The adapter adds its own Home affordance and adds the Search pill only for the default desktop.
 +- Resizing back to a desktop layout removes iOS controls and listeners without resetting application state. CSS is confined to the selected DindbOS host.
 +
@@ -254,6 +279,20 @@ index 0000000..25141e0
 +
 +
 +Astra review follow-up: Files folder tabs now use a 56px strip, 48px inset tab rail and 44px tab/close/new-tab controls. The existing 28/26px desktop strip previously clipped the larger mobile targets. Native browser review checked 390px light, 320px light/dark and two open folder tabs; measured tab and new-tab targets remain 44px tall. Canvas Files reflects the real commandbar and tab composition; Clock uses the bundled geographic silhouettes. Notes and Settings boards show the list state; their corresponding detail states use the existing mobile Back navigation.
++
++
++## Home and recent apps
++
++Home uses a four-column app grid, a translucent four-app Dock, a quiet status area, and a 2×2 miniature preview for the Experience folder. Experience app entries keep their existing launch actions; custom desktop slots retain their own layout. The folder supports Escape, outside dismissal, keyboard navigation and return focus.
++
++A short upward swipe from the bottom Home region backgrounds the active app without losing its draft. From Home, an upward swipe opens recent apps; holding an upward swipe also opens them from an app. Recent apps are horizontally draggable cards with snapshots of existing app DOM. Tap resumes; swipe up or the accessible close button uses the normal guarded close lifecycle. Embedded external frames have labeled placeholders. These are browser-host gestures; the native operating system can reserve the physical screen edge.
++
++
++## Reference geometry and motion correction
++
++The [official iPhone App Switcher guide](https://support.apple.com/guide/iphone/switch-between-open-apps-iph1a1f981ad/ios) specifies swiping up, pausing, then lifting a finger. The adapter now detects a pause after the movement, rather than a hold before the movement. Direct manipulation moves/scales the actual app during a Home gesture. A short upward app swipe returns Home; a paused swipe opens the switcher. The requested Home-screen upward shortcut also opens recent apps.
++
++Switcher cards use 76% host width, overlapping neighbors, original app icons and names above actual app previews. Height-constrained previews narrow to preserve the full source app aspect ratio and bottom navigation. Resume expands the selected card into the real app over 380ms. Horizontal release, vertical cancellation and guarded dismissal share the motion contract documented for Android. The Experience folder title sits above a frosted 342px square with three icon columns and nine slots. It expands from its actual Home icon over 360ms and reverses over 240ms. Native Apple animation parameters are not claimed. Reduced motion removes spatial interpolation; [Apple describes using dissolves instead of zoom/slide effects](https://support.apple.com/en-us/111781).
 diff --git a/docs/platform-windows.md b/docs/platform-windows.md
 new file mode 100644
 index 0000000..759d98e
@@ -323,7 +362,7 @@ index 0000000..759d98e
 +
 +The Windows app regression also checks light/dark calculator toolbar foreground and background colors, full-width title bars and in-bounds caption controls at 320/390px, visible Notes list headings, note editing, and Files navigation at those widths. These checks cover inherited macOS compact-title-bar rules as well as the Windows overrides.
 diff --git a/package.json b/package.json
-index 28bf8e1..38cc3cb 100644
+index 28bf8e1..a9b9697 100644
 --- a/package.json
 +++ b/package.json
 @@ -49,7 +49,10 @@
@@ -338,7 +377,7 @@ index 28bf8e1..38cc3cb 100644
    ],
    "sideEffects": [
      "./dist/styles.css",
-@@ -133,7 +136,11 @@
+@@ -133,7 +136,14 @@
      "smoke:clock": "node scripts/smoke-clock.js",
      "smoke:nfc": "node scripts/smoke-nfc-paths.js",
      "smoke:liquid-glass": "node scripts/smoke-liquid-glass.js && node scripts/smoke-liquid-glass-scheduling.js",
@@ -346,6 +385,9 @@ index 28bf8e1..38cc3cb 100644
 +    "smoke:customization-browser": "node scripts/smoke-customization-browser.js",
 +    "smoke:platforms": "node scripts/smoke-platform-styles.js && node scripts/smoke-platform-windows.js && node scripts/smoke-platform-ios.js && node scripts/smoke-platform-android.js",
 +    "smoke:platform-browser": "node scripts/smoke-platform-browser.js",
++    "smoke:platform-home": "node scripts/smoke-platform-home-browser.js",
++    "smoke:platform-recents": "node scripts/smoke-platform-recents-browser.js",
++    "smoke:platform-motion": "node scripts/smoke-platform-motion-browser.js",
 +    "smoke:platform-apps": "node scripts/smoke-platform-apps-browser.js",
 +    "smoke:platform-icons": "node scripts/smoke-platform-icons.js"
    },
@@ -488,6 +530,28 @@ index f6f4ad1..ea9812a 100644
 +void createDindbOS({ ui: { autoStyles: { linux: { desktop: 'macos' } } } });
 +// @ts-expect-error Automatic rules cannot recursively select auto.
 +void createDindbOS({ ui: { autoStyles: { ios: { mobile: 'auto' } } } });
+diff --git a/scripts/release-conformance-artifacts.js b/scripts/release-conformance-artifacts.js
+index 263d8db..d45e325 100644
+--- a/scripts/release-conformance-artifacts.js
++++ b/scripts/release-conformance-artifacts.js
+@@ -386,7 +386,7 @@ async function createNpmReleaseTrust({ repoRoot, outDir, generatedAt, packageJso
+     },
+     contentAllowlist: {
+       status: violations.length ? "fail" : "pass",
+-      allowed: ["package.json", "README.md", "README-ko.md", "LICENSE", "INSTALL.md", "CONTRIBUTING.md", "docs/agent-guide.md", "docs/customization.md", "docs/react-apps.md", "docs/first-app.md", "docs/builtin-apps.md", "docs/liquid-glass.md", "THIRD_PARTY_NOTICES.md", "docs/assets/**", "dist/**"],
++      allowed: ["package.json", "README.md", "README-ko.md", "LICENSE", "INSTALL.md", "CONTRIBUTING.md", "docs/agent-guide.md", "docs/customization.md", "docs/react-apps.md", "docs/first-app.md", "docs/builtin-apps.md", "docs/liquid-glass.md", "docs/platform-windows.md", "docs/platform-ios.md", "docs/platform-android.md", "THIRD_PARTY_NOTICES.md", "docs/assets/**", "dist/**"],
+       violations,
+     },
+     requiredFiles: {
+@@ -411,7 +411,7 @@ async function createNpmReleaseTrust({ repoRoot, outDir, generatedAt, packageJso
+ }
+ 
+ function isAllowedNpmPackageFile(path) {
+-  return ["package.json", "README.md", "README-ko.md", "LICENSE", "INSTALL.md", "CONTRIBUTING.md", "docs/agent-guide.md", "docs/customization.md", "docs/react-apps.md", "docs/first-app.md", "docs/builtin-apps.md", "docs/liquid-glass.md", "THIRD_PARTY_NOTICES.md"].includes(path) || path.startsWith("docs/assets/") || path.startsWith("dist/");
++  return ["package.json", "README.md", "README-ko.md", "LICENSE", "INSTALL.md", "CONTRIBUTING.md", "docs/agent-guide.md", "docs/customization.md", "docs/react-apps.md", "docs/first-app.md", "docs/builtin-apps.md", "docs/liquid-glass.md", "docs/platform-windows.md", "docs/platform-ios.md", "docs/platform-android.md", "THIRD_PARTY_NOTICES.md"].includes(path) || path.startsWith("docs/assets/") || path.startsWith("dist/");
+ }
+ 
+ function createDeploymentRecipes({ generatedAt }) {
 diff --git a/scripts/smoke-app-menus-browser.js b/scripts/smoke-app-menus-browser.js
 index 5d92dbd..27e3738 100644
 --- a/scripts/smoke-app-menus-browser.js
@@ -566,6 +630,31 @@ index db49a09..22b829c 100644
  const server = await createServer({configFile:false,logLevel:"error",optimizeDeps:{entries:[]},plugins:[{name:"control-fixture",resolveId(id){if(id==='/control-fixture.js')return '\0control-fixture';},load(id){if(id==='\0control-fixture')return source;},configureServer(vite){vite.middlewares.use(async(req,res,next)=>{if(req.url?.split('?')[0]!=='/control-fixture')return next();res.setHeader('Content-Type','text/html');try{res.end(await vite.transformIndexHtml(req.url,'<!doctype html><html><body style="margin:0"><div id="desktop" style="height:100vh"></div><script type="module" src="/control-fixture.js"></script></body></html>'));}catch(error){next(error);}});}}],server:{host:"127.0.0.1",port:0,hmr:false,watch:null}});
  function wave(frequency) {const rate=8000,length=rate*20,b=Buffer.alloc(44+length*2);b.write('RIFF');b.writeUInt32LE(b.length-8,4);b.write('WAVEfmt ',8);b.writeUInt32LE(16,16);b.writeUInt16LE(1,20);b.writeUInt16LE(1,22);b.writeUInt32LE(rate,24);b.writeUInt32LE(rate*2,28);b.writeUInt16LE(2,32);b.writeUInt16LE(16,34);b.write('data',36);b.writeUInt32LE(length*2,40);for(let n=0;n<length;n++)b.writeInt16LE(Math.round(Math.sin(n/rate*frequency*Math.PI*2)*1500),44+n*2);return b;}
  let browser;
+diff --git a/scripts/smoke-desktop-ui.js b/scripts/smoke-desktop-ui.js
+index 510ac06..2998994 100644
+--- a/scripts/smoke-desktop-ui.js
++++ b/scripts/smoke-desktop-ui.js
+@@ -1,7 +1,7 @@
+ import assert from "node:assert/strict";
+ import React from "react";
+ import { renderToStaticMarkup } from "react-dom/server";
+-import { dockMagnification } from "../src/ui/desktop-view.js";
++import { dockMagnification, groupMobileHomeEntries } from "../src/ui/desktop-view.js";
+ import { AppIcon, isImageIcon } from "../src/ui/app-icon.js";
+ 
+ assert.equal(dockMagnification(0), 1);
+@@ -27,3 +27,11 @@ assert(image.includes('src="/brand.svg"'));
+ const blocked = renderToStaticMarkup(React.createElement(AppIcon, { icon: "javascript:alert(1)" }));
+ assert(!blocked.includes("javascript:"));
+ console.log("desktop UI smoke passed: Dock falloff, safe custom icons, all built-in artwork");
++
++const careerEntries = [{ appId: "files", name: "Files" }, ...Array.from({ length: 6 }, (_, i) => ({ appId: `experience-${i}`, name: `Career ${i}` }))];
++const grouped = groupMobileHomeEntries(careerEntries);
++assert.equal(grouped.length, 2);
++assert.equal(grouped[1].children.length, 6);
++assert.equal(careerEntries.length, 7, "Grouping preserves original desktop data");
++assert.equal(groupMobileHomeEntries(careerEntries.slice(0, 2)).length, 2, "Single career app stays directly accessible");
++assert.equal(groupMobileHomeEntries([{ category: "career" }, { category: "experience" }])[0].children.length, 2);
 diff --git a/scripts/smoke-dock-browser.js b/scripts/smoke-dock-browser.js
 index e52cc9d..228b208 100644
 --- a/scripts/smoke-dock-browser.js
@@ -1389,7 +1478,7 @@ index 0000000..94b75a1
 +} finally { await browser.close(); }
 diff --git a/scripts/smoke-platform-browser.js b/scripts/smoke-platform-browser.js
 new file mode 100644
-index 0000000..dac4cf4
+index 0000000..5a4ca39
 --- /dev/null
 +++ b/scripts/smoke-platform-browser.js
 @@ -0,0 +1,105 @@
@@ -1444,7 +1533,7 @@ index 0000000..dac4cf4
 +    await expect(root.locator('[data-failed-icon-test] svg')).toHaveAttribute("data-icon-style", style);
 +    await page.evaluate(() => { window.failedIconCleanup(); document.querySelector('[data-failed-icon-test]').remove(); });
 +    if (output) await root.screenshot({ path: resolve(output, `${style}-home.png`) });
-+    await root.locator('[data-dock-app-id="draft"]').click();
++    await root.locator(["ios", "android"].includes(style) ? '[data-desktop-app-id="draft"]' : '[data-dock-app-id="draft"]').click();
 +    await root.getByRole("textbox", { name: "Draft text", exact: true }).fill(`${style} draft`);
 +    if (output) await root.screenshot({ path: resolve(output, `${style}-app.png`) });
 +    const box = await root.locator('.dos-window[data-app-id="draft"]').boundingBox();
@@ -1456,7 +1545,7 @@ index 0000000..dac4cf4
 +    if (style === "android") {
 +      await root.getByRole("button", { name: "Recent apps", exact: true }).click();
 +      await root.getByRole("dialog", { name: "Recent apps" }).getByRole("button", { name: "Draft", exact: true }).click();
-+    } else await root.locator('[data-dock-app-id="draft"]').click();
++    } else await root.locator(style === "ios" ? '[data-desktop-app-id="draft"]' : '[data-dock-app-id="draft"]').click();
 +    await expect(root.getByRole("textbox", { name: "Draft text", exact: true })).toHaveValue(`${style} draft`);
 +    await page.evaluate(() => window.platformOS.setAppearance({ mode: "dark" }));
 +    await expect(root).toHaveAttribute("data-appearance", "dark");
@@ -1498,6 +1587,137 @@ index 0000000..dac4cf4
 +} finally {
 +  await browser.close();
 +}
+diff --git a/scripts/smoke-platform-home-browser.js b/scripts/smoke-platform-home-browser.js
+new file mode 100644
+index 0000000..81cf879
+--- /dev/null
++++ b/scripts/smoke-platform-home-browser.js
+@@ -0,0 +1,125 @@
++import assert from "node:assert/strict";
++import { mkdir } from "node:fs/promises";
++import { resolve } from "node:path";
++import { chromium, expect } from "@playwright/test";
++import { groupMobileHomeEntries } from "../src/ui/desktop-view.js";
++
++const plain = [{ name: "Files", appId: "files" }];
++assert.equal(groupMobileHomeEntries(plain), plain, "No empty folder");
++const entries = [...plain, ...Array.from({ length: 6 }, (_, i) => ({ name: `Career ${i}`, appId: `experience-${i}` }))];
++const grouped = groupMobileHomeEntries(entries);
++assert.equal(grouped.length, 2);
++assert.equal(grouped[1].children.length, 6);
++assert.equal(entries.length, 7, "Grouping never mutates source entries");
++assert.equal(groupMobileHomeEntries([...plain, { appId: "experience-one" }]).length, 2, "Single app stays ungrouped");
++
++const output = process.env.DINDBOS_QA_OUTPUT;
++if (output) await mkdir(output, { recursive: true });
++const browser = await chromium.launch({ headless: true, ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}) });
++try {
++  const motion = process.env.DINDBOS_QA_MOTION || "reduce";
++  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: motion });
++  const errors = [];
++  page.on("pageerror", (error) => errors.push(error.message));
++  await page.goto(process.env.DINDBOS_QA_URL || "http://127.0.0.1:5186/?style=ios");
++  await page.locator(".dos-boot-screen").waitFor({ state: "detached" });
++  await page.evaluate(async () => {
++    document.querySelector("#dindbos-root").style.display = "none";
++    const { mountDindbOSDesktop } = await import("/src/sdk/desktop.js");
++    const root = document.createElement("div");
++    root.id = "home-test";
++    Object.assign(root.style, { width: "390px", height: "844px" });
++    document.body.append(root);
++    window.homeOS = await mountDindbOSDesktop({ root, ui: { style: "ios", liquidGlass: false }, bootScreen: false, bootstrapPackages: false,
++      storage: { backend: "memory", name: "home-regression" },
++      apps: Array.from({ length: 6 }, (_, i) => ({ id: `experience-${i}`, name: `Career ${i}`, icon: "portfolio", pinned: true, desktop: true, singleton: true,
++        render({ content }) { content.textContent = `Career detail ${i}`; } })),
++    });
++  });
++  const root = page.locator("#home-test");
++  const folder = root.getByRole("button", { name: "Open Experience", exact: true });
++  await expect(folder).toBeVisible();
++  await expect(folder.locator(".dos-folder-preview svg")).toHaveCount(4);
++  await expect(root.locator(".dos-dock-item")).toHaveCount(4);
++  assert.equal(await root.locator(".dos-desktop").evaluate((e) => getComputedStyle(e).gridTemplateColumns.split(" ").length), 4);
++  await folder.click();
++  const dialog = root.getByRole("dialog", { name: "Experience", exact: true });
++  await expect(dialog).toBeVisible();
++  await expect(dialog.locator("[data-folder-app-id]")).toHaveCount(6);
++  if (motion === "no-preference") {
++    const firstTransform = await dialog.evaluate((e) => getComputedStyle(e).transform);
++    await page.waitForTimeout(90);
++    const secondTransform = await dialog.evaluate((e) => getComputedStyle(e).transform);
++    assert.notEqual(firstTransform, secondTransform, "Folder grows from its home icon rather than appearing instantly");
++    await dialog.evaluate((e) => Promise.all(e.getAnimations().map((a) => a.finished)));
++  }
++  const geometry = await dialog.evaluate((e) => {
++    const title = e.querySelector("h2").getBoundingClientRect();
++    const grid = e.querySelector(".dos-home-folder-grid").getBoundingClientRect();
++    return { titleBottom: title.bottom, gridTop: grid.top, width: grid.width, height: grid.height };
++  });
++  assert.ok(geometry.titleBottom < geometry.gridTop, "Folder title sits above the app panel");
++  assert.equal(geometry.width, geometry.height, "Folder panel reserves a square 3x3 layout");
++  await page.keyboard.press("Escape");
++  if (motion === "no-preference") {
++    assert.equal(await dialog.count(), 1, "Exit keeps the folder mounted during its reverse animation");
++    assert.ok(await dialog.evaluate((e) => e.getAnimations().some((a) => a.playState === "running")));
++  }
++  await expect(dialog).toHaveCount(0);
++  await expect(folder).toBeFocused();
++  await folder.click();
++  await dialog.getByRole("button", { name: "Open Career 5", exact: true }).click();
++  await expect(root.locator('.dos-window[data-app-id="experience-5"]')).toContainText("Career detail 5");
++  await expect(dialog).toHaveCount(0);
++  await root.getByRole("button", { name: "Home", exact: true }).click();
++  await folder.click();
++  await dialog.getByRole("button", { name: "Close folder" }).click();
++  await expect(dialog).toHaveCount(0);
++  if (output) await root.screenshot({ path: resolve(output, "ios-home.png") });
++  await root.evaluate((e) => { e.style.width = "1280px"; });
++  await folder.click();
++  await dialog.getByRole("button", { name: "Open Career 4", exact: true }).click();
++  await expect(root.locator('.dos-window[data-app-id="experience-4"]')).toContainText("Career detail 4");
++  await root.getByRole("button", { name: "Home", exact: true }).click();
++  await root.evaluate((e) => { e.style.width = "390px"; });
++  await folder.click();
++  await dialog.evaluate((e) => Promise.all([...e.getAnimations(), ...e.parentElement.getAnimations()].map((a) => a.finished)));
++  if (output) await root.screenshot({ path: resolve(output, "ios-folder.png") });
++  await root.getByRole("button", { name: "Home", exact: true }).click();
++  await expect(dialog).toHaveCount(0);
++  await root.evaluate((e) => { e.style.width = "320px"; });
++  assert.ok((await folder.locator(".dos-folder-preview svg").first().boundingBox()).width <= 20, "Narrow folder mini icons stay in their 2x2 cells");
++  await folder.click();
++  await dialog.evaluate((e) => Promise.all([...e.getAnimations(), ...e.parentElement.getAnimations()].map((a) => a.finished)));
++  const narrowPanel = await dialog.locator(".dos-home-folder-grid").boundingBox();
++  assert.equal(narrowPanel.width, narrowPanel.height, "Narrow folder remains square");
++  await dialog.getByRole("button", { name: "Close folder" }).click();
++  await expect(dialog).toHaveCount(0);
++  await root.evaluate((e) => { e.style.width = "390px"; });
++  await page.evaluate(() => window.homeOS.setUIStylePreference({ mobile: "android" }));
++  await expect(root).toHaveAttribute("data-ui-style", "android");
++  await expect(root.getByRole("button", { name: "Open Experience", exact: true })).toHaveCount(0);
++  await expect(root.locator('.dos-desktop [data-desktop-app-id^="experience-"]')).toHaveCount(6);
++  for (const [width, columns] of [[320, 4], [390, 4], [480, 5]]) {
++    await root.evaluate((e, width) => { e.style.width = `${width}px`; }, width);
++    await expect(root.locator(".dos-desktop")).toHaveCSS("grid-template-columns", new RegExp(`^(?:[0-9.]+px ?){${columns}}$`));
++    assert.equal(await root.locator(".dos-desktop").evaluate((e) => getComputedStyle(e).gridTemplateColumns.split(" ").length), columns);
++    assert.equal(await root.evaluate((e) => e.scrollWidth > e.clientWidth), false);
++    await expect(root.locator(".dos-dock")).toHaveCSS("backdrop-filter", "none");
++    await expect(root.locator(".dos-dock")).toHaveCSS("box-shadow", "none");
++    await expect(root.locator(".dos-android-heading")).toHaveCount(0);
++    assert.ok(await root.locator(".dos-dock-item:visible").count() <= 5);
++  }
++  await root.evaluate(async (e) => {
++    const { attachLiquidGlass } = await import("/src/ui/liquid-glass.js");
++    window.homeGlassCleanup = attachLiquidGlass(e);
++  });
++  await expect(root.locator(".dos-dock")).toHaveAttribute("data-liquid-glass-mode", /.+/);
++  await page.evaluate(() => window.homeOS.setAppearance({ mode: "dark" }));
++  await expect(root.locator(".dos-dock")).toHaveCSS("backdrop-filter", "none");
++  await expect(root.locator(".dos-dock")).toHaveCSS("box-shadow", "none");
++  await expect(root.locator(".dos-dock")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
++  await page.evaluate(() => { window.homeGlassCleanup(); return window.homeOS.destroy(); });
++  assert.deepEqual(errors, []);
++  console.log("Mobile home smoke passed: four columns, four dock apps, 2x2 folder preview, all six apps reachable, keyboard/focus/dismiss/launch, Android ungrouped");
++} finally { await browser.close(); }
 diff --git a/scripts/smoke-platform-icons.js b/scripts/smoke-platform-icons.js
 new file mode 100644
 index 0000000..be623c0
@@ -1654,6 +1874,238 @@ index 0000000..cfd2d5f
 +mountIOSShell(shell)();
 +assert.equal(elements.length, 1, "Custom desktop slots retain their own search UI");
 +console.log("iOS shell smoke ok: Home preserves drafts and trusted prompts, repeat activation, cleanup, custom slot");
+diff --git a/scripts/smoke-platform-motion-browser.js b/scripts/smoke-platform-motion-browser.js
+new file mode 100644
+index 0000000..ddc6523
+--- /dev/null
++++ b/scripts/smoke-platform-motion-browser.js
+@@ -0,0 +1,226 @@
++import assert from "node:assert/strict";
++import { mkdir, writeFile } from "node:fs/promises";
++import { dirname, resolve } from "node:path";
++import { fileURLToPath } from "node:url";
++import { chromium, expect } from "@playwright/test";
++import { createServer } from "vite";
++
++const repo = resolve(dirname(fileURLToPath(import.meta.url)), "..");
++const primary = repo.split("/.worktrees/")[0];
++const output = resolve(process.env.DINDBOS_QA_OUTPUT || `${primary}/internal/docs/mobile-motion-20261110`);
++await mkdir(output, { recursive: true });
++const server = await createServer({ root: repo, server: { host: "127.0.0.1", port: 5199, strictPort: true, hmr: false, watch: null } });
++await server.listen();
++const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
++const results = [];
++try {
++  for (const style of ["android", "ios"]) for (const reducedMotion of ["no-preference", "reduce"]) {
++    const name = `${style}-${reducedMotion}`;
++    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, reducedMotion, recordVideo: { dir: `${output}/videos`, size: { width: 390, height: 844 } } });
++    const page = await context.newPage();
++    const errors = [];
++    page.on("pageerror", error => errors.push(error.message));
++    const cdp = await context.newCDPSession(page);
++    const traces = {};
++    const result = { style, reducedMotion, checks: [], status: "running" };
++    results.push(result);
++    try {
++      await page.goto(`http://127.0.0.1:5199/scripts/fixtures/platform-apps.html?style=${style}&width=390`);
++      const root = page.locator("#platform-apps-host");
++      await expect(root).toHaveAttribute("data-qa-ready", "true");
++      await page.evaluate(() => {
++        const os = window.platformAppsQA.os;
++        for (const task of [...os.windows.windows.values()]) os.windows.close(task.id, { force: true });
++        for (const id of ["calculator", "files", "notes"]) window.platformAppsQA.show(id);
++        window.motionPointerTypes = [];
++        document.addEventListener("pointerdown", event => window.motionPointerTypes.push(event.pointerType), true);
++        window.startMotionTrace = selectors => {
++          window.motionTrace = [];
++          window.motionTracing = true;
++          const sample = now => {
++            window.motionTrace.push({ now, elements: selectors.map(selector => {
++              const element = document.querySelector(selector);
++              if (!element) return null;
++              const box = element.getBoundingClientRect(), css = getComputedStyle(element);
++              if (!box.width || !box.height || css.visibility === "hidden" || css.display === "none") return null;
++              return { x: box.x, y: box.y, width: box.width, height: box.height, opacity: Number(css.opacity) };
++            }) });
++            if (window.motionTracing) requestAnimationFrame(sample);
++          };
++          requestAnimationFrame(sample);
++        };
++      });
++      const home = root.getByRole("button", { name: "Home", exact: true });
++      let touch;
++      const begin = async locator => {
++        const bounds = await locator.boundingBox();
++        assert(bounds, "touch target must have bounds");
++        touch = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height * .55 };
++        await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ ...touch, id: 1 }] });
++      };
++      const move = async (dx, dy) => {
++        const start = { ...touch };
++        for (let step = 1; step <= 10; step++) {
++          touch = { x: start.x + dx * step / 10, y: start.y + dy * step / 10 };
++          await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ ...touch, id: 1 }] });
++          await page.waitForTimeout(14);
++        }
++      };
++      const end = async (cancel = false) => cdp.send("Input.dispatchTouchEvent", { type: cancel ? "touchCancel" : "touchEnd", touchPoints: [] });
++      const swipe = async (locator, dx, dy) => { await begin(locator); await move(dx, dy); await end(); };
++      const trace = async selectors => page.evaluate(selectors => window.startMotionTrace(selectors), selectors);
++      const stop = async label => { traces[label] = await page.evaluate(() => { window.motionTracing = false; return window.motionTrace; }); return traces[label]; };
++      const settle = async locator => {
++        await expect.poll(async () => locator.evaluate(element => {
++          const animations = element.getAnimations({ subtree: true });
++          return animations.filter(animation => animation.playState === "running" && animation.effect?.getTiming().iterations !== Infinity).length;
++        }), { timeout: 3000 }).toBe(0);
++        await page.waitForTimeout(100);
++      };
++      const spatialStates = samples => new Set(samples.flatMap(sample => sample.elements.filter(Boolean)).map(box => [box.x, box.y, box.width, box.height].map(value => Math.round(value)).join(","))).size;
++      const notes = root.locator('.dos-window[data-app-id="notes"]');
++      await settle(notes);
++      await trace(['.dos-window[data-app-id="notes"]']);
++      if (style === "ios") await swipe(home, 0, -110);
++      else await home.tap();
++      await expect(notes).toBeHidden();
++      const homeMotion = await stop("home");
++      if (reducedMotion === "no-preference") assert(spatialStates(homeMotion) > 2, "Home visibly transforms the active app before hiding it");
++      else assert(spatialStates(homeMotion) <= 1, "reduced-motion Home has no spatial interpolation");
++      result.checks.push("actual app Home transition");
++      const open = async () => {
++        if (style === "ios") await swipe(home, 0, -110);
++        else await root.getByRole("button", { name: "Recent apps", exact: true }).tap();
++      };
++      await trace([".dos-recent-card:first-child .dos-recent-preview"]);
++      await open();
++      const dialog = root.getByRole("dialog", { name: "Recent apps" });
++      await expect(dialog).toBeVisible();
++      await settle(dialog);
++      const entrance = await stop("entrance");
++      if (reducedMotion === "no-preference") assert(spatialStates(entrance) > 2, "recents entrance visibly interpolates card geometry");
++      else assert(spatialStates(entrance) <= 1, "reduced-motion recents entrance has no spatial interpolation");
++      result.checks.push("recents entrance geometry");
++      if (style === "android") {
++        for (const action of ["Back", "Home"]) {
++          const button = root.getByRole("button", { name: action, exact: true });
++          assert(await button.evaluate(element => {
++            const box = element.getBoundingClientRect();
++            return element.ownerDocument.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)?.closest("button") === element;
++          }), `Android ${action} remains the actual touch target above recents`);
++          await button.tap();
++          await expect(dialog).toHaveCount(0);
++          assert.equal(await page.evaluate(() => window.platformAppsQA.os.windows.windows.size), 3, `${action} preserves running apps`);
++          await open();
++          await expect(dialog).toBeVisible();
++          await settle(dialog);
++        }
++        result.checks.push("Android Home/Back physical hit-test above recents");
++      }
++      await root.screenshot({ path: `${output}/${name}-recents-settled.png` });
++      const rail = dialog.locator(".dos-recents-rail");
++      const first = dialog.locator(".dos-recent-card").first();
++      await begin(first.locator(".dos-recent-preview"));
++      await move(-155, 0);
++      const draggedScroll = await rail.evaluate(element => element.scrollLeft);
++      assert(draggedScroll > 80, "actual touch drag moves the carousel");
++      await trace([".dos-recent-card:first-child"]);
++      await end();
++      await expect.poll(async () => rail.evaluate(element => {
++        const center = element.getBoundingClientRect().x + element.clientWidth / 2;
++        return Math.min(...[...element.children].map(card => { const box = card.getBoundingClientRect(); return Math.abs(box.x + box.width / 2 - center); }));
++      }), { timeout: 2500 }).toBeLessThan(3);
++      await page.waitForTimeout(120);
++      const scroll = await rail.evaluate(element => element.scrollLeft);
++      await page.waitForTimeout(100);
++      assert(Math.abs(await rail.evaluate(element => element.scrollLeft) - scroll) < 1, "released carousel remains settled");
++      const release = await stop("carousel-release");
++      if (reducedMotion === "no-preference") assert(spatialStates(release) > 2, "drag release visibly eases to its centered card");
++      result.checks.push("touch horizontal drag and stable centered release");
++      const centeredId = await rail.evaluate(element => {
++        const center = element.getBoundingClientRect().x + element.clientWidth / 2;
++        return [...element.children].sort((a, b) => Math.abs(a.getBoundingClientRect().x + a.clientWidth / 2 - center) - Math.abs(b.getBoundingClientRect().x + b.clientWidth / 2 - center))[0].dataset.recentWindowId;
++      });
++      const card = rail.locator(`[data-recent-window-id="${centeredId}"]`);
++      const baseline = await card.boundingBox();
++      await begin(card.locator(".dos-recent-preview"));
++      await move(0, -50);
++      await trace([`[data-recent-window-id="${centeredId}"]`]);
++      await end(true);
++      await expect.poll(async () => (await card.boundingBox()).y, { timeout: 2000 }).toBeGreaterThan(baseline.y - 1);
++      await settle(card);
++      const cancelled = await stop("cancelled-upward-pull");
++      if (reducedMotion === "no-preference") assert(spatialStates(cancelled) > 2, "cancelled upward touch animates back to its baseline");
++      else assert(spatialStates(cancelled) <= 2, "reduced-motion cancelled pull jumps directly between dragged and resting positions");
++      assert(await page.evaluate(id => window.platformAppsQA.os.windows.windows.has(id), centeredId), "cancelled swipe preserves its app");
++      result.checks.push("cancelled upward touch returns and preserves app");
++      const taskSelector = `.dos-window[data-window-id="${centeredId}"]`;
++      await trace([taskSelector]);
++      await card.locator(".dos-recent-preview").tap();
++      await expect(dialog).toHaveCount(0);
++      const restored = root.locator(taskSelector);
++      await expect(restored).toBeVisible();
++      await settle(restored);
++      const restore = await stop("restore");
++      if (reducedMotion === "no-preference") assert(spatialStates(restore) > 2, "restoring a card visibly expands it into the real app");
++      else assert(spatialStates(restore) <= 2, "reduced-motion restore switches directly between endpoint poses");
++      assert.equal(await page.evaluate(id => window.platformAppsQA.os.windows.activeWindowId === id, centeredId), true);
++      result.checks.push("card restore becomes focused real app");
++      if (style === "ios") {
++        await trace([".dos-recent-card:first-child .dos-recent-preview"]);
++        await begin(home);
++        await move(0, -110);
++        await page.waitForTimeout(180);
++        await end();
++        await expect(dialog).toBeVisible();
++        await settle(dialog);
++        const pausedEntrance = await stop("paused-app-swipe-to-recents");
++        if (reducedMotion === "no-preference") assert(spatialStates(pausedEntrance) > 2, "paused app swipe morphs fullscreen content into recents");
++        else assert(spatialStates(pausedEntrance) <= 2, "reduced-motion paused swipe uses discrete endpoint poses");
++        await page.keyboard.press("Escape");
++        await expect(dialog).toHaveCount(0);
++        await expect(restored).toBeVisible();
++        result.checks.push("paused iOS app swipe enters recents and returns without losing app");
++      }
++      if (style === "ios") await swipe(home, 0, -110);
++      else await home.tap();
++      await expect(restored).toBeHidden();
++      await open();
++      await expect(dialog).toBeVisible();
++      await settle(dialog);
++      const closingCard = dialog.locator(`[data-recent-window-id="${centeredId}"]`);
++      await page.evaluate(id => { window.platformAppsQA.os.windows.windows.get(id).beforeClose = () => new Promise(resolve => { window.resolveMotionClose = resolve; }); }, centeredId);
++      await swipe(closingCard.locator(".dos-recent-preview"), 0, -125);
++      await expect.poll(() => page.evaluate(() => typeof window.resolveMotionClose)).toBe("function");
++      assert(await page.evaluate(id => window.platformAppsQA.os.windows.windows.has(id), centeredId), "pending close guard retains the running app");
++      await expect(closingCard).toHaveCount(1);
++      await trace([`[data-recent-window-id="${centeredId}"]`]);
++      await page.evaluate(() => window.resolveMotionClose(true));
++      await expect(closingCard).toHaveCount(0);
++      const exit = await stop("approved-close-exit");
++      if (reducedMotion === "no-preference") {
++        const positions = exit.flatMap(sample => sample.elements.filter(Boolean));
++        assert(positions.length > 3, "approved dismissal retains the card during its exit");
++        assert(Math.max(...positions.map(box => box.y)) - Math.min(...positions.map(box => box.y)) > baseline.height * .6, "approved card visibly travels upward before removal");
++        assert(Math.min(...positions.map(box => box.y + box.height)) < 100, "dismissed card travels beyond the visible stage");
++      }
++      assert.equal(await page.evaluate(id => window.platformAppsQA.os.windows.windows.has(id), centeredId), false);
++      result.checks.push("guarded app close waits for approval then animates offstage");
++      await settle(dialog);
++      await root.screenshot({ path: `${output}/${name}-after-dismissal.png` });
++      assert((await page.evaluate(() => window.motionPointerTypes)).includes("touch"), "gestures used browser touch events, not synthetic mouse input");
++      assert.deepEqual(errors, []);
++      result.status = "pass";
++      console.log(`${name}: ${result.checks.join("; ")} passed`);
++    } catch (error) {
++      result.status = "fail";
++      result.error = error.message;
++      await page.screenshot({ path: `${output}/${name}-failure.png` }).catch(() => {});
++      throw error;
++    } finally {
++      await writeFile(`${output}/${name}-traces.json`, JSON.stringify(traces, null, 2));
++      await context.close();
++      await writeFile(`${output}/results.json`, JSON.stringify(results, null, 2));
++    }
++  }
++} finally { await browser.close(); await server.close(); }
 diff --git a/scripts/smoke-platform-query-browser.js b/scripts/smoke-platform-query-browser.js
 new file mode 100644
 index 0000000..3fe79ef
@@ -1691,6 +2143,166 @@ index 0000000..3fe79ef
 +  await expect(root).toHaveAttribute('data-ui-style', detected);
 +  console.log('explicit style precedence and invalid query fallback passed');
 +} finally { await browser.close(); }
+diff --git a/scripts/smoke-platform-recents-browser.js b/scripts/smoke-platform-recents-browser.js
+new file mode 100644
+index 0000000..031d798
+--- /dev/null
++++ b/scripts/smoke-platform-recents-browser.js
+@@ -0,0 +1,154 @@
++import assert from "node:assert/strict";
++import { mkdir } from "node:fs/promises";
++import { dirname, resolve } from "node:path";
++import { fileURLToPath } from "node:url";
++import { chromium, expect } from "@playwright/test";
++import { createServer } from "vite";
++
++const repo = resolve(dirname(fileURLToPath(import.meta.url)), "..");
++const primary = repo.split("/.worktrees/")[0];
++const output = resolve(process.env.DINDBOS_QA_OUTPUT || `${primary}/internal/docs/mobile-home-recents/runtime`);
++await mkdir(output, { recursive: true });
++const server = await createServer({ root: repo, server: { host: "127.0.0.1", port: 5198, strictPort: true, hmr: false, watch: null } });
++await server.listen();
++const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
++const errors = [];
++try {
++  for (const style of ["android", "ios"]) {
++    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce", recordVideo: { dir: `${output}/videos`, size: { width: 390, height: 844 } } });
++    const page = await context.newPage();
++    page.on("pageerror", error => errors.push(error.message));
++    await page.goto(`http://127.0.0.1:5198/scripts/fixtures/platform-apps.html?style=${style}&width=390`);
++    const root = page.locator("#platform-apps-host");
++    await expect(root).toHaveAttribute("data-qa-ready", "true");
++    await page.addStyleTag({ content: `
++      [data-recent-mobile-nav], [data-recent-frame-layout] { display: none; }
++      .dos-window[data-app-id="recent-draft"] > .dos-window-content {
++        container-type: inline-size; container-name: portfolio-window;
++      }
++      @container portfolio-window (max-width: 760px) {
++        [data-recent-desktop-nav] { display: none; }
++        [data-recent-mobile-nav] { display: block; }
++      }
++      @container recent-frame (max-width: 760px) {
++        [data-recent-frame-layout] { display: block; }
++      }
++    ` });
++    await page.evaluate(() => {
++      const os = window.platformAppsQA.os;
++      for (const task of [...os.windows.windows.values()]) os.windows.close(task.id, { force: true });
++      os.registerApp({ id: "recent-draft", name: "Draft", icon: "text", singleton: true, render({ content }) { content.innerHTML = '<div style="display:flex;flex-direction:column;height:100%"><nav data-recent-desktop-nav>Desktop navigation</nav><span data-recent-frame-layout>Compact frame layout</span><label>Draft text<input aria-label="Draft text" value="Original"></label><nav data-recent-mobile-nav style="margin-top:auto;height:44px;flex-shrink:0">Mobile navigation</nav></div>'; } });
++      for (const id of ["calculator", "notes", "recent-draft"]) os.launch(id);
++      os.windows.windows.get("recent-draft").frame.style.containerName = "recent-frame";
++    });
++    const original = root.locator('.dos-window[data-app-id="recent-draft"] input');
++    await expect(root.locator('.dos-window[data-app-id="recent-draft"] [data-recent-mobile-nav]')).toBeVisible();
++    await original.fill("Unsaved test draft");
++    const home = root.getByRole("button", { name: "Home", exact: true });
++    const swipe = async (locator, dx, dy, duration = 0) => {
++      const bounds = await locator.boundingBox();
++      const x = bounds.x + bounds.width / 2, y = bounds.y + bounds.height / 2;
++      await page.mouse.move(x, y);
++      await page.mouse.down();
++      await page.mouse.move(x + dx, y + dy, { steps: 12 });
++      if (duration) await page.waitForTimeout(duration);
++      await page.mouse.up();
++    };
++    if (style === "ios") await swipe(home, 0, -100);
++    else await home.click();
++    await expect(original).toBeHidden();
++    const open = async () => {
++      if (style === "ios") await swipe(home, 0, -100);
++      else await root.getByRole("button", { name: "Recent apps", exact: true }).click();
++      await expect(root.locator(".dos-recent-apps")).toBeVisible();
++    };
++    await root.screenshot({ path: `${output}/${style}-home.png` });
++    await open();
++    const dialog = root.getByRole("dialog", { name: "Recent apps" });
++    await expect(dialog.locator(".dos-recent-card")).toHaveCount(3);
++    const preview = dialog.locator('[data-recent-window-id="recent-draft"]');
++    await expect(preview.locator('[data-recent-mobile-nav]')).toBeVisible();
++    await expect(preview.locator('[data-recent-desktop-nav]')).toBeHidden();
++    await expect(preview.locator('[data-recent-frame-layout]')).toBeVisible();
++    const assertPreviewFits = async () => {
++      await expect.poll(() => preview.evaluate(card => {
++        const frame = card.querySelector('.dos-recent-preview').getBoundingClientRect();
++        const snapshot = card.querySelector('.dos-recent-snapshot').getBoundingClientRect();
++        const nav = card.querySelector('[data-recent-mobile-nav]').getBoundingClientRect();
++        return Math.max(snapshot.bottom - frame.bottom, snapshot.right - frame.right, nav.bottom - frame.bottom);
++      })).toBeLessThan(1);
++    };
++    await assertPreviewFits();
++    await page.setViewportSize({ width: 320, height: 540 });
++    await root.evaluate(element => { element.style.width = '320px'; element.style.height = '540px'; });
++    await assertPreviewFits();
++    await page.setViewportSize({ width: 390, height: 844 });
++    await root.evaluate(element => { element.style.width = '390px'; element.style.height = '844px'; });
++    await assertPreviewFits();
++    assert.equal(await dialog.locator('[data-recent-window-id="recent-draft"] input').inputValue(), "Unsaved test draft", "preview preserves current form state");
++    await root.screenshot({ path: `${output}/${style}-recents.png` });
++    const rail = dialog.locator(".dos-recents-rail");
++    await swipe(dialog.getByRole("button", { name: "Draft", exact: true }), -180, 0);
++    assert(await rail.evaluate(el => el.scrollLeft) > 100, "horizontal dragging moves the app carousel");
++    await page.keyboard.press("ArrowRight");
++    await root.screenshot({ path: `${output}/${style}-recents-carousel.png` });
++    await page.keyboard.press("ArrowLeft");
++    await dialog.getByRole("button", { name: "Draft", exact: true }).click();
++    await expect(dialog).toHaveCount(0);
++    await expect(original).toHaveValue("Unsaved test draft");
++    if (style === "ios") {
++      await swipe(home, 0, -100, 550);
++      await expect(root.locator(".dos-recent-apps")).toBeVisible();
++    } else await open();
++    await page.evaluate(() => { window.platformAppsQA.os.windows.windows.get("recent-draft").beforeClose = () => false; });
++    await dialog.getByRole("button", { name: "Close Draft", exact: true }).focus();
++    await page.keyboard.press("Enter");
++    assert(await page.evaluate(() => window.platformAppsQA.os.windows.windows.has("recent-draft")), "rejected close preserves the draft");
++    await expect(dialog.locator('[data-recent-window-id="recent-draft"]')).toHaveCount(1);
++    await page.evaluate(() => { window.platformAppsQA.os.windows.windows.get("recent-draft").beforeClose = async () => { throw new Error("Rejected guard"); }; });
++    await dialog.getByRole("button", { name: "Close Draft", exact: true }).focus();
++    await page.keyboard.press("Enter");
++    await expect(dialog.locator('[data-recent-window-id="recent-draft"]')).toHaveCount(1);
++    await page.evaluate(() => {
++      const windows = window.platformAppsQA.os.windows;
++      window.recentTrustedSurface = windows.openTrustedPrompt({ id: "recents-protection", capability: "close-confirmation", message: "Preserve this prompt" }, { onDecision: (_decision, surface) => windows.closeTrustedPrompt(surface.id) }).id;
++    });
++    const trusted = root.locator(".trusted-ui-surface");
++    await expect(trusted).toBeVisible();
++    await page.keyboard.press("Escape");
++    await expect(trusted).toBeVisible();
++    await expect(dialog).toBeVisible();
++    await trusted.getByRole("button", { name: "Deny", exact: true }).click();
++    await expect(trusted).toHaveCount(0);
++    await page.evaluate(() => { window.platformAppsQA.os.windows.windows.get("recent-draft").beforeClose = async () => true; });
++    await swipe(dialog.getByRole("button", { name: "Draft", exact: true }), 0, -140);
++    await expect(dialog.locator('[data-recent-window-id="recent-draft"]')).toHaveCount(0);
++    assert.equal(await page.evaluate(() => window.platformAppsQA.os.windows.windows.has("recent-draft")), false, "swipe dismiss uses the real guarded window lifecycle");
++    if (style === "android") {
++      await page.evaluate(() => {
++        const windows = window.platformAppsQA.os.windows;
++        const tasks = [...windows.windows.values()].sort((a, b) => Number(b.frame.style.zIndex) - Number(a.frame.style.zIndex));
++        window.pendingRecentId = tasks[0].id;
++        tasks[0].beforeClose = () => new Promise(resolve => { window.resolveRecentBatch = resolve; });
++      });
++      await dialog.getByRole("button", { name: "Close all", exact: true }).click();
++      await expect.poll(() => page.evaluate(() => typeof window.resolveRecentBatch)).toBe("function");
++      await home.click();
++      await open();
++      await page.evaluate(() => window.resolveRecentBatch(true));
++      await expect.poll(() => page.evaluate(() => window.platformAppsQA.os.windows.windows.size)).toBe(1);
++      await expect(dialog.locator(".dos-recent-card")).toHaveCount(1);
++      assert.equal(await page.evaluate(() => window.platformAppsQA.os.windows.windows.size), 1, "an old Close all request must not close apps in a reopened overview");
++      await dialog.getByRole("button", { name: "Close all", exact: true }).click();
++      await expect(dialog).toHaveCount(0);
++      assert.equal(await page.evaluate(() => window.platformAppsQA.os.windows.windows.size), 0);
++    } else {
++      await page.keyboard.press("Escape");
++      await expect(dialog).toHaveCount(0);
++    }
++    await expect(root).not.toHaveAttribute("data-recent-apps", "true");
++    await context.close();
++    console.log(`${style}: horizontal drag, previews, restore, upward dismissal, close guards, keyboard and cleanup passed`);
++  }
++  assert.deepEqual(errors, []);
++} finally { await browser.close(); await server.close(); }
 diff --git a/scripts/smoke-platform-styles.js b/scripts/smoke-platform-styles.js
 new file mode 100644
 index 0000000..a13206f
@@ -1975,6 +2587,21 @@ index eb505c7..7986081 100644
    ],
    desktop: [
      "bootDindbOS",
+diff --git a/scripts/smoke-sdk-build.js b/scripts/smoke-sdk-build.js
+index 941192e..8b3bef4 100644
+--- a/scripts/smoke-sdk-build.js
++++ b/scripts/smoke-sdk-build.js
+@@ -35,6 +35,10 @@ assert(styles.includes(".dos-shell"), "dist/styles.css missing desktop shell sty
+ assert(styles.includes(".glass-panel"), "dist/styles.css missing Liquid Glass panel utility");
+ assert(styles.includes("-webkit-backdrop-filter"), "dist/styles.css missing Safari glass blur support");
+ assert(styles.includes('data-appearance="dark"'), "dist/styles.css missing instance-scoped dark appearance");
++for (const selector of [".dos-recent-apps.dos-recent-apps", ".dos-recents-rail", ".dos-window-layer:has(> .trusted-ui-surface)"]) {
++  assert(styles.includes(selector), `dist/styles.css missing mobile recents layout: ${selector}`);
++}
++assert(styles.includes("transform: var(--mobile-swipe-transform, none)"), "dist/styles.css missing interactive mobile Home motion");
+ assert(!index.includes("portfolio-demo"), "SDK root bundle should not import demo portfolio data");
+ 
+ const pack = JSON.parse(execFileSync("npm", ["pack", "--dry-run", "--json"], { encoding: "utf8" }))[0];
 diff --git a/scripts/smoke-searchable-select.js b/scripts/smoke-searchable-select.js
 new file mode 100644
 index 0000000..9e23446
@@ -2320,7 +2947,7 @@ index 031b337..5df3102 100644
          </section>
          <section class="settings-section" id="${escapeAttr(prefix)}-section-wallpaper" data-settings-section="wallpaper" role="tabpanel" aria-labelledby="${escapeAttr(prefix)}-tab-wallpaper" hidden>
 diff --git a/src/dindbos/desktop-shell.js b/src/dindbos/desktop-shell.js
-index 189d1eb..b8d2426 100644
+index 189d1eb..c887bc6 100644
 --- a/src/dindbos/desktop-shell.js
 +++ b/src/dindbos/desktop-shell.js
 @@ -1,3 +1,8 @@
@@ -2340,7 +2967,19 @@ index 189d1eb..b8d2426 100644
      root.innerHTML = `
        <main class="dos-shell">
          <header class="dos-menubar"></header>
-@@ -61,12 +67,48 @@ export class DesktopShell {
+@@ -33,7 +39,10 @@ export class DesktopShell {
+     this.renderer = createDesktopRenderer({
+       desktopElement: this.refs.desktop,
+       dockElement: this.refs.dock,
+-      isMobile: () => (this.root.clientWidth || 1024) <= 760,
++      overlayElement: this.refs.overlays,
++      getStyle: () => this.currentStyle,
++      hasTrustedSurface: () => this.os.windows.hasVisibleTrustedSurface?.(),
++      isMobile: () => ["ios", "android"].includes(this.currentStyle) || (this.root.clientWidth || 1024) <= 760,
+       onOpenNode: (node) => this.os.openNode(node),
+       onLaunchApp: (id) => this.launchApp(id),
+     });
+@@ -61,12 +70,48 @@ export class DesktopShell {
        if (this.activePanel === "controls") this.panels.updateControls();
      });
      if (typeof unsubscribe === "function") this.cleanups.push(unsubscribe);
@@ -2389,7 +3028,16 @@ index 189d1eb..b8d2426 100644
    listen(target, name, handler, options) {
      target?.addEventListener?.(name, handler, options);
      this.cleanups.push(() => target?.removeEventListener?.(name, handler, options));
-@@ -156,10 +198,19 @@ export class DesktopShell {
+@@ -124,7 +169,7 @@ export class DesktopShell {
+       </nav>
+       <div class="dos-menu-status">
+         <button type="button" class="dos-status-button" data-shell-panel="launcher" aria-label="Search applications" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
+-        <button type="button" class="dos-status-button" data-shell-panel="controls" aria-label="Control Center" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="3"/><rect x="3" y="14" width="18" height="6" rx="3"/><circle cx="8" cy="7" r="1"/><circle cx="16" cy="17" r="1"/></svg></button>
++        <button type="button" class="dos-status-button" data-shell-panel="controls" aria-label="Control Center" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="3"/><rect x="3" y="14" width="18" height="6" rx="3"/><circle cx="8" cy="7" r="1"/><circle cx="16" cy="17" r="1"/></svg><span class="dos-mobile-status" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20v-4m6 4v-8m6 8V8m6 12V4"/></svg><svg viewBox="0 0 24 24"><path d="M3 9q9-8 18 0M6 13q6-6 12 0m-9 4q3-3 6 0"/><circle cx="12" cy="20" r="1"/></svg></span></button>
+         <button type="button" class="dos-clock-button" data-shell-panel="calendar" aria-label="Date and calendar" aria-haspopup="dialog" aria-expanded="false"><time class="dos-clock"></time></button>
+       </div>`;
+     this.refs.clock = this.refs.menubar.querySelector(".dos-clock");
+@@ -156,10 +201,19 @@ export class DesktopShell {
  
    renderDesktop() {
      const desktopPath = this.os.session.desktopPath || this.os.fs.join(this.os.session.home, "Desktop");
@@ -2407,11 +3055,20 @@ index 189d1eb..b8d2426 100644
        const resolved = this.os.fs.resolveNode(node);
        const app = resolved.appId && this.os.apps.list().find((item) => item.id === resolved.appId);
 -      return { node, name: node.name, path: node.path, appId: app?.id, kind: resolved.type, icon: app?.icon || resolved.icon || resolved.type };
-+      return { node, name: mobile && app ? app.name : node.name, path: node.path, appId: app?.id, kind: resolved.type, icon: app?.icon || resolved.icon || resolved.type };
++      return { node, name: mobile && app ? app.name : node.name, path: node.path, appId: app?.id, category: app?.category, kind: resolved.type, icon: app?.icon || resolved.icon || resolved.type };
      });
      this.renderSlot("desktop", { entries }, () => this.renderer.renderDesktop(entries));
    }
-@@ -327,6 +378,10 @@ export class DesktopShell {
+@@ -302,7 +356,7 @@ export class DesktopShell {
+     const now = new Date();
+     if (!this.refs.clock) return;
+     this.refs.clock.dateTime = now.toISOString();
+-    this.refs.clock.innerHTML = `<span class="dos-clock-date">${escapeHtml(now.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }))}</span><span class="dos-clock-time">${escapeHtml(now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }))}</span>`;
++    this.refs.clock.innerHTML = `<span class="dos-clock-date">${escapeHtml(now.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }))}</span><span class="dos-clock-time">${escapeHtml(now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", ...(["ios", "android"].includes(this.currentStyle) ? { hour12: false } : {}) }))}</span>`;
+     this.refs.clock.title = now.toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" });
+   }
+ 
+@@ -327,6 +381,10 @@ export class DesktopShell {
      if (this.clockTimer) globalThis.clearInterval(this.clockTimer);
      this.clockTimer = null;
      attempt(() => this.closePanel(false));
@@ -2816,10 +3473,10 @@ index 4ef25c5..adee3cb 100644
    .files-app .files-commandbar { flex-wrap: nowrap; gap: 4px; min-height: 54px; padding: 10px 12px; background: var(--sidebar-bg); border-bottom: 1px solid var(--line); }
    .files-commandbar .files-history { display: flex; gap: 1px; margin-right: 8px; }
 diff --git a/src/styles/index.css b/src/styles/index.css
-index 37ac32b..8b63fa6 100644
+index 37ac32b..61078f9 100644
 --- a/src/styles/index.css
 +++ b/src/styles/index.css
-@@ -13,3 +13,11 @@
+@@ -13,3 +13,12 @@
  @import "./applications.css";
  @import "./liquid-glass.css";
  @import "./control-center.css";
@@ -2831,6 +3488,7 @@ index 37ac32b..8b63fa6 100644
 +@import "./platform-windows-apps.css";
 +@import "./platform-android-apps.css";
 +@import "./platform-ios-apps.css";
++@import "./platform-recents.css";
 diff --git a/src/styles/mobile-tabbar.css b/src/styles/mobile-tabbar.css
 new file mode 100644
 index 0000000..54de6a3
@@ -3192,12 +3850,12 @@ index 0000000..47635e2
 +}
 diff --git a/src/styles/platform-android.css b/src/styles/platform-android.css
 new file mode 100644
-index 0000000..e97e3df
+index 0000000..5d3e307
 --- /dev/null
 +++ b/src/styles/platform-android.css
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,61 @@
 +@scope (.dindbos-host[data-ui-style='android']) to (.dindbos-host) {
-+  :scope { --font-ui: Roboto, "Segoe UI", sans-serif; --dock-size: 48px; }
++  :scope { --font-ui: Roboto, Arial, sans-serif; --dock-size: 48px; }
 +  :scope .dos-menubar { height: calc(48px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) 16px 0; background: var(--chrome-bg); border: 0; color: var(--text); backdrop-filter: none; }
 +  :scope .dos-app-menus, :scope .dos-menu-status > .dos-status-button { display: none; }
 +  :scope .dos-shell:has(.dos-window.is-active:not([hidden]):not(.is-minimizing)) .dos-app-menus { display: flex; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
@@ -3208,22 +3866,27 @@ index 0000000..e97e3df
 +  :scope .dos-menu-status { width: 100%; }
 +  :scope .dos-clock-button { min-height: 48px; }
 +  :scope .dos-clock { font-size: 14px; }
-+  :scope .dos-android-heading { position: absolute; inset: calc(56px + env(safe-area-inset-top, 0px)) 24px auto; height: min(22cqh, 180px); display: flex; flex-direction: column; justify-content: center; color: white; text-shadow: 0 1px 8px #0006; pointer-events: none; }
-+  :scope .dos-android-heading h1 { margin: 0; font-size: clamp(25px, 8cqw, 38px); font-weight: 400; letter-spacing: -.8px; }
-+  :scope .dos-android-heading p { margin: 12px 0 0; font-size: 14px; }
-+  :scope .dos-desktop { inset: calc(56px + env(safe-area-inset-top, 0px) + min(22cqh, 180px)) 24px 224px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: none; grid-auto-flow: row; grid-auto-rows: 94px; grid-auto-columns: auto; gap: 20px 8px; direction: ltr; }
-+  :scope .dos-icon { width: 100%; height: 94px; grid-template-rows: 56px auto; gap: 8px; border-radius: 18px; }
++  :scope .dos-desktop { inset: calc(76px + env(safe-area-inset-top, 0px)) 20px calc(240px + env(safe-area-inset-bottom, 0px)); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: none; grid-auto-flow: row; grid-auto-rows: 94px; grid-auto-columns: auto; gap: 18px 8px; direction: ltr; align-content: start; overflow-y: auto; scrollbar-width: none; }
++  :scope .dos-icon { width: 100%; height: 94px; grid-template-rows: 56px auto; gap: 8px; padding: 0; border-radius: 18px; }
 +  :scope .dos-icon-art, :scope .dos-icon-art svg, :scope .dos-icon-art img { width: 56px; height: 56px; }
-+  :scope .dos-icon-label { font-size: 12px; }
-+  :scope .dos-dock { left: 24px; right: 24px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); max-width: none; width: auto; min-height: 64px; justify-content: safe center; gap: 12px; padding: 8px; transform: none; background: rgb(255 255 255 / 12%); border: 0; border-radius: 24px; box-shadow: none; overflow: auto hidden; scrollbar-width: thin; }
++  :scope .dos-icon-label { max-width: 100%; font-size: 12px; line-height: 16px; font-weight: 400; white-space: nowrap; text-overflow: ellipsis; display: block; }
++  :scope .dos-dock { --dock-background: transparent; --dock-border: 0; --dock-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; left: 24px; right: 24px; bottom: calc(70px + env(safe-area-inset-bottom, 0px)); max-width: none; width: auto; min-height: 64px; justify-content: space-around; gap: 12px; padding: 8px; transform: none; background: transparent; border: 0; border-radius: 24px; box-shadow: none; overflow: auto hidden; scrollbar-width: thin; }
 +  :scope .dos-dock-item { flex: 0 0 48px; width: 48px; min-height: 48px; }
-+  :scope .dos-dock-separator, :scope .dos-dock-window { display: none; }
-+  :scope .dos-android-home-actions { position: absolute; left: 24px; right: 24px; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: center; gap: 12px; }
-+  :scope .dos-android-home-actions button { min-height: 48px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 24px; background: var(--content-bg); color: var(--text); font-size: 13px; }
++  :scope .dos-dock-separator, :scope .dos-dock-window, :scope .dos-dock-item:nth-of-type(n+5), :scope .dos-dock-tooltip { display: none; }
++  :scope .dos-android-home-actions { position: absolute; left: 24px; right: 24px; bottom: calc(156px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: center; gap: 12px; }
++  :scope .dos-android-home-actions button { width: 100%; min-height: 48px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: flex-start; gap: 12px; border: 0; border-radius: 24px; background: rgb(28 33 31 / 72%); color: white; font-size: 14px; backdrop-filter: blur(20px); }
++  :scope .dos-dock[data-liquid-glass-mode] { background: transparent; border: 0; box-shadow: none; filter: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
++  :scope .dos-icon:is(:hover, .is-selected) { background: transparent; border-color: transparent; }
++  :scope .dos-icon.is-selected .dos-icon-label { background: transparent; color: white; text-shadow: 0 1px 3px #0008; }
++  :scope :is(.dos-icon-art, .dos-dock-glyph) { transition: transform 180ms cubic-bezier(.22,.8,.25,1), filter 180ms ease; }
++  :scope .dos-icon:active .dos-icon-art, :scope .dos-dock-item:active .dos-dock-glyph { transform: scale(.9); filter: brightness(.8); }
++  :scope .dos-dock-glyph::after { display: none; }
 +  :scope .dos-android-home-actions svg, :scope .dos-android-navigation svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-+  :scope .dos-android-navigation { position: absolute; inset: auto 0 0; z-index: 1050; display: flex; justify-content: space-around; height: calc(56px + env(safe-area-inset-bottom, 0px)); padding: 4px 24px calc(4px + env(safe-area-inset-bottom, 0px)); background: var(--content-bg); color: var(--text); }
++  :scope .dos-android-navigation { position: absolute; inset: auto 0 0; z-index: 1050; display: flex; justify-content: space-around; height: calc(56px + env(safe-area-inset-bottom, 0px)); padding: 4px 24px calc(4px + env(safe-area-inset-bottom, 0px)); background: transparent; color: white; }
 +  :scope .dos-android-navigation button { display: grid; place-items: center; width: 72px; min-height: 48px; padding: 0; border: 0; border-radius: 24px; background: transparent; color: inherit; }
-+  :scope .dos-android-navigation button:hover, :scope .dos-android-home-actions button:hover { background: var(--accent-soft); }
++  :scope .dos-android-navigation button:hover { background: transparent; }
++  :scope .dos-android-navigation button:active { background: rgb(255 255 255 / 12%); }
++  :scope .dos-android-home-actions button:hover { background: rgb(28 33 31 / 80%); }
 +  :scope .dos-android-navigation button:focus-visible, :scope .dos-android-home-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
 +  :scope .dos-window, :scope .dos-window:not(.is-maximized), :scope .dos-window.is-maximized { inset: calc(48px + env(safe-area-inset-top, 0px)) 0 calc(56px + env(safe-area-inset-bottom, 0px)) !important; width: auto !important; height: auto !important; max-width: 100%; min-width: 0; min-height: 0; border: 0; border-radius: 0; grid-template-rows: 48px minmax(0, 1fr); }
 +  :scope .dos-window-titlebar, :scope .dos-window[data-window-chrome='integrated'] > .dos-window-titlebar { position: relative; width: auto; height: 48px; min-height: 48px; grid-row: 1; display: grid; grid-template-columns: 1fr; padding: 0 24px; background: var(--content-bg); }
@@ -3235,13 +3898,22 @@ index 0000000..e97e3df
 +  :scope .dos-shell-panel, :scope .dos-shell-menu { max-height: calc(100% - 120px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); border-radius: 24px; }
 +  :scope .dos-launcher { top: auto; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
 +  :scope .dos-launcher-results button, :scope .dos-shell-menu button, :scope .dos-panel-close { min-height: 48px; }
-+  :scope .dos-android-recents { position: absolute; inset: 0; width: calc(100% - 48px); max-width: 520px; max-height: calc(100% - 144px); margin: auto; padding: 24px; box-shadow: 0 12px 60px #0005; border: 1px solid var(--line); border-radius: 28px; background: var(--content-bg); color: var(--text); pointer-events: auto; }
-+  :scope .dos-android-recents header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
-+  :scope .dos-android-recents h2 { margin: 0; font-size: 22px; }
-+  :scope .dos-android-recents button { min-height: 48px; padding: 12px 16px; border: 0; border-radius: 24px; background: var(--accent-soft); color: var(--text); font: inherit; }
-+  :scope .dos-android-recents button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-+  :scope .dos-android-recents .dos-android-recent-task { display: block; width: 100%; margin-top: 12px; text-align: left; overflow-wrap: anywhere; }
-+  @container (max-height: 540px) { :scope .dos-android-heading { display: none; } :scope .dos-desktop { top: calc(56px + env(safe-area-inset-top, 0px)); bottom: calc(200px + env(safe-area-inset-bottom, 0px)); } }
++  :scope .dos-menubar { background: transparent; color: white; }
++  :scope .dos-clock-date { display: none; }
++  :scope .dos-menu-status { display: flex; justify-content: space-between; flex-direction: row-reverse; }
++  :scope .dos-menu-status > .dos-status-button[data-shell-panel="controls"] { display: flex; gap: 6px; }
++  :scope .dos-clock { font-size: 16px; font-weight: 600; }
++  :scope .dos-shell:has(.dos-window.is-active:not([hidden]):not(.is-minimizing)) :is(.dos-menubar, .dos-android-navigation) { background: var(--content-bg); color: var(--text); }
++  @container (min-width: 440px) { :scope .dos-desktop { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
++  @container (max-width: 350px) {
++    :scope .dos-desktop { inset-inline: 12px; gap: 12px 4px; }
++    :scope .dos-icon-art, :scope .dos-icon-art svg, :scope .dos-icon-art img { width: 48px; height: 48px; }
++  }
++  @media (prefers-reduced-motion: reduce) {
++    :scope .dos-icon-art, :scope .dos-dock-glyph { transition: none; }
++    :scope .dos-icon:active .dos-icon-art, :scope .dos-dock-item:active .dos-dock-glyph { transform: none; }
++  }
++  @container (max-height: 540px) { :scope .dos-desktop { top: calc(56px + env(safe-area-inset-top, 0px)); bottom: calc(200px + env(safe-area-inset-bottom, 0px)); } }
 +}
 diff --git a/src/styles/platform-ios-apps.css b/src/styles/platform-ios-apps.css
 new file mode 100644
@@ -3528,10 +4200,10 @@ index 0000000..bce0da8
 +}
 diff --git a/src/styles/platform-ios.css b/src/styles/platform-ios.css
 new file mode 100644
-index 0000000..869a790
+index 0000000..92924d5
 --- /dev/null
 +++ b/src/styles/platform-ios.css
-@@ -0,0 +1,84 @@
+@@ -0,0 +1,121 @@
 +@scope (.dindbos-host[data-ui-style='ios']) to (.dindbos-host) {
 +  :scope {
 +    --ios-top: calc(52px + env(safe-area-inset-top, 0px));
@@ -3540,47 +4212,64 @@ index 0000000..869a790
 +  }
 +  :scope .dos-menubar {
 +    height: var(--ios-top); min-height: 52px; padding: env(safe-area-inset-top, 0px) 12px 0;
-+    border: 0; background: var(--chrome-bg); box-shadow: none;
++    border: 0; background: transparent; color: white; box-shadow: none; backdrop-filter: none;
 +  }
 +  :scope .dos-menubar button { min-width: 44px; min-height: 44px; border-radius: 22px; }
-+  :scope .dos-app-menus { min-width: 0; gap: 0; }
++  :scope .dos-app-menus { display: none; min-width: 0; gap: 0; }
++  :scope .dos-shell:has(.dos-window.is-active:not([hidden])) .dos-app-menus { display: flex; }
++  :scope .dos-shell:has(.dos-window.is-active:not([hidden])) .dos-menubar { background: var(--chrome-bg); color: var(--text); }
++  :scope .dos-menu-status { flex: 1; justify-content: space-between; }
++  :scope .dos-clock-button { order: -1; margin-right: auto; }
++  :scope .dos-menu-status > [data-shell-panel="launcher"] { display: none; }
++  :scope .dos-mobile-status { display: flex; align-items: center; gap: 5px; }
++  :scope .dos-mobile-status svg { width: 19px; height: 19px; }
++  :scope .dos-menu-status > [data-shell-panel="controls"] > svg { display: none; }
 +  :scope .dos-menu-label { display: none; }
 +  :scope .dos-active-app { max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
 +  :scope .dos-clock-date { display: none; }
-+  :scope .dos-clock { font-size: 13px; font-weight: 600; }
++  :scope .dos-clock { font-size: 17px; font-weight: 600; }
 +  :scope .dos-menu-status { gap: 0; }
 +  :scope .dos-desktop {
-+    inset: calc(var(--ios-top) + 16px) 12px calc(var(--ios-bottom) + 152px);
++    inset: calc(var(--ios-top) + 16px) 20px calc(var(--ios-bottom) + 144px);
 +    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: none;
-+    grid-auto-flow: row; grid-auto-columns: auto; grid-auto-rows: 100px;
-+    gap: 16px 4px; direction: ltr; align-content: start;
++    grid-auto-flow: row; grid-auto-columns: auto; grid-auto-rows: 96px;
++    gap: 10px 8px; direction: ltr; align-content: start;
 +  }
-+  :scope .dos-icon { width: 100%; height: 100px; grid-template-rows: 60px auto; padding: 0; }
++  :scope .dos-icon { width: 100%; height: 96px; grid-template-rows: 60px auto; padding: 0; }
 +  :scope .dos-icon-art, :scope .dos-icon-art svg, :scope .dos-icon-art img { width: 60px; height: 60px; }
-+  :scope .dos-icon-label { max-width: 100%; font-size: 12px; line-height: 16px; }
++  :scope .dos-icon-label { display: block; max-width: 100%; font-size: 12px; line-height: 16px; font-weight: 400; white-space: nowrap; text-overflow: ellipsis; color: white; text-shadow: 0 1px 3px #0008; }
++  :scope .dos-icon:is(:hover, .is-selected) { background: transparent; border-color: transparent; }
++  :scope .dos-icon.is-selected .dos-icon-label { background: transparent; color: white; text-shadow: 0 1px 3px #0008; }
++  :scope :is(.dos-icon-art, .dos-dock-glyph) { transition: transform 180ms cubic-bezier(.22,.8,.25,1), filter 180ms ease; }
++  :scope .dos-icon:active .dos-icon-art, :scope .dos-dock-item:active .dos-dock-glyph { transform: scale(.9); filter: brightness(.8); }
 +  :scope .dos-dock {
++    --dock-background: rgb(255 255 255 / 22%); --dock-border: 1px solid rgb(255 255 255 / 26%); --dock-shadow: none; --liquid-glass-blur: 24;
 +    inset: auto 12px calc(var(--ios-bottom) + 8px); transform: none; width: auto; max-width: none;
-+    height: 88px; padding: 12px; gap: 16px; align-items: center; border-radius: 28px;
-+    overflow: auto hidden; overscroll-behavior: contain; scrollbar-width: thin;
++    height: 96px; padding: 16px; gap: 12px; align-items: center; justify-content: space-evenly; border-radius: 34px; background: rgb(255 255 255 / 22%); border: 1px solid rgb(255 255 255 / 26%); backdrop-filter: blur(24px);
++    overflow: hidden; overscroll-behavior: contain;
 +  }
 +  :scope .dos-dock-item { flex: 0 0 56px; width: 56px; height: 56px; min-width: 56px; }
-+  :scope .dos-dock-separator { flex-shrink: 0; }
++  :scope .dos-dock-separator, :scope .dos-dock-window { display: none; }
++  :scope .dos-dock-glyph::after { display: none; }
 +  :scope .dos-dock-tooltip { display: none; }
 +  :scope .dos-ios-search {
 +    position: absolute; bottom: calc(var(--ios-bottom) + 108px); left: 50%; transform: translateX(-50%);
 +    z-index: 75; min-width: 88px; min-height: 44px; padding: 8px 20px; border: 1px solid var(--line);
-+    border-radius: 24px; background: var(--chrome-bg); color: var(--text); font: inherit;
++    border-radius: 24px; background: rgb(255 255 255 / 22%); color: white; font: inherit;
 +    backdrop-filter: blur(20px);
 +  }
 +  :scope .dos-ios-home {
 +    position: absolute; z-index: 1100; left: 50%; bottom: env(safe-area-inset-bottom, 0px);
-+    transform: translateX(-50%); width: 160px; min-height: 44px; padding: 0;
++    transform: translateX(-50%); width: 100%; min-height: 44px; padding: 0;
 +    display: grid; place-items: center; border: 0; border-radius: 22px;
-+    background: transparent; color: var(--text); box-shadow: none;
++    background: transparent; color: white; box-shadow: none;
 +  }
++  :scope .dos-shell:has(.dos-window.is-active:not([hidden])) .dos-ios-home { color: var(--text); }
 +  :scope .dos-ios-home span { width: 128px; height: 5px; border-radius: 3px; background: currentColor; }
-+  :scope .dos-ios-home:hover, :scope .dos-ios-search:hover { background: var(--control-hover); }
-+  :scope .dos-ios-home:active, :scope .dos-ios-search:active { background: var(--control-pressed); }
++  :scope .dos-ios-home:hover { background: transparent; }
++  :scope .dos-ios-search:hover { background: rgb(255 255 255 / 28%); }
++  :scope .dos-ios-home:active { background: transparent; }
++  :scope .dos-ios-search:active { background: rgb(255 255 255 / 18%); }
 +  :scope .dos-ios-home:focus-visible, :scope .dos-ios-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 +  :scope .dos-window, :scope .dos-window:not(.is-maximized), :scope .dos-window.is-maximized {
 +    inset: var(--ios-top) 0 var(--ios-bottom) !important; width: auto !important; height: auto !important;
@@ -3607,14 +4296,121 @@ index 0000000..869a790
 +  :scope .dos-launcher-results { max-height: min(420px, 48cqh); }
 +  :scope .dos-launcher-results button, :scope .dos-shell-menu button { min-height: 44px; }
 +  :scope .dos-shell-panel, :scope .dos-shell-menu { top: calc(var(--ios-top) + 8px); max-height: calc(100% - var(--ios-top) - var(--ios-bottom) - 16px); overflow-y: auto; }
++  :scope .dos-folder-preview {
++    display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr);
++    gap: 5px; padding: 8px; border-radius: 15px; background: rgb(255 255 255 / 30%) !important; backdrop-filter: blur(16px);
++  }
++  :scope .dos-folder-preview > :is(svg, img) { width: 100%; height: 100%; min-width: 0; min-height: 0; border-radius: 4px; }
++  :scope .dos-home-folder-backdrop {
++    position: absolute; inset: 0; display: grid; place-items: center;
++    padding: 24px; background: rgb(25 28 47 / 18%); backdrop-filter: blur(28px) saturate(1.15); -webkit-backdrop-filter: blur(28px) saturate(1.15);
++  }
++  :scope .dos-home-folder { width: min(100%, 342px); max-height: calc(100% - 96px); overflow: auto; color: white; transform-origin: top left; }
++  :scope .dos-home-folder header { position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; margin-bottom: 28px; }
++  :scope .dos-home-folder h2 { margin: 0; font-size: 28px; font-weight: 500; text-align: center; }
++  :scope .dos-home-folder header button { position: absolute; right: 0; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; color: white; background: transparent; font-size: 26px; opacity: .75; }
++  :scope .dos-home-folder-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 92px; align-content: start; min-height: min(342px, calc(100cqw - 48px)); gap: 12px 8px; padding: 24px 12px; border-radius: 38px; background: rgb(255 255 255 / 22%); }
++  :scope .dos-home-folder :is(button, .dos-icon):focus-visible { outline: 2px solid white; outline-offset: 3px; }
 +  @container (max-width: 350px) {
++    :scope .dos-home-folder-grid { padding: 16px 8px; grid-auto-rows: 76px; gap: 8px; border-radius: 32px; }
++    :scope .dos-home-folder-grid .dos-icon { height: 76px; grid-template-rows: 48px auto; }
++    :scope .dos-home-folder-grid .dos-icon-art, :scope .dos-home-folder-grid .dos-icon-art :is(svg, img) { width: 48px; height: 48px; }
 +    :scope .dos-active-app { max-width: 64px; }
 +    :scope .dos-menubar { padding-inline: 4px; }
 +    :scope .dos-icon-art, :scope .dos-icon-art svg, :scope .dos-icon-art img { width: 52px; height: 52px; }
++    :scope .dos-folder-preview > :is(svg, img) { width: 100%; height: 100%; }
 +  }
 +  @media (prefers-reduced-motion: reduce) {
-+    :scope .dos-window, :scope .dos-dock-item { animation: none; transition: none; }
++    :scope .dos-window, :scope .dos-dock-item, :scope .dos-icon-art, :scope .dos-dock-glyph { animation: none; transition: none; }
++    :scope .dos-icon:active .dos-icon-art, :scope .dos-dock-item:active .dos-dock-glyph { transform: none; }
 +  }
++}
+diff --git a/src/styles/platform-recents.css b/src/styles/platform-recents.css
+new file mode 100644
+index 0000000..7bd972a
+--- /dev/null
++++ b/src/styles/platform-recents.css
+@@ -0,0 +1,81 @@
++@scope (.dindbos-host:is([data-ui-style='ios'], [data-ui-style='android'])) to (.dindbos-host) {
++  :scope[data-recent-apps] .dos-window-layer:has(> .trusted-ui-surface) { z-index: 1200; }
++  :scope[data-recent-apps] .dos-window-layer > .dos-window { visibility: hidden; pointer-events: none; }
++  :scope[data-recent-apps] :is(.dos-desktop, .dos-dock, .dos-ios-search, .dos-android-home-actions) { visibility: hidden; }
++    :scope[data-recent-apps] .dos-menubar,
++  :scope .dos-shell:not(:has(.dos-window.is-active:not([hidden]):not(.is-minimizing))) .dos-menubar[data-liquid-glass-mode] {
++    background: transparent !important; color: white; border: 0; box-shadow: none; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
++  }
++  :scope[data-recent-apps] .dos-menubar { z-index: 1101; }
++  :scope[data-recent-apps] .dos-android-navigation { z-index: 1102; background: transparent; color: white; }
++  :scope .dos-recent-apps.dos-recent-apps {
++    position: absolute; inset: 0; z-index: 1040; width: 100%; max-width: none; height: 100%; max-height: none;
++    margin: 0; padding: 0; overflow: hidden; border: 0; border-radius: 0;
++    background: rgb(30 37 33 / 34%); color: white; backdrop-filter: blur(28px) saturate(.7);
++    box-shadow: none; pointer-events: auto;
++  }
++  :scope .dos-recents-header { position: absolute; right: 16px; top: 52px; z-index: 2; }
++  :scope :is(.dos-recents-header h2, .dos-recents-header button, .dos-recent-close) {
++    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
++    clip-path: inset(50%); white-space: nowrap; border: 0;
++  }
++  :scope .dos-recents-header button:focus-visible, :scope .dos-recent-close:focus-visible {
++    position: relative; width: auto; min-width: 44px; height: 44px; margin: 0; padding: 8px;
++    clip-path: none; border-radius: 22px; background: #26302e; color: white;
++  }
++  :scope .dos-recent-apps button { font: inherit; color: inherit; cursor: pointer; }
++  :scope .dos-recents-rail {
++    position: absolute; top: 11.5%; bottom: 26%; display: flex; align-items: center; gap: 20px;
++    width: 100%; padding-inline: 18%; overflow: auto hidden; scroll-snap-type: x mandatory;
++    scroll-padding-inline: 18%; scrollbar-width: none; overscroll-behavior: contain; touch-action: none;
++  }
++  :scope .dos-recent-card {
++    flex: 0 0 100%; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: center;
++    scroll-snap-align: center; position: relative; user-select: none; scale: var(--recent-scale, 1);
++    transform-origin: center; will-change: transform;
++  }
++  :scope .dos-recent-card[data-closing] { pointer-events: none; }
++  :scope .dos-recent-heading { flex: 0 0 50px; display: flex; align-items: start; justify-content: center; gap: 8px; min-width: 0; }
++  :scope .dos-recent-heading > span:nth-child(2) { display: none; }
++  :scope .dos-recent-icon, :scope .dos-recent-icon > :is(svg, img) { display: block; width: 40px; height: 40px; flex: 0 0 40px; }
++  :scope .dos-recent-apps .dos-recent-preview {
++    position: relative; flex: 0 1 auto; display: block; width: 100%; min-height: 0; max-height: calc(100% - 50px);
++    padding: 0; margin: 0; overflow: hidden; border: 0; border-radius: 24px;
++    background: var(--content-bg); color: var(--text); text-align: left; box-shadow: 0 12px 32px #0003; touch-action: none;
++  }
++  :scope .dos-recent-snapshot { position: absolute; inset: 0 auto auto 0; transform-origin: top left; pointer-events: none; overflow: hidden; container-type: inline-size; }
++  :scope .dos-recent-snapshot > .dos-window-content { width: 100%; height: 100%; padding: 0; }
++  :scope .dos-recent-snapshot[data-mobile-pane='list'] :is(.settings-detail, .note-editor) { display: none; }
++  :scope .dos-recent-snapshot[data-mobile-pane='list'] :is(.notes-sidebar, .settings-sidebar) { flex: 1; max-height: none; }
++  :scope .dos-recent-snapshot[data-mobile-pane='detail'] :is(.notes-sidebar, .settings-sidebar) { display: none; }
++  :scope .dos-recent-frame-placeholder { min-height: 200px; display: grid; place-items: center; background: var(--content-bg); color: var(--muted); }
++  :scope .dos-recent-apps .dos-recents-close-all {
++    position: absolute; bottom: 18.5%; left: 50%; transform: translateX(-50%); min-width: 180px; min-height: 44px;
++    padding: 0 28px; border: 1px solid #ffffff60; border-radius: 24px; background: #ffffff0a;
++  }
++  :scope .dos-recents-suggestions { position: absolute; inset: auto 0 8%; display: flex; justify-content: space-around; padding-inline: 24px; }
++  :scope .dos-recents-suggestions button { width: 48px; height: 48px; padding: 0; border: 0; background: transparent; }
++  :scope .dos-recents-suggestions .dos-app-icon { width: 48px; height: 48px; }
++  :scope .dos-recents-empty { position: absolute; inset: 45% 0 auto; margin: 0; text-align: center; }
++  :scope .dos-recent-apps button:focus-visible { outline: 2px solid white; outline-offset: -3px; }
++  :scope .dos-recent-apps button:active { filter: brightness(.94); }
++  :scope .dos-ios-home { touch-action: none; }
++  :scope[data-ui-style='ios'] .dos-recents-rail { top: 17%; bottom: 18%; padding-inline: 12%; scroll-padding-inline: 12%; gap: 0; }
++  :scope[data-ui-style='ios'] .dos-recent-card { margin-inline-end: -16px; }
++  :scope[data-ui-style='ios'] .dos-recent-heading { align-items: center; justify-content: start; padding-left: 8px; gap: 10px; }
++  :scope[data-ui-style='ios'] .dos-recent-heading > span:nth-child(2) { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 600; }
++  :scope[data-ui-style='ios'] .dos-recent-icon, :scope[data-ui-style='ios'] .dos-recent-icon > :is(svg, img) { width: 32px; height: 32px; flex-basis: 32px; }
++  :scope[data-ui-style='ios'] .dos-recent-apps .dos-recent-preview { border-radius: 30px; }
++  @container (max-height: 540px) { :scope .dos-recents-rail { top: 14%; bottom: 26%; } :scope .dos-recents-suggestions { display: none; } :scope .dos-recents-close-all { bottom: 14%; } }
++  @media (prefers-reduced-motion: reduce) { :scope .dos-recent-card { scale: 1; will-change: auto; } }
++}
++
++@scope (.dindbos-host:is([data-ui-style='ios'], [data-ui-style='android'])) to (.dindbos-host) {
++  :scope .dos-window:not(.is-minimizing):not(.is-restoring) { transform: var(--mobile-swipe-transform, none); }
++  :scope .dos-window.is-minimizing, :scope .dos-window.is-restoring {
++    transform: translate3d(var(--minimize-x, 0), var(--minimize-y, 18px), 0) scale(var(--minimize-scale-x, .12));
++    border-radius: 36px;
++  }
++  :scope[data-home-gesture] .dos-window { transition: none; border-radius: 24px; }
++  @media (prefers-reduced-motion: reduce) { :scope .dos-window { transition: none; } }
 +}
 diff --git a/src/styles/platform-windows-apps.css b/src/styles/platform-windows-apps.css
 new file mode 100644
@@ -4010,6 +4806,21 @@ index 203840a..3263ac7 100644
    .settings-section > .appearance-settings > h3 { display: none; }
    .settings-detail .appearance-modes { max-width: none; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
    .settings-detail .appearance-setting-row { padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--settings-group-bg); }
+diff --git a/src/styles/shell.css b/src/styles/shell.css
+index a1e544f..47d8bab 100644
+--- a/src/styles/shell.css
++++ b/src/styles/shell.css
+@@ -159,3 +159,10 @@
+ }
+ 
+ .dindbos-host .dos-menubar button[hidden] { display: none !important; }
++
++@scope (.dindbos-host) to (.dindbos-host) {
++  .dos-mobile-status { display: none; }
++  :scope:is([data-ui-style='ios'], [data-ui-style='android']) .dos-mobile-status { display: inline-flex; align-items: center; gap: 6px; }
++  :scope:is([data-ui-style='ios'], [data-ui-style='android']) .dos-status-button:has(.dos-mobile-status) > svg { display: none; }
++  .dos-mobile-status svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
++}
 diff --git a/src/ui/app-icon.js b/src/ui/app-icon.js
 index 44a2864..2e37a5d 100644
 --- a/src/ui/app-icon.js
@@ -4066,10 +4877,147 @@ index 44a2864..2e37a5d 100644
        h("linearGradient", { id, x1: "12", y1: "3", x2: "48", y2: "63", gradientUnits: "userSpaceOnUse" },
          h("stop", { stopColor: colors[0] }), h("stop", { offset: "1", stopColor: colors[1] }))),
 diff --git a/src/ui/desktop-view.js b/src/ui/desktop-view.js
-index 45723fd..9863e8e 100644
+index 45723fd..d58f3e7 100644
 --- a/src/ui/desktop-view.js
 +++ b/src/ui/desktop-view.js
-@@ -84,7 +84,7 @@ function DockList({ apps, dockApps, appStates, launchApp, element }) {
+@@ -1,5 +1,6 @@
+ import React, { useEffect, useRef, useState } from "react";
+ import { createRoot } from "react-dom/client";
++import { createPortal } from "react-dom";
+ import { AppIcon } from "./app-icon.js";
+ 
+ const h = React.createElement;
+@@ -13,10 +14,10 @@ export function createDesktopRenderer(options = {}) {
+   let unmounted = false;
+   return {
+     renderDesktop(entries = []) {
+-      if (!unmounted) desktopRoot.render(h(DesktopGrid, { entries, isMobile: options.isMobile || (() => false), openNode: options.onOpenNode || (() => {}), onSelectNode: options.onSelectNode }));
++      if (!unmounted) desktopRoot.render(h(DesktopGrid, { key: options.getStyle?.(), entries: options.getStyle?.() === "ios" ? groupMobileHomeEntries(entries) : entries, overlayElement: options.overlayElement, hasTrustedSurface: options.hasTrustedSurface, isMobile: options.isMobile || (() => false), openNode: options.onOpenNode || (() => {}), onSelectNode: options.onSelectNode }));
+     },
+     renderDock(apps = [], dockApps = [], appStates = {}) {
+-      if (!unmounted) dockRoot.render(h(DockList, { apps, dockApps, appStates, element: options.dockElement, launchApp: options.onLaunchApp || (() => {}) }));
++      if (!unmounted) dockRoot.render(h(DockList, { apps: options.getStyle?.() === "ios" ? apps.slice(0, 4) : apps, dockApps: options.getStyle?.() === "ios" ? [] : dockApps, appStates, element: options.dockElement, launchApp: options.onLaunchApp || (() => {}) }));
+     },
+     unmount() {
+       if (unmounted) return;
+@@ -34,18 +35,31 @@ function isReactRootTarget(element) {
+   return element?.nodeType === 1 || element?.nodeType === 9 || element?.nodeType === 11;
+ }
+ 
+-function DesktopGrid({ entries, isMobile, openNode, onSelectNode }) {
++export function groupMobileHomeEntries(entries) {
++  // shortcut: legacy experience-* IDs group career apps; use category for new hosts.
++  const children = entries.filter((entry) => ["career", "experience"].includes(entry.category) || entry.appId?.startsWith("experience-"));
++  if (children.length < 2) return entries;
++  const grouped = new Set(children);
++  const folder = { name: "Experience", kind: "app-folder", children };
++  return entries.flatMap((entry) => entry === children[0] ? [folder] : grouped.has(entry) ? [] : [entry]);
++}
++
++function DesktopGrid({ entries, isMobile, openNode, onSelectNode, overlayElement, hasTrustedSurface }) {
+   const [selected, setSelected] = useState(null);
++  const [folder, setFolder] = useState(null);
+   const select = (entry) => { setSelected(entry.path || entry.name); onSelectNode?.(entry.node); };
+-  return entries.map((entry, index) => h("button", {
++  return [entries.map((entry, index) => h("button", {
+     key: entry.path || entry.name,
+     className: `dos-icon${selected === (entry.path || entry.name) ? " is-selected" : ""}`,
+     type: "button", "data-icon": typeof entry.icon === "string" ? entry.icon : "custom",
+     "data-desktop-path": entry.path,
+     "data-desktop-app-id": entry.appId || undefined,
+     "data-desktop-kind": entry.kind,
+-    draggable: true,
++    draggable: !entry.children,
++    "aria-haspopup": entry.children ? "dialog" : undefined,
++    "aria-expanded": entry.children ? folder === entry : undefined,
+     onDragStart: (event) => {
++      if (entry.children) return event.preventDefault();
+       event.dataTransfer.setData("application/x-dindbos-path", entry.path);
+       event.dataTransfer.effectAllowed = "copyMove";
+     },
+@@ -53,10 +67,11 @@ function DesktopGrid({ entries, isMobile, openNode, onSelectNode }) {
+     onPointerDown: () => select(entry),
+     onClick: (event) => {
+       select(entry);
++      if (entry.children) { if (!hasTrustedSurface?.()) setFolder(entry); return; }
+       // Keyboard-generated clicks have detail=0; pointer desktop clicks select.
+       if (event.detail === 0 || event.nativeEvent.pointerType === "touch" || isMobile()) openNode(entry.node);
+     },
+-    onDoubleClick: () => { if (!isMobile()) openNode(entry.node); },
++    onDoubleClick: () => { if (!entry.children && !isMobile()) openNode(entry.node); },
+     onKeyDown: (event) => {
+       if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+       event.preventDefault();
+@@ -65,7 +80,67 @@ function DesktopGrid({ entries, isMobile, openNode, onSelectNode }) {
+       event.currentTarget.parentElement?.querySelectorAll(".dos-icon")[next]?.focus();
+       select(entries[next]);
+     },
+-  }, h("span", { className: "dos-icon-art", "aria-hidden": true }, h(AppIcon, { icon: entry.icon })), h("span", { className: "dos-icon-label" }, entry.name)));
++  }, h("span", { className: entry.children ? "dos-icon-art dos-folder-preview" : "dos-icon-art", "aria-hidden": true }, entry.children ? entry.children.slice(0, 4).map((child) => h(AppIcon, { key: child.appId, icon: child.icon })) : h(AppIcon, { icon: entry.icon })), h("span", { className: "dos-icon-label" }, entry.name))),
++    folder && overlayElement ? createPortal(h(HomeFolder, { key: folder.name, folder, openNode, hasTrustedSurface, close: () => setFolder(null) }), overlayElement) : null,
++  ];
++}
++
++function HomeFolder({ folder, openNode, close, hasTrustedSurface }) {
++  const panel = useRef(null);
++  const backdrop = useRef(null);
++  const restoreFocus = useRef(true);
++  const dismiss = useRef(() => close());
++  useEffect(() => {
++    const element = panel.current;
++    const shade = backdrop.current;
++    const document = element.ownerDocument;
++    const trigger = document.activeElement;
++    const source = trigger?.querySelector?.(".dos-icon-art")?.getBoundingClientRect();
++    const destination = element.getBoundingClientRect();
++    const reduced = document.defaultView.matchMedia("(prefers-reduced-motion: reduce)").matches;
++    const origin = !reduced && source ? `translate(${source.left - destination.left}px, ${source.top - destination.top}px) scale(${source.width / destination.width}, ${source.height / destination.height})` : "none";
++    const animations = [];
++    let closing = false;
++    const animate = (target, frames, duration, easing) => {
++      const animation = target.animate(frames, { duration: reduced ? 0 : duration, easing, fill: "both" });
++      animations.push(animation);
++      return animation;
++    };
++    animate(element, [{ transform: origin, opacity: 0 }, { transform: "none", opacity: 1 }], 360, "cubic-bezier(.22,.8,.25,1)");
++    animate(shade, [{ opacity: 0 }, { opacity: 1 }], 260, "ease-out");
++    dismiss.current = (after) => {
++      if (closing) return;
++      closing = true;
++      const current = document.defaultView.getComputedStyle(element);
++      animate(element, [{ transform: current.transform, opacity: current.opacity }, { transform: origin, opacity: 0 }], 240, "cubic-bezier(.4,0,.7,.3)");
++      const exit = animate(shade, [{ opacity: document.defaultView.getComputedStyle(shade).opacity }, { opacity: 0 }], 240, "ease-in");
++      exit.finished.then(() => { if (element.isConnected) { close(); if (!hasTrustedSurface?.()) after?.(); } }).catch(() => {});
++    };
++    element.querySelector("button")?.focus({ preventScroll: true });
++    const outside = (event) => { if (!element.contains(event.target)) { restoreFocus.current = false; dismiss.current(); } };
++    document.addEventListener("pointerdown", outside, true);
++    return () => {
++      document.removeEventListener("pointerdown", outside, true);
++      animations.forEach((animation) => animation.cancel());
++      if (restoreFocus.current && !hasTrustedSurface?.() && trigger?.isConnected) trigger.focus({ preventScroll: true });
++    };
++  }, []);
++  return h("div", { className: "dos-home-folder-backdrop", ref: backdrop }, h("section", {
++    className: "dos-home-folder", ref: panel, role: "dialog", "aria-modal": "true", "aria-label": folder.name,
++    onKeyDown: (event) => {
++      if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); dismiss.current(); }
++      if (event.key === "Tab") {
++        const buttons = [...panel.current.querySelectorAll("button")];
++        const index = buttons.indexOf(event.currentTarget.ownerDocument.activeElement);
++        if (event.shiftKey && index === 0) { event.preventDefault(); buttons.at(-1)?.focus(); }
++        else if (!event.shiftKey && index === buttons.length - 1) { event.preventDefault(); buttons[0]?.focus(); }
++      }
++    },
++  }, h("header", null, h("h2", null, folder.name), h("button", { type: "button", "aria-label": "Close folder", onClick: () => dismiss.current() }, "×")),
++  h("div", { className: "dos-home-folder-grid" }, folder.children.map((entry) => h("button", {
++    type: "button", className: "dos-icon", key: entry.path || entry.appId, "aria-label": `Open ${entry.name}`, "data-folder-app-id": entry.appId,
++    onClick: () => { restoreFocus.current = false; dismiss.current(() => openNode(entry.node)); },
++  }, h("span", { className: "dos-icon-art", "aria-hidden": true }, h(AppIcon, { icon: entry.icon })), h("span", { className: "dos-icon-label" }, entry.name))))));
+ }
+ 
+ export function dockMagnification(distance, radius = 140) {
+@@ -84,7 +159,7 @@ function DockList({ apps, dockApps, appStates, launchApp, element }) {
        element.querySelectorAll(".dos-dock-item").forEach((item) => item.style.removeProperty("--dock-proximity"));
      };
      const move = (event) => {
@@ -4149,10 +5097,12 @@ index 0000000..b96a710
 +}
 diff --git a/src/ui/platforms/android.js b/src/ui/platforms/android.js
 new file mode 100644
-index 0000000..4c480bf
+index 0000000..5591824
 --- /dev/null
 +++ b/src/ui/platforms/android.js
-@@ -0,0 +1,117 @@
+@@ -0,0 +1,53 @@
++import { mountRecentApps } from "./recent-apps.js";
++
 +const glyph = (paths) => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
 +
 +export function androidHome(shell) {
@@ -4184,89 +5134,23 @@ index 0000000..4c480bf
 +    <button type="button" data-android-action="recents" aria-label="Recent apps" aria-haspopup="dialog">${glyph('<path d="M7 6v12M12 6v12M17 6v12"/>')}</button>
 +    <button type="button" data-android-action="home" aria-label="Home">${glyph('<rect x="5" y="5" width="14" height="14" rx="5"/>')}</button>
 +    <button type="button" data-android-action="back" aria-label="Back">${glyph('<path d="m15 5-7 7 7 7"/>')}</button>`;
-+  const heading = document.createElement("section");
-+  heading.className = "dos-android-heading";
-+  const title = document.createElement("h1");
-+  title.textContent = "Your workspace";
-+  const subtitle = document.createElement("p");
-+  subtitle.textContent = "Everything in reach.";
-+  heading.append(title, subtitle);
 +  const actions = document.createElement("div");
 +  actions.className = "dos-android-home-actions";
-+  actions.innerHTML = `<button type="button" data-shell-panel="launcher" aria-haspopup="dialog" aria-expanded="false">${glyph('<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/>')}<span>Apps</span></button><button type="button" data-shell-panel="controls" aria-haspopup="dialog" aria-expanded="false">${glyph('<path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/>')}<span>Quick settings</span></button>`;
-+  refs.shell.append(heading, actions, navigation);
-+  let recentDialog;
-+  let recentReturnFocus;
-+  const closeRecents = (restoreFocus = true) => {
-+    if (!recentDialog) return;
-+    recentDialog.close();
-+    recentDialog.remove();
-+    recentDialog = null;
-+    if (restoreFocus && recentReturnFocus?.isConnected) recentReturnFocus.focus({ preventScroll: true });
-+    recentReturnFocus = null;
-+  };
-+  const openRecents = () => {
-+    if (shell.os.windows.hasVisibleTrustedSurface?.()) return;
-+    shell.closePanel(false);
-+    closeRecents(false);
-+    recentReturnFocus = document.activeElement;
-+    const dialog = document.createElement("dialog");
-+    recentDialog = dialog;
-+    dialog.className = "dos-android-recents";
-+    dialog.setAttribute("aria-label", "Recent apps");
-+    const header = document.createElement("header");
-+    const label = document.createElement("h2");
-+    label.textContent = "Recent apps";
-+    const dismiss = document.createElement("button");
-+    dismiss.type = "button";
-+    dismiss.textContent = "Done";
-+    dismiss.addEventListener("click", () => closeRecents());
-+    header.append(label, dismiss);
-+    dialog.append(header);
-+    const tasks = [...shell.os.windows.windows.values()].sort((a, b) => Number(b.frame?.style?.zIndex || 0) - Number(a.frame?.style?.zIndex || 0));
-+    for (const task of tasks) {
-+      const button = document.createElement("button");
-+      button.className = "dos-android-recent-task";
-+      button.type = "button";
-+      button.textContent = task.title || task.appId;
-+      button.addEventListener("click", () => { closeRecents(false); shell.os.windows.restore(task.id); });
-+      dialog.append(button);
-+    }
-+    if (!tasks.length) {
-+      const empty = document.createElement("p");
-+      empty.textContent = "No recent apps";
-+      dialog.append(empty);
-+    }
-+    dialog.addEventListener("keydown", (event) => {
-+      if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); closeRecents(); }
-+      if (event.key === "Tab") {
-+        const buttons = [...dialog.querySelectorAll("button")];
-+        const first = buttons[0], last = buttons.at(-1);
-+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-+      }
-+    });
-+    dialog.addEventListener("close", () => { dialog.remove(); if (recentDialog === dialog) recentDialog = null; });
-+    refs.overlays.append(dialog);
-+    dialog.show();
-+    dismiss.focus({ preventScroll: true });
-+  };
++  actions.innerHTML = `<button type="button" data-shell-panel="launcher" aria-label="Search applications" aria-haspopup="dialog" aria-expanded="false">${glyph('<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/>')}<span>Search apps</span></button>`;
++  refs.shell.append(actions, navigation);
++  const recents = mountRecentApps(shell, { platform: "android" });
 +  const click = (event) => {
 +    if (shell.os.windows.hasVisibleTrustedSurface?.()) return;
 +    const action = event.target.closest("[data-android-action]")?.dataset.androidAction;
-+    if (action === "home") { closeRecents(false); androidHome(shell); }
-+    else if (action === "back") { if (recentDialog) closeRecents(); else androidBack(shell); }
-+    else if (action === "recents") openRecents();
++    if (action === "home") { recents.close(false); androidHome(shell); }
++    else if (action === "back") { if (recents.isOpen) recents.close(); else androidBack(shell); }
++    else if (action === "recents") recents.open();
 +  };
-+  const outside = (event) => { if (recentDialog && !recentDialog.contains(event.target) && !navigation.contains(event.target)) closeRecents(false); };
-+  document.addEventListener("pointerdown", outside, true);
 +  navigation.addEventListener("click", click);
 +  return () => {
-+    closeRecents(false);
-+    document.removeEventListener("pointerdown", outside, true);
++    recents.destroy();
 +    navigation.removeEventListener("click", click);
 +    navigation.remove();
-+    heading.remove();
 +    actions.remove();
 +  };
 +}
@@ -4317,10 +5201,12 @@ index 0000000..7860f8a
 +}
 diff --git a/src/ui/platforms/ios.js b/src/ui/platforms/ios.js
 new file mode 100644
-index 0000000..54464a2
+index 0000000..98c7adc
 --- /dev/null
 +++ b/src/ui/platforms/ios.js
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,86 @@
++import { mountRecentApps } from "./recent-apps.js";
++
 +export function mountIOSShell(shell) {
 +  const document = shell.root.ownerDocument;
 +  const home = document.createElement("button");
@@ -4328,15 +5214,58 @@ index 0000000..54464a2
 +  home.className = "dos-ios-home";
 +  home.setAttribute("aria-label", "Home");
 +  home.innerHTML = '<span aria-hidden="true"></span>';
++  const recents = mountRecentApps(shell, { platform: "ios" });
 +  const showHome = () => {
 +    if (shell.os.windows.hasVisibleTrustedSurface?.()) return;
++    recents.close(false);
 +    shell.closePanel(false);
 +    for (const task of shell.os.windows.windows.values()) {
 +      if (!task.minimized) shell.os.windows.minimize(task.id);
 +    }
 +    home.focus({ preventScroll: true });
 +  };
-+  home.addEventListener("click", showHome);
++  let swipe;
++  let suppressClick = false;
++  const startSwipe = event => {
++    if (event.button !== 0 || shell.os.windows.hasVisibleTrustedSurface?.()) return;
++    swipe = { x: event.clientX, y: event.clientY, pointer: event.pointerId, began: Date.now(), lastMove: Date.now(), frame: shell.os.windows.windows.get(shell.os.windows.activeWindowId)?.frame, hadApp: [...shell.os.windows.windows.values()].some(task => !task.minimized) };
++    suppressClick = false;
++    home.setPointerCapture?.(event.pointerId);
++  };
++  const clearSwipe = (gesture) => {
++    gesture.frame?.style.removeProperty("--mobile-swipe-transform");
++    delete shell.root.dataset.homeGesture;
++  };
++  const moveSwipe = event => {
++    if (!swipe || swipe.pointer !== event.pointerId || shell.os.windows.hasVisibleTrustedSurface?.()) return;
++    const distance = Math.max(0, swipe.y - event.clientY);
++    swipe.lastMove = Date.now();
++    if (swipe.frame && !document.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
++      shell.root.dataset.homeGesture = "true";
++      const progress = Math.min(.4, distance / Math.max(400, shell.root.clientHeight));
++      swipe.frame.style.setProperty("--mobile-swipe-transform", `translateY(${-distance * .35}px) scale(${1 - progress * .45})`);
++    }
++  };
++  const endSwipe = event => {
++    if (!swipe || swipe.pointer !== event.pointerId) return;
++    const gesture = swipe;
++    swipe = null;
++    delete shell.root.dataset.homeGesture;
++    if (event.type !== "pointerup" || gesture.y - event.clientY < 35 || Math.abs(gesture.x - event.clientX) > 100) { clearSwipe(gesture); return; }
++    suppressClick = true;
++    const paused = Date.now() - gesture.lastMove >= 120;
++    if (gesture.hadApp && !paused) {
++      showHome();
++      // Let the window manager install its minimizing state before clearing direct manipulation.
++      document.defaultView?.requestAnimationFrame(() => clearSwipe(gesture));
++    } else { recents.open(); clearSwipe(gesture); }
++  };
++  const activateHome = () => { if (suppressClick) suppressClick = false; else showHome(); };
++  home.addEventListener("click", activateHome);
++  home.addEventListener("pointerdown", startSwipe);
++  home.addEventListener("pointermove", moveSwipe);
++  home.addEventListener("pointerup", endSwipe);
++  home.addEventListener("pointercancel", endSwipe);
 +  shell.refs.shell.appendChild(home);
 +
 +  let search;
@@ -4351,7 +5280,13 @@ index 0000000..54464a2
 +    shell.refs.shell.appendChild(search);
 +  }
 +  return () => {
-+    home.removeEventListener("click", showHome);
++    recents.destroy();
++    if (swipe) clearSwipe(swipe);
++    home.removeEventListener("click", activateHome);
++    home.removeEventListener("pointerdown", startSwipe);
++    home.removeEventListener("pointermove", moveSwipe);
++    home.removeEventListener("pointerup", endSwipe);
++    home.removeEventListener("pointercancel", endSwipe);
 +    home.remove();
 +    search?.remove();
 +  };
@@ -4480,6 +5415,342 @@ index 0000000..7522a0a
 +      frame.querySelectorAll('[data-mobile-app-back], [data-mobile-note-new]').forEach(button => button.remove());
 +    }
 +  };
++}
+diff --git a/src/ui/platforms/recent-apps.js b/src/ui/platforms/recent-apps.js
+new file mode 100644
+index 0000000..cf2a011
+--- /dev/null
++++ b/src/ui/platforms/recent-apps.js
+@@ -0,0 +1,330 @@
++import { mountAppIcon } from "../app-icon.js";
++
++export function mountRecentApps(shell, { platform }) {
++  const { root } = shell;
++  const document = root.ownerDocument;
++  let dialog, returnFocus, rail;
++  let cleanups = [];
++  let settleFrame;
++  const animations = new Set();
++  const reducedMotion = () => document.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
++  const motion = async (element, frames, duration = 320) => {
++    if (reducedMotion() || !element?.animate) return;
++    const animation = element.animate(frames, { duration, easing: "cubic-bezier(.22,.8,.25,1)", fill: "forwards" });
++    animations.add(animation);
++    try { await animation.finished; } catch { /* Interrupted navigation cancels its own motion. */ }
++    finally { animations.delete(animation); animation.cancel(); }
++  };
++  const perspective = () => {
++    if (!rail) return;
++    for (const card of rail.children) {
++      const distance = Math.min(1, Math.abs(card.offsetLeft + card.offsetWidth / 2 - rail.scrollLeft - rail.clientWidth / 2) / rail.clientWidth);
++      card.style.setProperty("--recent-scale", reducedMotion() ? "1" : String(1 - distance * .09));
++    }
++  };
++  const settle = (destination) => {
++    document.defaultView.cancelAnimationFrame(settleFrame);
++    const targetRail = rail;
++    const start = targetRail.scrollLeft;
++    const target = Math.max(0, Math.min(targetRail.scrollWidth - targetRail.clientWidth, destination));
++    if (reducedMotion()) { targetRail.scrollLeft = target; perspective(); return; }
++    const began = document.defaultView.performance.now();
++    const step = now => {
++      const progress = Math.min(1, (now - began) / 360);
++      targetRail.scrollLeft = start + (target - start) * (1 - Math.pow(1 - progress, 4));
++      perspective();
++      if (progress < 1 && targetRail.isConnected) settleFrame = document.defaultView.requestAnimationFrame(step);
++      else targetRail.style.scrollSnapType = "";
++    };
++    targetRail.style.scrollSnapType = "none";
++    settleFrame = document.defaultView.requestAnimationFrame(step);
++  };
++  const center = card => card.offsetLeft + card.offsetWidth / 2 - rail.clientWidth / 2;
++  const close = (restoreFocus = true) => {
++    document.defaultView?.cancelAnimationFrame?.(settleFrame);
++    for (const animation of animations) animation.cancel();
++    animations.clear();
++    if (!dialog) return;
++    for (const cleanup of cleanups) cleanup();
++    cleanups = [];
++    dialog.remove();
++    dialog = null;
++    delete root.dataset.recentApps;
++    if (restoreFocus && returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
++    returnFocus = null;
++  };
++  const closeTask = async (task, card) => {
++    if (shell.os.windows.hasVisibleTrustedSurface?.() || card.dataset.closing) return;
++    card.dataset.closing = "true";
++    const owner = dialog;
++    const from = card.style.transform || "translateY(0px)";
++    try {
++      await shell.os.windows.close(task.id);
++      if (!card.isConnected || dialog !== owner) {
++        if (dialog && !shell.os.windows.windows.has(task.id)) {
++          [...rail.children].find(item => item.dataset.recentWindowId === task.id)?.remove();
++          if (!rail.children.length) close(false);
++        }
++        return;
++      }
++      if (!shell.os.windows.windows.has(task.id)) {
++        await motion(card, [{ transform: from, opacity: 1 }, { transform: `translateY(${-root.clientHeight}px)`, opacity: 0 }], 240);
++        if (!card.isConnected || dialog !== owner) return;
++        const next = card.nextElementSibling || card.previousElementSibling;
++        card.remove();
++        if (!rail.children.length) close(false);
++        else { settle(center(next)); next?.querySelector(".dos-recent-preview")?.focus({ preventScroll: true }); }
++      } else await motion(card, [{ transform: from }, { transform: "translateY(0px)" }]);
++    } catch (error) {
++      shell.notify?.(error.message || "The app could not be closed.");
++    } finally {
++      delete card.dataset.closing;
++      card.style.transform = "";
++      card.style.opacity = "";
++    }
++  };
++  const open = () => {
++    if (shell.os.windows.hasVisibleTrustedSurface?.()) return;
++    shell.closePanel(false);
++    close(false);
++    returnFocus = document.activeElement;
++    dialog = document.createElement("dialog");
++    dialog.className = `dos-recent-apps dos-${platform}-recents`;
++    dialog.setAttribute("aria-label", "Recent apps");
++    root.dataset.recentApps = "true";
++    const sourceTask = shell.os.windows.windows.get(shell.os.windows.activeWindowId);
++    const sourceBounds = sourceTask && !sourceTask.minimized ? sourceTask.frame.getBoundingClientRect() : null;
++    const header = document.createElement("header");
++    header.className = "dos-recents-header";
++    const label = document.createElement("h2");
++    label.textContent = "Recent apps";
++    const done = document.createElement("button");
++    done.type = "button";
++    done.textContent = "Done";
++    done.addEventListener("click", () => close());
++    header.append(label, done);
++    rail = document.createElement("div");
++    rail.className = "dos-recents-rail";
++    rail.setAttribute("aria-label", "Running apps");
++    const tasks = [...shell.os.windows.windows.values()].filter(task => !task.closing).sort((a, b) => Number(b.frame?.style?.zIndex || 0) - Number(a.frame?.style?.zIndex || 0));
++    for (const task of tasks) {
++      const card = document.createElement("article");
++      card.className = "dos-recent-card";
++      card.dataset.recentWindowId = task.id;
++      const heading = document.createElement("div");
++      heading.className = "dos-recent-heading";
++      const icon = document.createElement("span");
++      icon.className = "dos-recent-icon";
++      const app = shell.os.apps?.list().find(app => app.id === task.appId);
++      cleanups.push(mountAppIcon(icon, app?.icon || "app"));
++      const title = document.createElement("span");
++      title.textContent = app?.name || task.title || task.appId;
++      const dismiss = document.createElement("button");
++      dismiss.type = "button";
++      dismiss.className = "dos-recent-close";
++      dismiss.setAttribute("aria-label", `Close ${task.title || task.appId}`);
++      dismiss.textContent = "×";
++      dismiss.addEventListener("click", () => closeTask(task, card));
++      heading.append(icon, title, dismiss);
++      const preview = document.createElement("button");
++      preview.type = "button";
++      preview.className = "dos-recent-preview dos-android-recent-task";
++      preview.setAttribute("aria-label", task.title || task.appId);
++      const snapshot = document.createElement("div");
++      snapshot.className = "dos-recent-snapshot";
++      snapshot.style.containerName = document.defaultView.getComputedStyle(task.frame).containerName;
++      snapshot.dataset.mobilePane = task.frame?.dataset.mobilePane || "";
++      snapshot.setAttribute("aria-hidden", "true");
++      snapshot.inert = true;
++      const content = task.content?.cloneNode(true);
++      if (content) {
++        const contentStyle = document.defaultView.getComputedStyle(task.content);
++        content.style.containerName = contentStyle.containerName;
++        content.style.containerType = contentStyle.containerType;
++        const sources = [task.content, ...task.content.querySelectorAll("*")];
++        const copies = [content, ...content.querySelectorAll("*")];
++        copies.forEach((copy, index) => {
++          copy.removeAttribute("id");
++          copy.removeAttribute("autofocus");
++          copy.removeAttribute("name");
++          if ("value" in sources[index]) copy.value = sources[index].value;
++          if ("checked" in sources[index]) copy.checked = sources[index].checked;
++          if (copy.tagName === "CANVAS") {
++            try { copy.getContext("2d")?.drawImage(sources[index], 0, 0); } catch { /* A protected canvas remains blank. */ }
++          }
++        });
++        // shortcut: external frames cannot be safely cloned; retain a labeled preview until a capture broker exists.
++        content.querySelectorAll("iframe, object, embed, script").forEach(element => {
++          const fallback = document.createElement("div");
++          fallback.className = "dos-recent-frame-placeholder";
++          fallback.textContent = element.tagName === "SCRIPT" ? "" : element.title || "Embedded content";
++          element.replaceWith(fallback);
++        });
++        snapshot.append(content);
++        snapshot._scrollPositions = () => copies.forEach((copy, index) => { copy.scrollTop = sources[index].scrollTop; copy.scrollLeft = sources[index].scrollLeft; });
++      }
++      preview.append(snapshot);
++      card.append(heading, preview);
++      rail.append(card);
++      let gesture, moved = false;
++      card.addEventListener("pointerdown", event => {
++        if (event.button !== 0 || event.target.closest(".dos-recent-close")) return;
++        if (card.dataset.closing || shell.os.windows.hasVisibleTrustedSurface?.()) return;
++        document.defaultView.cancelAnimationFrame(settleFrame);
++        for (const animation of card.getAnimations()) animation.cancel();
++        gesture = { x: event.clientX, y: event.clientY, scroll: rail.scrollLeft, pointer: event.pointerId, lastX: event.clientX, lastTime: event.timeStamp, velocity: 0 };
++        rail.style.scrollSnapType = "none";
++        moved = false;
++        (event.target.closest(".dos-recent-preview") || card).setPointerCapture?.(event.pointerId);
++      });
++      card.addEventListener("pointermove", event => {
++        if (!gesture || gesture.pointer !== event.pointerId) return;
++        const x = event.clientX - gesture.x, y = event.clientY - gesture.y;
++        if (Math.max(Math.abs(x), Math.abs(y)) < 8 && !gesture.axis) return;
++        gesture.axis ||= Math.abs(x) > Math.abs(y) ? "x" : "y";
++        moved = true;
++        const elapsed = event.timeStamp - gesture.lastTime;
++        if (elapsed > 0) gesture.velocity = (event.clientX - gesture.lastX) / elapsed;
++        gesture.lastX = event.clientX; gesture.lastTime = event.timeStamp;
++        if (gesture.axis === "x") { rail.style.scrollSnapType = "none"; rail.scrollLeft = gesture.scroll - x; perspective(); }
++        else { card.style.transform = `translateY(${Math.min(0, y)}px)`; card.style.opacity = String(Math.max(.15, 1 + Math.min(0, y) / 350)); }
++      });
++      const finish = event => {
++        if (!gesture || gesture.pointer !== event.pointerId) return;
++        const { axis, velocity } = gesture;
++        const dismiss = event.type === "pointerup" && axis === "y" && event.clientY - gesture.y < -80;
++        gesture = null;
++        if (event.type === "pointercancel") moved = false;
++        if (axis === "x") {
++          const projected = rail.scrollLeft - (event.type === "pointerup" ? Math.max(-2, Math.min(2, velocity)) * 100 : 0);
++          const nearest = [...rail.children].reduce((best, item) => Math.abs(center(item) - projected) < Math.abs(center(best) - projected) ? item : best);
++          settle(center(nearest));
++        } else if (dismiss) closeTask(task, card);
++        else {
++          const from = card.style.transform || "translateY(0px)";
++          card.style.transform = ""; card.style.opacity = "";
++          motion(card, [{ transform: from }, { transform: "translateY(0px)" }]);
++          rail.style.scrollSnapType = "";
++        }
++      };
++      card.addEventListener("pointerup", finish);
++      card.addEventListener("pointercancel", finish);
++      preview.addEventListener("click", event => {
++        if (moved) { event.preventDefault(); moved = false; return; }
++        if (shell.os.windows.hasVisibleTrustedSurface?.()) return;
++        const from = preview.getBoundingClientRect();
++        close(false);
++        shell.os.windows.restore(task.id);
++        shell.os.windows.focus(task.id);
++        const to = task.frame.getBoundingClientRect();
++        motion(task.frame, [
++          { transformOrigin: "top left", transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`, borderRadius: "26px" },
++          { transformOrigin: "top left", transform: "translate(0px, 0px) scale(1)", borderRadius: "0px" },
++        ], 380);
++      });
++    }
++    dialog.append(header, rail);
++    rail.addEventListener("scroll", perspective, { passive: true });
++    if (!tasks.length) {
++      const empty = document.createElement("p");
++      empty.className = "dos-recents-empty";
++      empty.textContent = "No recent apps";
++      dialog.append(empty);
++    }
++    if (platform === "android" && tasks.length) {
++      const all = document.createElement("button");
++      all.className = "dos-recents-close-all";
++      all.type = "button";
++      all.textContent = "Close all";
++      all.addEventListener("click", async () => {
++        const owner = dialog;
++        for (const task of tasks) {
++          if (!dialog || dialog !== owner || shell.os.windows.hasVisibleTrustedSurface?.()) break;
++          const card = [...rail.children].find(card => card.dataset.recentWindowId === task.id);
++          if (card) await closeTask(task, card);
++          if (dialog !== owner || shell.os.windows.windows.has(task.id)) break;
++        }
++      });
++      dialog.append(all);
++    }
++    if (platform === "android") {
++      const suggestions = document.createElement("nav");
++      suggestions.className = "dos-recents-suggestions";
++      suggestions.setAttribute("aria-label", "Suggested apps");
++      for (const app of (shell.os.apps?.list() || []).filter(app => app.pinned).slice(0, 4)) {
++        const button = document.createElement("button"); button.type = "button";
++        button.setAttribute("aria-label", `Open ${app.name}`);
++        cleanups.push(mountAppIcon(button, app.icon || "app"));
++        button.addEventListener("click", () => { close(false); shell.launchApp(app.id); });
++        suggestions.append(button);
++      }
++      dialog.append(suggestions);
++    }
++    dialog.addEventListener("keydown", event => {
++      if (shell.os.windows.hasVisibleTrustedSurface?.()) return;
++      if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); close(); }
++      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
++        event.preventDefault(); event.stopPropagation();
++        const cards = [...rail.children];
++        const current = document.activeElement.closest(".dos-recent-card");
++        const next = cards[Math.max(0, Math.min(cards.length - 1, cards.indexOf(current) + (event.key === "ArrowRight" ? 1 : -1)))];
++        next?.querySelector(".dos-recent-preview")?.focus();
++        if (next) settle(center(next));
++      }
++      if (event.key === "Tab") {
++        const buttons = [...dialog.querySelectorAll("button")];
++        const first = buttons[0], last = buttons.at(-1);
++        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
++        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
++      }
++    });
++    const outside = event => {
++      if (!dialog || shell.os.windows.hasVisibleTrustedSurface?.()) return;
++      if (event.target === dialog || !root.contains(event.target)) close(false);
++    };
++    document.addEventListener("pointerdown", outside, true);
++    cleanups.push(() => document.removeEventListener("pointerdown", outside, true));
++    shell.refs.overlays.append(dialog);
++    dialog.show();
++    const fitSnapshot = snapshot => {
++      const preview = snapshot.parentElement;
++      const width = parseFloat(snapshot.style.width), height = parseFloat(snapshot.style.height);
++      const availableHeight = preview.parentElement.clientHeight - preview.previousElementSibling.offsetHeight;
++      preview.style.transition = "none";
++      preview.style.maxWidth = `${Math.max(0, availableHeight) * width / height}px`;
++      preview.style.alignSelf = "center";
++      snapshot.style.transform = `scale(${parseFloat(document.defaultView.getComputedStyle(preview).width) / width})`;
++    };
++    for (const snapshot of rail.querySelectorAll(".dos-recent-snapshot")) {
++      const task = shell.os.windows.windows.get(snapshot.closest("[data-recent-window-id]").dataset.recentWindowId);
++      const width = task.content.clientWidth || root.clientWidth;
++      const height = task.content.clientHeight || Math.max(240, root.clientHeight - 148);
++      const preview = snapshot.parentElement;
++      preview.style.aspectRatio = `${width} / ${height}`;
++      Object.assign(snapshot.style, { width: `${width}px`, height: `${height}px` });
++      fitSnapshot(snapshot);
++      snapshot._scrollPositions?.();
++      delete snapshot._scrollPositions;
++    }
++    const ResizeObserverType = document.defaultView.ResizeObserver;
++    if (ResizeObserverType) {
++      const observer = new ResizeObserverType(() => {
++        for (const snapshot of rail.querySelectorAll(".dos-recent-snapshot")) fitSnapshot(snapshot);
++      });
++      observer.observe(rail);
++      cleanups.push(() => observer.disconnect());
++    }
++    perspective();
++    motion(dialog, [{ opacity: 0 }, { opacity: 1 }], 220);
++    for (const [index, card] of [...rail.children].entries()) {
++      const preview = card.querySelector(".dos-recent-preview");
++      const bounds = preview.getBoundingClientRect();
++      const origin = index === 0 && sourceBounds
++        ? `translate(${sourceBounds.left - bounds.left}px, ${sourceBounds.top - bounds.top}px) scale(${sourceBounds.width / bounds.width}, ${sourceBounds.height / bounds.height})`
++        : "translateY(64px) scale(.92)";
++      motion(preview, [{ transformOrigin: "top left", transform: origin, opacity: .6 }, { transformOrigin: "top left", transform: "none", opacity: 1 }], 380);
++    }
++    (rail.querySelector(".dos-recent-preview") || done).focus({ preventScroll: true });
++  };
++  return { open, close, get isOpen() { return Boolean(dialog); }, destroy: () => close(false) };
 +}
 diff --git a/src/ui/platforms/windows-icons.js b/src/ui/platforms/windows-icons.js
 new file mode 100644
@@ -4613,7 +5884,7 @@ index 1ca4dbb..299e041 100644
      else if (action === "launch") this.shell.launchApp(data.app);
      else if (action === "launch-new") this.shell.launchApp(data.app, {});
 diff --git a/vite.sdk.config.js b/vite.sdk.config.js
-index 9320927..afc37c9 100644
+index 9320927..eecd87e 100644
 --- a/vite.sdk.config.js
 +++ b/vite.sdk.config.js
 @@ -37,7 +37,7 @@ function sdkArtifactsPlugin() {
@@ -4621,7 +5892,7 @@ index 9320927..afc37c9 100644
      closeBundle() {
        mkdirSync("dist", { recursive: true });
 -      const styles = ["dindbos", "theme", "shell", "windows", "dock", "apps", "settings", "files", "browser", "productivity", "media", "clock", "applications", "liquid-glass", "control-center"];
-+      const styles = ["dindbos", "theme", "shell", "windows", "dock", "apps", "settings", "files", "browser", "productivity", "media", "clock", "applications", "liquid-glass", "control-center", "mobile-tabbar", "searchable-select", "platform-windows", "platform-ios", "platform-android", "platform-windows-apps", "platform-android-apps", "platform-ios-apps"];
++      const styles = ["dindbos", "theme", "shell", "windows", "dock", "apps", "settings", "files", "browser", "productivity", "media", "clock", "applications", "liquid-glass", "control-center", "mobile-tabbar", "searchable-select", "platform-windows", "platform-ios", "platform-android", "platform-windows-apps", "platform-android-apps", "platform-ios-apps", "platform-recents"];
        writeFileSync("dist/styles.css", styles.map((name) => readFileSync(`src/styles/${name}.css`, "utf8")).join("\n"));
        cpSync("src/styles/wallpapers", "dist/wallpapers", { recursive: true });
        for (const name of Object.keys(entrypoints)) {
