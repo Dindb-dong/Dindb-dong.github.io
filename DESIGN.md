@@ -1,5 +1,13 @@
 # Design
 
+## Temporary Android fullscreen suggestion (2026-11-10)
+
+- After the startup screen is dismissed, show a small top-right Fullscreen action and a 44px close control only for actual Android visitors with an enabled Fullscreen API. OS style preview parameters do not enable it on other devices.
+- Use the existing neutral surfaces, secondary blue outline icon, 13px label, 16px radius and visible keyboard focus. Reserve a compact row while visible so app content remains reachable.
+- Remove the entire row on successful fullscreen entry, explicit dismissal or ten seconds without interaction. Returning from fullscreen never restores it during that page visit. Restore all space to the runtime, with no persistent exit button. Browser denial produces a localized status message while the temporary suggestion remains dismissible.
+- Canvas: existing DindbOS · Portfolio Mobile Navigation document, Page 1; board `e5f56c7c-ffa7-4276-9071-c91f6803850f`, main `edb12900-6fb3-4ebb-b433-0c4022e9c28e`, component `component-41e957eb-ed0c-46df-86af-5f2e48bc74c8`, linked suggestion row `b44c114e-426d-41de-b89e-202bef88136f`. Read back the saved revision and reviewed its screenshot.
+- Maps to `src/android-fullscreen.js`, the post-startup mount in `src/hello.js`, and `src/portfolio.css`. Compared the real 390px preview screenshots `android-before.png` and `android-fullscreen.png` against the Canvas. The latter models successful API entry; native system-bar hiding still requires Samsung hardware verification. Layout checks cover 320px and landscape.
+
 ## Source of truth
 
 - Status: Active

@@ -1,3 +1,5 @@
+import { mountAndroidFullscreen } from "./android-fullscreen.js";
+
 const startup = document.getElementById("portfolio-startup");
 const app = document.getElementById("app");
 const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -59,6 +61,7 @@ async function start() {
   }
   app.inert = false;
   app.setAttribute("aria-busy", "false");
+  mountAndroidFullscreen(document.documentElement.lang);
   if (confirmEntry) app.focus({ preventScroll: true });
   if (!animated()) {
     startup.remove();
