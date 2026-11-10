@@ -5,6 +5,7 @@ import { createPortfolioApps } from "./portfolio-app.js";
 import { EXPERIENCE_APPS } from "./experience-content.js";
 import { loadPortfolioRuntime, currentData, portfolioDataForBuiltin } from "./portfolio-data.js";
 import { buildPortfolioFileSystem } from "./portfolio-filesystem.js";
+import { portfolioUIOptions } from "./ui-options.js";
 export async function bootPortfolioOS(report = () => {}) {
   report("Loading portfolio datasets");
   const runtime = await loadPortfolioRuntime(report);
@@ -18,6 +19,7 @@ export async function bootPortfolioOS(report = () => {}) {
 
   const os = await createAndBootDindbOS({
     root: "#app",
+    ui: portfolioUIOptions(location.search),
     theme: { mode: "light", accent: "#7c9fe5", wallpaper: "meadow", dockSize: 48 },
     session: {
       user: "kimdongwook",
