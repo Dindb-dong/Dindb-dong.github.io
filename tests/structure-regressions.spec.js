@@ -1,3 +1,4 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 
 for (const locale of ["ko", "en"]) {
@@ -6,6 +7,7 @@ for (const locale of ["ko", "en"]) {
     page.on("request", request => { if (new URL(request.url()).pathname.startsWith("/legacy/")) archiveRequests.push(request.url()); });
     await page.addInitScript(locale => localStorage.setItem("dindbos-language", locale), locale);
     await page.goto("/");
+    await enterPortfolio(page);
     await expect(page.getByRole("heading", { name: locale === "ko" ? "김동욱" : "Kim Dong Wook", exact: true })).toBeVisible();
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
     await expect(page.locator("[data-project-id]")).toHaveCount(19);
@@ -39,6 +41,7 @@ for (const locale of ["ko", "en"]) {
 
 test("navigating to another open window preserves source project controls and closes the latest view", async ({ page }) => {
   await page.goto("/");
+  await enterPortfolio(page);
   const portfolio = page.locator('.dos-window[data-window-id="portfolio"]');
   await page.locator('.dos-icon[aria-label="Open Resume.app"]').dblclick();
   await expect(page.locator('.portfolio-resume-frame')).toBeVisible();

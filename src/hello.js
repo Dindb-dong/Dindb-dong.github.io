@@ -1,9 +1,9 @@
-import { mountAndroidFullscreen } from "./android-fullscreen.js";
+import { requestAndroidFullscreen } from "./android-fullscreen.js";
 
 const startup = document.getElementById("portfolio-startup");
 const app = document.getElementById("app");
 const motion = matchMedia("(prefers-reduced-motion: reduce)");
-const animated = () => document.documentElement.dataset.hello === "write" && !motion.matches;
+const animated = () => !motion.matches;
 let logs = Promise.resolve();
 let failed = false;
 let bootComplete = false;
@@ -31,6 +31,8 @@ function waitForEntry() {
       event.preventDefault();
       event.stopPropagation();
       lifetime.abort();
+      // Request inside the input handler while browser user activation is still live.
+      void requestAndroidFullscreen();
       resolve();
     };
     window.addEventListener("keydown", event => {
@@ -53,16 +55,12 @@ async function start() {
   bootComplete = true;
   await logs;
   startup.removeAttribute("data-recovery");
-  const confirmEntry = animated();
-  if (confirmEntry) {
-    startup.dataset.phase = "welcome";
-    document.getElementById("startup-message").textContent = "Welcome. Portfolio ready. Press any key or tap to enter.";
-    await waitForEntry();
-  }
+  startup.dataset.phase = "welcome";
+  document.getElementById("startup-message").textContent = "Welcome. Portfolio ready. Press any key or tap to enter.";
+  await waitForEntry();
   app.inert = false;
   app.setAttribute("aria-busy", "false");
-  mountAndroidFullscreen(document.documentElement.lang);
-  if (confirmEntry) app.focus({ preventScroll: true });
+  app.focus({ preventScroll: true });
   if (!animated()) {
     startup.remove();
     return;

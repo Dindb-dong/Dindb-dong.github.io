@@ -1,3 +1,4 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 
 test.use({ reducedMotion: "reduce" });
@@ -27,6 +28,7 @@ test("standalone and printed resume keep body metrics plain", async ({ page }) =
 
 test("resume app embeds highlighted preview and downloads PDF", async ({ page }) => {
   await page.goto("/");
+  await enterPortfolio(page);
   await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
   await page.locator('.dos-icon[aria-label="Open Resume.app"]').dblclick();
   const app = page.locator(".portfolio-resume-app");
@@ -47,6 +49,7 @@ test("YAI contributions use grouped sections in both languages", async ({ page }
     ["en", ["Platform & product engineering", "Infrastructure & load testing", "Deployment & operations automation", "AI research & projects"]],
   ]) {
     await page.goto(`/?ln=${locale}`);
+    await enterPortfolio(page);
     await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
     await page.locator("#portfolio-startup").waitFor({ state: "hidden" });
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="experience"]').click();

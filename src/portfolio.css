@@ -31,17 +31,6 @@ input {
   letter-spacing: 0;
 }
 
-body:has(> .portfolio-display-controls) { display: flex; flex-direction: column; }
-body:has(> .portfolio-display-controls) > #app { flex: 1; min-height: 0; height: auto; }
-.portfolio-display-controls { display: flex; flex: none; align-items: center; justify-content: flex-end; gap: 8px; padding: 4px max(12px, env(safe-area-inset-right)) 4px max(12px, env(safe-area-inset-left)); background: var(--brand-surface, #f5f5f5); color: var(--brand-ink); }
-.portfolio-display-controls [role="status"] { font-size: 12px; line-height: 1.4; }
-.portfolio-fullscreen, .portfolio-fullscreen-dismiss { display: flex; flex: none; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1px solid var(--brand-border); border-radius: 16px; background: var(--brand-paper); color: var(--brand-ink); font-size: 13px; font-weight: 600; cursor: pointer; }
-.portfolio-fullscreen-dismiss { width: 44px; padding: 0; border-color: transparent; background: transparent; }
-.portfolio-fullscreen svg { color: var(--brand-secondary); }
-.portfolio-fullscreen:hover { background: var(--brand-surface, #f5f5f5); }
-.portfolio-fullscreen:focus-visible, .portfolio-fullscreen-dismiss:focus-visible { outline: 2px solid var(--brand-secondary); outline-offset: 1px; }
-.portfolio-fullscreen:disabled { opacity: .6; cursor: wait; }
-
 /* Keep launchers beside the portfolio while using the SDK shell appearance. */
 .dindbos-host .dos-desktop {
   inset: 48px auto 100px 14px;
