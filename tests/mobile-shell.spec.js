@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { EXPERIENCE_APPS } from "../src/experience-content.js";
+import { enterPortfolio } from "./enter-portfolio.js";
 
 test.use({
   viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true,
@@ -16,9 +17,8 @@ async function settle(locator) {
 }
 
 async function boot(page, style) {
-  // Skip only the separately tested welcome presentation; run the real portfolio boot.
-  await page.addInitScript(() => localStorage.setItem("portfolio-hello-seen", "1"));
   await page.goto(`/?style=${style}&ln=en&intro=0`);
+  await enterPortfolio(page);
   const root = page.locator("#app");
   await expect(root).toHaveAttribute("aria-busy", "false");
   await expect(root).toHaveAttribute("data-ui-style", style);
