@@ -1,9 +1,11 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 
 for (const app of ["portfolio", "terminal", "experience-leviosa"]) {
   test(`${app} window moves and resizes with pointer input`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto("/");
+    await enterPortfolio(page);
     await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
     await expect(page.locator('.portfolio-about')).toBeVisible();
     if (app === "terminal") await page.locator('.dos-icon[aria-label="Open Terminal.app"]').dblclick();
@@ -37,6 +39,7 @@ for (const app of ["portfolio", "terminal", "experience-leviosa"]) {
 test("portfolio navigation adapts when a desktop window is narrowed", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
+  await enterPortfolio(page);
   await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
   const frame = page.locator('.dos-window[data-window-id="portfolio"]');
   await expect(frame).toBeVisible();

@@ -1,7 +1,9 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 
 test("overview shows verified profile panels and launches career and research details", async ({ page }) => {
   await page.goto("/");
+  await enterPortfolio(page);
   await expect(page.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
   await expect(page.locator(".profile-panel")).toHaveCount(5);
   await expect(page.locator(".profile-panel h2")).toHaveText(["개발 도구", "스테이터스", "커리어", "AI"]);
@@ -28,6 +30,7 @@ test("overview shows verified profile panels and launches career and research de
 test("desktop app shortcuts remain visible beside the default portfolio window", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
+  await enterPortfolio(page);
 
   await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
   const shortcuts = page.locator(".dos-icon");
@@ -48,6 +51,7 @@ test("desktop app shortcuts remain visible beside the default portfolio window",
 test("career desktop shortcuts form a reachable lower-right group while other icons close the gaps", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
+  await enterPortfolio(page);
   await page.locator(".dos-window").getByRole("button", { name: "Minimize", exact: true }).click();
   const names = ["Leviosa-AI", "Alus-Healthcare", "NOI-LAB", "SDP", "YAI", "YCC"];
   const bounds = [];
@@ -82,7 +86,9 @@ for (const width of [1024, 390]) {
   test(`all desktop shortcuts remain reachable at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
-    await page.locator(".dos-window").getByRole("button", { name: "Minimize", exact: true }).click();
+    await enterPortfolio(page);
+    if (width === 390) await page.getByRole("button", { name: "Home", exact: true }).click();
+    else await page.locator(".dos-window").getByRole("button", { name: "Minimize", exact: true }).click();
     for (const icon of await page.locator(".dos-icon").all()) {
       await icon.scrollIntoViewIfNeeded();
       expect(await icon.evaluate(el => {
@@ -96,6 +102,7 @@ for (const width of [1024, 390]) {
 
 test("project search, empty state, and reset remain usable", async ({ page }) => {
   await page.goto("/");
+  await enterPortfolio(page);
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
 
   const search = page.getByRole("combobox", { name: "프로젝트 검색" });
@@ -113,6 +120,7 @@ test("project search, empty state, and reset remain usable", async ({ page }) =>
 test("project controls combine search and filters, keep newest registration first, and omit redundant tab headers", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
+  await enterPortfolio(page);
   const nav = page.getByRole("navigation", { name: "Portfolio sections" });
   await nav.locator('[data-sidebar-target="projects"]').click();
   const controls = page.getByRole("search", { name: "프로젝트 검색", exact: true });
@@ -146,6 +154,7 @@ test("project controls combine search and filters, keep newest registration firs
   }
   await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
   await page.reload();
+  await enterPortfolio(page);
   await nav.locator('[data-sidebar-target="projects"]').click();
   await expect(page.getByRole("combobox", { name: "Search projects" })).toBeVisible();
   await expect(rows.first()).toHaveAttribute("data-project-id", "20");
@@ -155,6 +164,7 @@ for (const width of [1440]) {
   test(`selecting a project preserves window and list scroll at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
+    await enterPortfolio(page);
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
     await page.locator('[data-project-id="20"]').click();
     const row = page.locator('[data-project-id="4"]');
@@ -174,6 +184,7 @@ for (const width of [1440]) {
 test("selecting another project resets only the detail scroll", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
+  await enterPortfolio(page);
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
   await page.locator('[data-project-id="16"]').click();
   const detail = page.locator(".portfolio-detail-pane");
@@ -194,6 +205,7 @@ test("selecting another project resets only the detail scroll", async ({ page })
 test("mobile layout exposes every portfolio destination without page overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  await enterPortfolio(page);
 
   const navigation = page.getByRole("navigation", { name: "Portfolio sections" });
   await expect(navigation.getByRole("button")).toHaveCount(5);
@@ -222,6 +234,7 @@ test("company projects remain accessible after removing the overview showcase", 
   const urls = ["https://leviosa.ai.kr/agency/detail-page/new-landing", "https://yomates.ai/"];
   for (const [index, name] of names.entries()) {
     await page.goto("/");
+    await enterPortfolio(page);
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="projects"]').click();
     await page.locator(`[data-project-id="${ids[index]}"]`).click();
     await expect(page.locator(`[data-project-id="${ids[index]}"]`)).toHaveAttribute("aria-selected", "true");
@@ -237,6 +250,7 @@ test("company projects remain accessible after removing the overview showcase", 
 
 test("Leviosa experience includes contributions and results in both languages", async ({ page }, testInfo) => {
   await page.goto("/");
+  await enterPortfolio(page);
   const nav = page.getByRole("navigation", { name: "Portfolio sections" });
   await nav.locator('[data-sidebar-target="experience"]').click();
   const company = page.locator(".portfolio-timeline-card").filter({ hasText: "Leviosa AI" });
@@ -246,6 +260,7 @@ test("Leviosa experience includes contributions and results in both languages", 
   await page.screenshot({ path: testInfo.outputPath("leviosa-experience.png") });
   await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
   await page.reload();
+  await enterPortfolio(page);
   await nav.locator('[data-sidebar-target="about"]').click();
   await expect(page.locator(".profile-panel h2")).toHaveText(["Development tools", "Skills", "Experience", "AI"]);
   await expect(page.locator(".profile-languages dd")).toHaveText(["Native", "Advanced", "Advanced"]);
@@ -257,10 +272,12 @@ test("Leviosa experience includes contributions and results in both languages", 
 
 test("saved language and resume work with five portfolio tabs", async ({ page }) => {
   await page.goto("/");
+  await enterPortfolio(page);
   const navigation = page.getByRole("navigation", { name: "Portfolio sections" });
 
   await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
   await page.reload();
+  await enterPortfolio(page);
   await expect(page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="about"]')).toContainText("Overview");
 
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="resume"]').click();
@@ -270,6 +287,7 @@ test("saved language and resume work with five portfolio tabs", async ({ page })
 
 test("portfolio minimizes, restores, closes, and reopens on the new runtime", async ({ page }) => {
   await page.goto("/");
+  await enterPortfolio(page);
   const window = page.locator(".dos-window").filter({ has: page.locator(".portfolio-os-app") });
   await expect(window.getByRole("heading", { name: "김동욱", exact: true })).toBeVisible();
   await window.getByRole("button", { name: "Minimize", exact: true }).click();
@@ -285,6 +303,7 @@ test("portfolio minimizes, restores, closes, and reopens on the new runtime", as
 test("design board and portfolio share the main/sub palette", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
+  await enterPortfolio(page);
   const navigation = page.getByRole("navigation", { name: "Portfolio sections" });
   await expect(navigation.locator("button span").first()).toHaveCSS("font-size", "14px");
   await expect(navigation.locator('[aria-current="page"]')).toHaveCSS("background-color", "rgb(124, 159, 229)");
@@ -305,6 +324,7 @@ for (const width of [1440, 1024, 390]) {
   test(`profile panels fit the reading pane at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: width === 1440 ? 900 : 1000 });
     await page.goto("/");
+    await enterPortfolio(page);
     const pane = page.locator(".profile-overview");
     await expect(pane).toBeVisible();
     expect(await pane.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThan(2);

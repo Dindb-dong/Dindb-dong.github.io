@@ -132,16 +132,16 @@ test("cleanup still finishes if only the ready fade animation is paused", async 
   await enterWhenReady(page);
 });
 
-test("first visit waits for entry and repeat visits preserve language", async ({ page, context }) => {
+test("every visit waits for WELCOME entry and preserves language", async ({ page, context }) => {
   await page.goto("/?ln=ko", { waitUntil: "commit" });
   await enterWhenReady(page);
   const data = barrier();
   await page.route("**/portfolio/data/projectDetails.json", async route => { await data.wait; await route.continue(); });
   try {
     await page.reload({ waitUntil: "commit" });
-    await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+    await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
     await expect(greeting(page).locator("svg")).toBeHidden();
-    await expectVisibleLoadingMessage(page);
+    await expect(page.locator("#boot-log")).toBeVisible();
   } finally {
     data.release();
   }
@@ -150,10 +150,10 @@ test("first visit waits for entry and repeat visits preserve language", async ({
   await revisit.goto("/?ln=en");
   await enterWhenReady(revisit);
   await expect(heading(revisit)).toHaveText("Kim Dong Wook");
-  await expect(revisit.locator("html")).toHaveAttribute("data-hello", "skip");
+  await expect(revisit.locator("html")).toHaveAttribute("data-hello", "write");
 });
 
-test("reduced motion skips the terminal and records the visit", async ({ page }) => {
+test("reduced motion skips log animation but still waits for WELCOME on every visit", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const data = barrier();
   await page.route("**/portfolio/data/projectDetails.json", async route => { await data.wait; await route.continue(); });
@@ -166,15 +166,15 @@ test("reduced motion skips the terminal and records the visit", async ({ page })
   }
   await enterWhenReady(page);
   await expect(heading(page)).toHaveText("Kim Dong Wook");
-  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBe("1");
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBeNull();
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.reload();
   await enterWhenReady(page);
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
 });
 
-test("denied storage skips the terminal and preserves navigation", async ({ page }) => {
+test("denied storage still shows WELCOME and preserves navigation", async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, "localStorage", { get() { throw new DOMException("Denied", "SecurityError"); } });
   });
@@ -183,12 +183,12 @@ test("denied storage skips the terminal and preserves navigation", async ({ page
   try {
     await page.goto("/?ln=ko", { waitUntil: "commit" });
     await expect(greeting(page).locator("svg")).toBeHidden();
-    await expectVisibleLoadingMessage(page);
+    await expect(page.locator("#boot-log")).toBeVisible();
   } finally {
     data.release();
   }
   await enterWhenReady(page);
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
   await page.locator('[data-sidebar-target="projects"]').first().click();
   await expect(page.getByRole("combobox", { name: "프로젝트 검색" })).toBeVisible();
 });
@@ -277,41 +277,26 @@ test("JavaScript-disabled visitors can open the existing static resume", async (
   }
 });
 
-test("intro=1 replays on every reload without changing an existing visit flag", async ({ page }) => {
+test("legacy visit flags and intro parameters never skip WELCOME", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("portfolio-hello-seen", "existing"));
-  await page.goto("/?ln=en&intro=1");
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
-  await enterWhenReady(page);
-  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBe("existing");
-  await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
-  await enterWhenReady(page);
-  await page.goto("/?intro=0");
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
-  await enterWhenReady(page);
+  for (const url of ["/?ln=en", "/?intro=0", "/?intro=1"]) {
+    await page.goto(url);
+    await expect(greeting(page)).toHaveAttribute("data-phase", "welcome");
+    await expect(page.locator("#app")).toHaveAttribute("inert", "");
+    await enterWhenReady(page);
+    expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBe("existing");
+  }
 });
 
-test("intro=1 does not consume a fresh first visit", async ({ page }) => {
-  await page.goto("/?intro=1");
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
-  await enterWhenReady(page);
-  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBeNull();
-  await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
-  await enterWhenReady(page);
-  expect(await page.evaluate(() => localStorage.getItem("portfolio-hello-seen"))).toBe("1");
-});
-
-test("intro=1 works without storage and still respects reduced motion", async ({ page }) => {
+test("WELCOME works without storage and still respects reduced motion", async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, "localStorage", { get() { throw new DOMException("Denied", "SecurityError"); } });
   });
-  await page.goto("/?intro=1");
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "write");
-  await enterWhenReady(page);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-hello", "skip");
+  await page.goto("/");
+  await expect(greeting(page)).toHaveAttribute("data-phase", "welcome");
+  await expect(page.locator("#startup-enter span")).toHaveCSS("animation-name", "none");
+  await expect(page.locator("#app")).toHaveAttribute("inert", "");
   await enterWhenReady(page);
 });
 

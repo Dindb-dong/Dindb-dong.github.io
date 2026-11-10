@@ -1,3 +1,4 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from '@playwright/test';
 
 test.use({ video: { mode: 'on', size: { width: 1440, height: 900 } } });
@@ -27,6 +28,7 @@ function choice(page, mode, name) {
 test('desktop menu and Settings preserve project state, independent choices and reload', async ({ page }, info) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?device=windows&ln=en&intro=0');
+  await enterPortfolio(page);
   const root = page.locator('#app');
   await expect(root).toHaveAttribute('aria-busy', 'false');
   await expect(root).toHaveAttribute('data-ui-style', 'macos');
@@ -54,6 +56,7 @@ test('desktop menu and Settings preserve project state, independent choices and 
   await expect(root).toHaveAttribute('data-ui-style', 'android');
   await expect(picker).toHaveValue(/DindbOS/);
   await page.reload();
+  await enterPortfolio(page);
   await expect(root).toHaveAttribute('aria-busy', 'false');
   await expect(root).toHaveAttribute('data-ui-style', 'android');
   await settings(page, true);
@@ -67,6 +70,7 @@ test('desktop menu and Settings preserve project state, independent choices and 
 test('mobile menu and Settings switch both ways, retain landscape choice and fit 320px', async ({ page }, info) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/?device=android&ln=en&intro=0');
+  await enterPortfolio(page);
   const root = page.locator('#app');
   await expect(root).toHaveAttribute('aria-busy', 'false');
   await expect(root).toHaveAttribute('data-ui-style', 'ios');
@@ -94,6 +98,7 @@ test('mobile menu and Settings switch both ways, retain landscape choice and fit
   await page.setViewportSize({ width: 844, height: 390 });
   await expect(root).toHaveAttribute('data-ui-style', 'windows');
   await page.reload();
+  await enterPortfolio(page);
   await expect(root).toHaveAttribute('aria-busy', 'false');
   await expect(root).toHaveAttribute('data-ui-style', 'windows');
   await page.setViewportSize({ width: 390, height: 844 });
@@ -115,6 +120,7 @@ test('invalid saved preferences and denied storage retain a working automatic de
   });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?device=windows&ln=en&intro=0');
+  await enterPortfolio(page);
   const root = page.locator('#app');
   await expect(root).toHaveAttribute('aria-busy', 'false');
   await expect(root).toHaveAttribute('data-ui-style', 'macos');
@@ -139,6 +145,7 @@ test('failed Automatic reset reports session-only state before reload restores s
   });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?device=windows&ln=en&intro=0');
+  await enterPortfolio(page);
   const root = page.locator('#app');
   await expect(root).toHaveAttribute('aria-busy', 'false');
   await expect(root).toHaveAttribute('data-ui-style', 'windows');
@@ -149,6 +156,7 @@ test('failed Automatic reset reports session-only state before reload restores s
   await expect(page.locator('[data-ui-preference-status]')).toContainText('reloading may restore the previous choice');
   expect(await page.evaluate(() => localStorage.getItem('dindbos:vfs:dindbos-portfolio-runtime:ui-style'))).toBe('{"desktop":"windows"}');
   await page.reload();
+  await enterPortfolio(page);
   await expect(root).toHaveAttribute('aria-busy', 'false');
   await expect(root).toHaveAttribute('data-ui-style', 'windows');
 });
@@ -156,6 +164,7 @@ test('failed Automatic reset reports session-only state before reload restores s
 test('Settings controls survive storage rerenders and close/reopen cleanup', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?device=windows&ln=en&intro=0');
+  await enterPortfolio(page);
   await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false');
   await settings(page);
   await choice(page, 'Desktop', 'Windows').click();

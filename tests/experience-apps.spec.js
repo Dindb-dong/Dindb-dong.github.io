@@ -1,3 +1,4 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 
 const apps = [
@@ -7,6 +8,7 @@ const apps = [
 
 async function openExperience(page, id) {
   await page.goto("/");
+  await enterPortfolio(page);
   await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="experience"]').click();
   await page.locator(`[data-experience-open="${id}"]`).first().click();
   const app = page.locator(`.experience-app[data-experience-app="${id}"]`);
@@ -85,7 +87,7 @@ test("experience viewer supports keyboard, state, and multiple apps", async ({ p
   await expect(page.locator('.experience-app[data-experience-app="1"]')).toHaveCount(1);
   await expect(app.locator('[data-experience-case="19"]')).toBeVisible();
   await window.getByRole("button", { name: "Close", exact: true }).click();
-  await page.getByRole("button", { name: "Focus YAI.app", exact: true }).click();
+  await expect(yai).toBeVisible();
   await yai.locator("[data-dropdown-trigger]").click();
   await yai.getByRole("option", { name: "Leviosa-AI.app", exact: true }).click();
   await expect(app).toHaveAttribute("data-experience-tab-active", "role");
@@ -201,7 +203,11 @@ for (const width of [1440, 390]) {
     await expect(page.locator('.experience-app[data-experience-app="2"]')).toBeVisible();
     await expect(menu).not.toBeVisible();
     // Closing an app with an open menu must remove the top-layer popup too.
-    await page.getByRole('button', { name: 'Focus Leviosa-AI.app', exact: true }).click();
+    const other = page.locator('.experience-app[data-experience-app="2"]');
+    await other.locator('[data-dropdown-trigger]').click();
+    await other.getByRole('option', { name: 'Leviosa-AI.app', exact: true }).click();
+    // Native mobile shells have no window close control; test owner cleanup on desktop.
+    await page.setViewportSize({ width: 1440, height: 900 });
     await trigger.click();
     await page.locator('.dos-window').filter({ has: app }).getByRole('button', { name: 'Close', exact: true }).click();
     await expect(page.locator('.app-dropdown-menu:popover-open')).toHaveCount(0);
