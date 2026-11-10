@@ -1,3 +1,4 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 
 test.use({ hasTouch: true, isMobile: true });
@@ -20,6 +21,7 @@ for (const width of [320, 390, 430]) {
   test(`portfolio bottom tabs have reachable touch targets at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/");
+    await enterPortfolio(page);
     const app = page.locator(".portfolio-os-app");
     const nav = app.getByRole("navigation", { name: "Portfolio sections" });
     await expect(nav.getByRole("button")).toHaveCount(5);
@@ -34,6 +36,7 @@ for (const width of [320, 390, 430]) {
     await page.screenshot({ path: testInfo.outputPath(`portfolio-touch-${width}.png`) });
     await page.evaluate(() => localStorage.setItem("dindbos-language", "en"));
     await page.reload();
+    await enterPortfolio(page);
     await assertTouchTarget(nav.locator('[data-sidebar-target="projects"]'), page);
     await expect(page.getByRole("combobox", { name: "Search projects" })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath(`portfolio-english-${width}.png`) });
@@ -44,6 +47,7 @@ for (const [id, name] of [[1, "Leviosa-AI"], [2, "Alus-Healthcare"], [3, "YAI"],
   test(`${name} mobile tabs switch with real touch input`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
+    await enterPortfolio(page);
     await page.getByRole("navigation", { name: "Portfolio sections" }).locator('[data-sidebar-target="experience"]').tap();
     await page.locator(`[data-experience-open="${id}"]`).first().tap();
     const app = page.locator(`.experience-app[data-experience-app="${id}"]`);

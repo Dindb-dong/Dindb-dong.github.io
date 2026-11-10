@@ -1,9 +1,11 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 
 for (const width of [320, 390, 1440]) {
   test(`profile and five-tab navigation follow the requested edits at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
+    await enterPortfolio(page);
     const nav = page.getByRole("navigation", { name: "Portfolio sections" });
     await expect(nav.getByRole("button")).toHaveCount(5);
     await expect(nav.locator('[data-sidebar-target="settings"], [data-sidebar-target="contact"]')).toHaveCount(0);
@@ -24,6 +26,7 @@ for (const width of [390, 1440]) {
   test(`project popup combines sort, categories, tags and reset at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
+    await enterPortfolio(page);
     await page.locator('nav [data-sidebar-target="projects"]').click();
     const button = page.getByRole("button", { name: "필터", exact: true });
     const popup = page.getByRole("dialog", { name: "필터", exact: true });
@@ -57,6 +60,7 @@ test("mobile searchable selector replaces separate dropdown, search and count ro
   const page = await context.newPage();
   try {
     await page.goto("/");
+    await enterPortfolio(page);
     await page.locator('nav [data-sidebar-target="projects"]').tap();
     const picker = page.getByRole("combobox", { name: "프로젝트 검색", exact: true });
     await expect(page.locator(".portfolio-project-list")).toBeVisible();
@@ -96,6 +100,7 @@ test("mobile searchable selector replaces separate dropdown, search and count ro
 
 test("skill filters appear in the popup and overview project links clear previous filters", async ({ page }) => {
   await page.goto("/");
+  await enterPortfolio(page);
   const nav = page.getByRole("navigation", { name: "Portfolio sections" });
   await nav.locator('[data-sidebar-target="skills"]').click();
   await page.getByRole("button", { name: "Python", exact: true }).click();
@@ -114,6 +119,7 @@ test("skill filters appear in the popup and overview project links clear previou
 test("searchable selector supports keyboard selection, dismissal and empty-result recovery", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  await enterPortfolio(page);
   await page.locator('nav [data-sidebar-target="projects"]').click();
   const input = page.getByRole("combobox", { name: "프로젝트 검색", exact: true });
   await input.fill("Yomates");
@@ -139,6 +145,7 @@ for (const width of [390, 1440]) {
   test(`selected project returns to all and filters browse the entire source at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
+    await enterPortfolio(page);
     await page.locator('nav [data-sidebar-target="projects"]').click();
     const picker = page.getByRole("combobox", { name: "프로젝트 검색", exact: true });
     const list = page.locator(".portfolio-project-list");

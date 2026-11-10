@@ -1,3 +1,4 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 
@@ -9,6 +10,7 @@ for (const locale of ["ko", "en"]) {
   test(`${locale} every project retains its text with selected topic and role emphasis`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`/?ln=${locale}`);
+    await enterPortfolio(page);
     await page.locator('nav [data-sidebar-target="projects"]').click();
     for (const [id, project] of Object.entries(projects)) {
       await page.locator(`[data-project-id="${id}"]`).click();
@@ -25,6 +27,7 @@ for (const locale of ["ko", "en"]) {
     await page.setViewportSize({ width: 1440, height: 900 });
     for (const experience of experiences) {
       await page.goto(`/?ln=${locale}`);
+      await enterPortfolio(page);
       await page.locator('nav [data-sidebar-target="experience"]').click();
       await page.locator(`[data-experience-open="${experience.id}"]`).first().click();
       const app = page.locator(`[data-experience-app="${experience.id}"]`);
@@ -47,6 +50,7 @@ for (const locale of ["ko", "en"]) {
     test(`${locale} emphasis wraps inside ${width}px overview and experience content`, async ({ page }, testInfo) => {
       await page.setViewportSize({ width, height: 844 });
       await page.goto(`/?ln=${locale}`);
+      await enterPortfolio(page);
       await expect(page.locator(".profile-school-meta .portfolio-highlight")).toHaveText("4.00 / 4.3");
       await expect(page.locator(".profile-research .portfolio-highlight")).toHaveCSS("display", "inline");
       await expect(page.locator(".profile-research .portfolio-highlight")).toHaveCSS("font-size", "12px");
@@ -55,7 +59,7 @@ for (const locale of ["ko", "en"]) {
       await page.locator('[data-experience-open="1"]').first().click();
       const app = page.locator('[data-experience-app="1"]');
       const markers = app.locator(".experience-responsibilities .portfolio-highlight");
-      await expect(markers).toHaveCount(4);
+      await expect(markers).toHaveCount(6);
       await expect(markers.first()).toHaveCSS("box-decoration-break", "clone");
       expect(await app.locator(".experience-main").evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
       for (const marker of await markers.all()) {

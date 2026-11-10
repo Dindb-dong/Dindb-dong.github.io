@@ -1,127 +1,112 @@
 import { expect, test } from "@playwright/test";
+import { enterPortfolio } from "./enter-portfolio.js";
+
+test.use({ video: { mode: "on", size: { width: 390, height: 844 } } });
 
 const androidUA = "Mozilla/5.0 (Linux; Android 14; SM-S921B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/27.0 Chrome/125.0.0.0 Mobile Safari/537.36";
 
-// Desktop Chrome here rejects even a minimal native fullscreen request; model success separately.
-async function modelFullscreen(page) {
-  await page.addInitScript(() => {
+// Model native success: this desktop runner cannot verify Android system bars.
+async function modelFullscreen(page, mode = "success", platform = "Android") {
+  await page.addInitScript(({ mode, platform }) => {
+    window.fullscreenRequests = [];
+    Object.defineProperty(navigator, "userAgentData", { value: platform ? { platform } : undefined });
     let active = null;
-    Object.defineProperty(document, "fullscreenElement", { get: () => active });
-    Element.prototype.requestFullscreen = async function (options) {
-      window.fullscreenRequest = { options, activated: navigator.userActivation.isActive };
+    Object.defineProperty(document, "fullscreenElement", { get: () => mode === "active" ? document.documentElement : active });
+    Object.defineProperty(document, "fullscreenEnabled", { value: mode !== "policy" });
+    Element.prototype.requestFullscreen = mode === "missing" ? undefined : function (options) {
+      window.fullscreenRequests.push({ options, activated: navigator.userActivation.isActive, busy: document.getElementById("app").getAttribute("aria-busy") });
+      if (mode === "throw") throw new TypeError("Denied");
+      if (mode === "reject") return Promise.reject(new TypeError("Denied"));
+      if (mode === "pending") return new Promise(() => {});
       active = this;
       document.dispatchEvent(new Event("fullscreenchange"));
+      return Promise.resolve();
     };
-    document.exitFullscreen = async () => {
-      active = null;
-      document.dispatchEvent(new Event("fullscreenchange"));
-    };
-  });
+    document.exitFullscreen = async () => { active = null; document.dispatchEvent(new Event("fullscreenchange")); };
+  }, { mode, platform });
 }
 
-test.describe("Android fullscreen", () => {
-  test.use({ userAgent: androidUA, viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
-  test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => Object.defineProperty(navigator, "userAgentData", { value: { platform: "Android" } }));
-  });
+async function ready(page) {
+  await expect(page.locator("#portfolio-startup")).toHaveAttribute("data-phase", "welcome");
+  await expect(page.locator("#app")).toHaveAttribute("aria-busy", "true");
+  expect(await page.evaluate(() => window.fullscreenRequests)).toEqual([]);
+}
 
-  test("removes the suggestion on modeled fullscreen entry and never restores it on exit", async ({ page }, info) => {
+async function entered(page) {
+  await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator("#portfolio-startup")).toHaveCount(0);
+  await expect(page.locator(".portfolio-display-controls, .portfolio-fullscreen")).toHaveCount(0);
+  expect((await page.locator("#app").boundingBox()).y).toBe(0);
+}
+
+test.describe("Android WELCOME fullscreen", () => {
+  test.use({ userAgent: androidUA, viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+
+  test("touching WELCOME requests fullscreen during the gesture and opens the portfolio on every visit", async ({ page }, info) => {
     await modelFullscreen(page);
-    await page.goto("/?intro=0&ln=ko");
-    await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
-    const button = page.getByRole("button", { name: "전체화면", exact: true });
-    await expect(button).toBeVisible();
-    expect(await page.evaluate(() => document.fullscreenElement)).toBeNull();
-    const bounds = await button.boundingBox();
-    expect(bounds.height).toBeGreaterThanOrEqual(44);
-    expect((await page.locator("#app").boundingBox()).y).toBeGreaterThanOrEqual(bounds.y + bounds.height);
-    await page.screenshot({ path: info.outputPath("android-before.png") });
-    await button.tap();
-    await expect(page.locator(".portfolio-display-controls")).toHaveCount(0);
-    expect((await page.locator("#app").boundingBox()).y).toBe(0);
-    expect(await page.evaluate(() => document.fullscreenElement === document.documentElement)).toBe(true);
-    expect(await page.evaluate(() => window.fullscreenRequest)).toEqual({ options: { navigationUI: "hide" }, activated: true });
+    await page.goto("/?ln=ko");
+    await ready(page);
+    await page.screenshot({ path: info.outputPath("welcome-before-entry.png") });
+    await page.touchscreen.tap(30, 40);
+    await entered(page);
+    expect(await page.evaluate(() => window.fullscreenRequests)).toEqual([{ options: { navigationUI: "hide" }, activated: true, busy: "true" }]);
+    await page.screenshot({ path: info.outputPath("portfolio-after-entry.png") });
+    await page.evaluate(() => document.exitFullscreen());
     await page.locator('[data-sidebar-target="projects"]').tap();
     await expect(page.getByRole("combobox")).toBeVisible();
-    await page.screenshot({ path: info.outputPath("android-fullscreen.png") });
-    await page.evaluate(() => document.exitFullscreen());
-    await expect(page.locator(".portfolio-display-controls")).toHaveCount(0);
+    expect(await page.evaluate(() => window.fullscreenRequests.length)).toBe(1);
+    await page.reload();
+    await ready(page);
+    await page.touchscreen.tap(30, 40);
+    await entered(page);
+    expect(await page.evaluate(() => window.fullscreenRequests.length)).toBe(1);
   });
 
-  test("fits 320px and landscape with English labels", async ({ page }) => {
-    await page.setViewportSize({ width: 320, height: 844 });
-    await page.goto("/?intro=0&ln=en");
-    await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
-    const button = page.getByRole("button", { name: "Fullscreen", exact: true });
-    await expect(button).toBeInViewport({ ratio: 1 });
-    await expect(page.getByRole("button", { name: "Dismiss fullscreen suggestion" })).toBeInViewport({ ratio: 1 });
-    await page.setViewportSize({ width: 844, height: 390 });
-    await expect(button).toBeInViewport({ ratio: 1 });
-    expect(await page.evaluate(() => document.body.scrollWidth <= innerWidth)).toBe(true);
-  });
-
-  test("dismisses immediately and gives the reserved space back to the OS", async ({ page }) => {
-    await page.goto("/?intro=0&ln=en");
-    await page.getByRole("button", { name: "Dismiss fullscreen suggestion" }).tap();
-    await expect(page.locator(".portfolio-display-controls")).toHaveCount(0);
-    expect((await page.locator("#app").boundingBox()).y).toBe(0);
-  });
-
-  test("automatically disappears after ten seconds without interaction", async ({ page }) => {
-    await page.clock.install();
-    await page.goto("/?intro=0&ln=en");
-    await expect(page.getByRole("button", { name: "Fullscreen", exact: true })).toBeVisible();
-    await page.clock.fastForward(10_001);
-    await expect(page.locator(".portfolio-display-controls")).toHaveCount(0);
-    expect((await page.locator("#app").boundingBox()).y).toBe(0);
-  });
-
-  test("waits for the welcome screen to finish before showing the suggestion", async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: "no-preference" });
-    await page.goto("/?intro=1&ln=en");
-    await expect(page.locator("#startup-enter")).toBeVisible();
-    await expect(page.locator(".portfolio-display-controls")).toHaveCount(0);
-    await page.locator("#startup-enter").tap();
-    await expect(page.getByRole("button", { name: "Fullscreen", exact: true })).toBeVisible();
-  });
-
-  for (const unavailable of ["policy", "method"]) {
-    test(`hides control when ${unavailable} prevents fullscreen`, async ({ page }) => {
-      await page.addInitScript(reason => {
-        if (reason === "policy") Object.defineProperty(document, "fullscreenEnabled", { value: false });
-        else Element.prototype.requestFullscreen = undefined;
-      }, unavailable);
-      await page.goto("/?intro=0");
-      await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
-      await expect(page.locator(".portfolio-display-controls")).toHaveCount(0);
+  for (const mode of ["reject", "throw", "pending", "policy", "missing", "active"]) {
+    test(`${mode} fullscreen still allows normal entry`, async ({ page }) => {
+      const errors = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await modelFullscreen(page, mode);
+      await page.goto("/");
+      await ready(page);
+      await page.touchscreen.tap(30, 40);
+      await entered(page);
+      expect(await page.evaluate(() => window.fullscreenRequests.length)).toBe(["policy", "missing", "active"].includes(mode) ? 0 : 1);
+      expect(errors).toEqual([]);
     });
   }
 
-  test("reports rejection without breaking the portfolio or leaving the button disabled", async ({ page }) => {
-    await page.addInitScript(() => {
-      Element.prototype.requestFullscreen = () => Promise.reject(new TypeError("Fullscreen denied"));
-    });
-    await page.goto("/?intro=0&ln=en");
-    await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
-    const button = page.getByRole("button", { name: "Fullscreen", exact: true });
-    await button.tap();
-    await expect(page.locator(".portfolio-display-controls [role=status]")).toHaveText("The browser did not allow fullscreen.");
-    await expect(button).toBeEnabled();
-    await page.locator('[data-sidebar-target="projects"]').tap();
-    await expect(page.getByRole("combobox")).toBeVisible();
+  test("Android user-agent fallback works without client hints", async ({ page }) => {
+    await modelFullscreen(page, "success", null);
+    await page.goto("/");
+    await enterPortfolio(page);
+    expect(await page.evaluate(() => window.fullscreenRequests.length)).toBe(1);
+  });
+
+  test("touches before readiness never request fullscreen", async ({ page }) => {
+    await modelFullscreen(page);
+    let release;
+    const wait = new Promise(resolve => { release = resolve; });
+    await page.route("**/portfolio/data/projectDetails.json", async route => { await wait; await route.continue(); });
+    try {
+      await page.goto("/", { waitUntil: "commit" });
+      await page.touchscreen.tap(30, 40);
+      expect(await page.evaluate(() => window.fullscreenRequests)).toEqual([]);
+    } finally { release(); }
+    await ready(page);
+    await page.touchscreen.tap(30, 40);
+    await entered(page);
+    expect(await page.evaluate(() => window.fullscreenRequests.length)).toBe(1);
   });
 });
 
-for (const [platform, userAgent] of [
-  ["iOS", "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1"],
-  ["Windows", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36"],
-]) {
-  test(`hides control on ${platform} even with an Android style preview`, async ({ browser, baseURL }) => {
-    const context = await browser.newContext({ userAgent, viewport: { width: 390, height: 844 } });
-    const page = await context.newPage();
-    await page.goto(`${baseURL}/?device=android&intro=0`);
-    await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
-    await expect(page.locator(".portfolio-display-controls")).toHaveCount(0);
-    await context.close();
+for (const platform of ["iOS", "Windows"]) {
+  test(`${platform} WELCOME entry never requests fullscreen, even with Android style preview`, async ({ page }) => {
+    await modelFullscreen(page, "success", platform);
+    await page.goto("/?device=android");
+    await ready(page);
+    await enterPortfolio(page);
+    await entered(page);
+    expect(await page.evaluate(() => window.fullscreenRequests)).toEqual([]);
   });
 }

@@ -1,3 +1,4 @@
+import { enterPortfolio } from "./enter-portfolio.js";
 import { expect, test } from '@playwright/test';
 
 test.use({ video: { mode: 'on', size: { width: 900, height: 900 } } });
@@ -11,6 +12,7 @@ for (const [device, portrait, landscape] of [
   test(`${device} query preserves project selection across orientation`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`/?device=${device}&ln=en&intro=0`);
+    await enterPortfolio(page);
     const root = page.locator('#app');
     await expect(root).toHaveAttribute('aria-busy', 'false');
     await expect(root).toHaveAttribute('data-ui-style', portrait);
