@@ -1,13 +1,19 @@
 diff --git a/DESIGN.md b/DESIGN.md
-index 88c73ac..52ac487 100644
+index 88c73ac..f35cdaf 100644
 --- a/DESIGN.md
 +++ b/DESIGN.md
-@@ -64,3 +64,25 @@ Inspect actual desktop and mobile rendering, a narrow embedded desktop, light an
+@@ -64,3 +64,31 @@ Inspect actual desktop and mobile rendering, a narrow embedded desktop, light an
  ## Consumer Dock tokens
  
  `theme.variables` exposes `--dock-background`, `--dock-border`, `--dock-radius`, `--dock-shadow`, `--dock-gap`, `--dock-padding` and `--dock-bottom`. Omitted values preserve the existing desktop and narrow-container defaults; glass and dark appearance honor the same overrides. Reduced transparency and forced colors retain opaque readable material. This API wiring and performance maintenance do not introduce a new visual design. Wallpaper and accent use the existing appearance API; full replacement uses `ui.slots.dock`.
 +
 +## Platform shells
++
++### Visitor style controls
++
++The system menu offers a direct switch within the current UI family: macOS/Windows or iOS/Samsung. Settings → Appearance exposes Desktop UI and Mobile UI groups, each with Automatic and its two named presets. Each group remembers its own choice under the instance storage key; Automatic restores the consumer's configured selection. The configured UI determines the family during resizing/rotation, so a manual mobile preference does not replace the landscape desktop. Changes reuse the responsive shell transition and preserve open apps and drafts. Controls use existing semantic tokens, 44px targets, wrapping rows and `aria-pressed`; keyboard focus remains reachable after a transition.
++
++The editable source is the existing **DindbOS · iOS Apps · Reviewed** document, **Components / UI style switching** board with a reusable Desktop/Automatic group and linked instance. The same controls are composed inside each platform's existing Settings appearance panel. Local IDs and rendered comparison evidence remain in the private evaluation record.
 +
 +`ui.style` defaults to `auto`. macOS visitors receive Windows on wide hosts and Samsung-inspired Android on compact hosts; Windows visitors receive macOS and iOS. Detected Android visitors receive iOS in portrait and macOS in landscape; iOS/iPadOS visitors receive Samsung-inspired Android and Windows. Unknown visitors retain macOS. Desktop selection uses the760px host breakpoint; mobile orientation uses the host width/height. `ui.autoStyles` overrides any visitor's desktop/mobile defaults, explicit named styles force a preset at all sizes, and `ui.mobileStyle` optionally overrides the compact choice. Palette, wallpaper and app state remain instance-owned.
 +
@@ -1687,13 +1693,17 @@ index 0000000..3fe79ef
 +} finally { await browser.close(); }
 diff --git a/scripts/smoke-platform-styles.js b/scripts/smoke-platform-styles.js
 new file mode 100644
-index 0000000..ec9a793
+index 0000000..a13206f
 --- /dev/null
 +++ b/scripts/smoke-platform-styles.js
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,59 @@
 +import assert from "node:assert/strict";
 +import { normalizeDindbOSHostConfig, publicHostConfig } from "../src/sdk/host-config.js";
-+import { detectVisitorOS, resolveUIStyle } from "../src/dindbos/ui-style.js";
++import { detectVisitorOS, resolveUIStyle, normalizeUIStylePreference } from "../src/dindbos/ui-style.js";
++
++assert.deepEqual(normalizeUIStylePreference({ desktop: "windows", mobile: "ios" }), { desktop: "windows", mobile: "ios" });
++assert.deepEqual(normalizeUIStylePreference({ desktop: null }, { desktop: "windows", mobile: "ios" }), { mobile: "ios" });
++for (const invalid of [null, [], "macos", { desktop: "ios" }, { mobile: "macos" }, { other: "windows" }, { mobile: ["ios"] }, { desktop: undefined }]) assert.throws(() => normalizeUIStylePreference(invalid), TypeError);
 +
 +assert.equal(normalizeDindbOSHostConfig().ui.style, "auto");
 +for (const style of ["macos", "windows", "ios", "android"]) {
@@ -2063,10 +2073,33 @@ index 277bdcf..c7e2a1a 100644
      ["shell", "smoke-shell-browser.js"],
      ["control-center", "smoke-control-center-browser.js"],
 diff --git a/src/dindbos/apps/builtins.js b/src/dindbos/apps/builtins.js
-index 031b337..4cb611e 100644
+index 031b337..5df3102 100644
 --- a/src/dindbos/apps/builtins.js
 +++ b/src/dindbos/apps/builtins.js
-@@ -344,6 +344,7 @@ function renderFiles(os, content, path, windowApi, context = {}) {
+@@ -46,6 +46,13 @@ export function installBuiltinApps(os, options = {}) {
+     set: (patch) => os.setAppearance?.(patch),
+     subscribe: (listener) => os.bus?.on?.("appearance:change", listener) || (() => {}),
+   };
++  const uiStyle = {
++    get: () => os.getUIStylePreference(),
++    set: (patch) => os.setUIStylePreference(patch),
++    subscribe: (listener) => os.bus.on("ui:preference-change", listener),
++    owns: (target) => target.closest(".dindbos-host") === os.root,
++    status: () => os.memoryOnly ? "session" : os.uiStyleSaveFailed ? "failed" : "persistent",
++  };
+   const portfolioData = options.portfolioData || DEFAULT_PORTFOLIO_DATA;
+   const includePortfolio = options.includePortfolio !== false;
+   const userHome = os.session.home || "/home/guest";
+@@ -215,7 +222,7 @@ export function installBuiltinApps(os, options = {}) {
+       capabilities: ["process.read", "storage.read", "storage.manage", "package.read", "localMount.read", "localMount.manage", "service.read", "service.manage", "keychain.read", "browser.read"],
+       fileSystem: { read: ["/etc", "/proc", userHome], write: [] },
+     },
+-    render: ({ content, os: runtime, context }) => renderSettings(runtime, content, appearance, context?.section || context?.settingsSection),
++    render: ({ content, os: runtime, context }) => renderSettings(runtime, content, appearance, context?.section || context?.settingsSection, uiStyle),
+   });
+   for (const [id, name, render, width, height, accepts] of [
+     ["notes", "Notes", renderNotes, 840, 580],
+@@ -344,6 +351,7 @@ function renderFiles(os, content, path, windowApi, context = {}) {
    const navigationHistory = restoredHistory[restoredIndex] === currentPath ? restoredHistory : [currentPath];
    let navigationIndex = navigationHistory === restoredHistory ? restoredIndex : 0;
    let dismissToolbarMenus = null;
@@ -2074,7 +2107,7 @@ index 031b337..4cb611e 100644
    let disconnectColumns = null;
    let fileIconCleanups = [];
    let cancelInlineRename = () => {};
-@@ -416,8 +417,11 @@ function renderFiles(os, content, path, windowApi, context = {}) {
+@@ -416,8 +424,11 @@ function renderFiles(os, content, path, windowApi, context = {}) {
      cancelTabDrag();
      if (disposed) return;
      const generation = ++drawGeneration;
@@ -2088,7 +2121,7 @@ index 031b337..4cb611e 100644
      if (!options.skipHistory && navigationHistory[navigationIndex] !== currentPath) {
        navigationHistory.splice(navigationIndex + 1);
        navigationHistory.push(currentPath);
-@@ -425,7 +429,6 @@ function renderFiles(os, content, path, windowApi, context = {}) {
+@@ -425,7 +436,6 @@ function renderFiles(os, content, path, windowApi, context = {}) {
      }
      const activeTab = folderTabs.find((tab) => tab.id === activeTabId);
      Object.assign(activeTab, { path: currentPath, history: [...navigationHistory], historyIndex: navigationIndex });
@@ -2096,7 +2129,7 @@ index 031b337..4cb611e 100644
      selectedPath = nextSelectedPath ? os.fs.normalize(nextSelectedPath) : currentPath;
      if (!options.preserveSelection) {
        selectedPaths = new Set([selectedPath]);
-@@ -454,6 +457,7 @@ function renderFiles(os, content, path, windowApi, context = {}) {
+@@ -454,6 +464,7 @@ function renderFiles(os, content, path, windowApi, context = {}) {
      sidebar[0].items = favoriteItems();
      const activeSidebarItem = sidebar.flatMap((group) => group.items).filter((item) => isWithinPath(currentPath, item.path)).sort((a, b) => b.path.length - a.path.length)[0];
  
@@ -2104,7 +2137,7 @@ index 031b337..4cb611e 100644
      content.innerHTML = `
        <section class="files-app${inspectorOpen ? " has-inspector" : ""}" tabindex="0" data-files-view="${viewMode}" style="--app-sidebar-width:205px">
          <aside class="files-sidebar">
-@@ -471,6 +475,11 @@ function renderFiles(os, content, path, windowApi, context = {}) {
+@@ -471,6 +482,11 @@ function renderFiles(os, content, path, windowApi, context = {}) {
            `).join("")}
          </aside>
          <div class="files-main">
@@ -2116,7 +2149,7 @@ index 031b337..4cb611e 100644
            <div class="files-toolbar files-commandbar" data-window-drag role="toolbar" aria-label="File actions">
              <div class="files-history">
                <button type="button" data-files-back aria-label="Back" title="Back" ${navigationIndex === 0 ? "disabled" : ""}>${filesToolIcon("back")}</button>
-@@ -557,6 +566,66 @@ function renderFiles(os, content, path, windowApi, context = {}) {
+@@ -557,6 +573,66 @@ function renderFiles(os, content, path, windowApi, context = {}) {
      `;
      const appRoot = content.querySelector(".files-app");
      appRoot.dataset.filesPath = currentPath;
@@ -2183,7 +2216,7 @@ index 031b337..4cb611e 100644
      const registeredApps = new Map(os.apps.list().map((app) => [app.id, app]));
      fileIconCleanups = [...content.querySelectorAll("[data-files-app-icon]")].map((element) => mountAppIcon(element, registeredApps.get(element.dataset.filesAppIcon)?.icon || element.dataset.filesIconFallback || "app"));
      content.querySelectorAll("[data-files-tab]").forEach((button) => {
-@@ -1229,6 +1298,7 @@ function renderFiles(os, content, path, windowApi, context = {}) {
+@@ -1229,6 +1305,7 @@ function renderFiles(os, content, path, windowApi, context = {}) {
    });
    return () => {
      disposed = true;
@@ -2191,7 +2224,7 @@ index 031b337..4cb611e 100644
      cancelInlineRename();
      finishInitialDraw(new Error("Finder window closed before opening"));
      for (const cancel of pendingTabTransfers) cancel();
-@@ -1535,7 +1605,7 @@ export function filesActionTargets(currentPath, selectedPath, selectedPaths = []
+@@ -1535,7 +1612,7 @@ export function filesActionTargets(currentPath, selectedPath, selectedPaths = []
    return [];
  }
  
@@ -2200,7 +2233,7 @@ index 031b337..4cb611e 100644
    const normalized = os.fs.normalize(currentPath);
    const parts = normalized.split("/").filter(Boolean);
    const crumbs = [{ label: "DindbOS", path: "/" }];
-@@ -1544,6 +1614,11 @@ function renderBreadcrumb(os, currentPath) {
+@@ -1544,6 +1621,11 @@ function renderBreadcrumb(os, currentPath) {
      cursor = os.fs.join(cursor, part);
      crumbs.push({ label: part, path: cursor });
    });
@@ -2212,8 +2245,82 @@ index 031b337..4cb611e 100644
    return crumbs.map((crumb, index) => `
      <button type="button" data-nav="${escapeAttr(crumb.path)}">
        ${escapeHtml(crumb.label)}
+@@ -4558,7 +4640,7 @@ const SETTINGS_SECTIONS = [
+ 
+ const settingsCleanups = new WeakMap();
+ 
+-function renderSettings(os, content, appearance = null, requestedSection) {
++function renderSettings(os, content, appearance = null, requestedSection, uiStyle) {
+   let initialSection = requestedSection || content.querySelector(".settings-app")?.dataset.settingsActive || "appearance";
+   let navigate = null;
+   const onNavigate = (event) => {
+@@ -4576,11 +4658,28 @@ function renderSettings(os, content, appearance = null, requestedSection) {
+       <p class="settings-muted" role="status">Loading Settings…</p>
+     </section>
+   `;
+-  renderSettingsContent(os, content, appearance, () => disposed, () => initialSection).then((rendered) => {
++  renderSettingsContent(os, content, appearance, () => disposed, () => initialSection, uiStyle).then((rendered) => {
+     if (disposed) { rendered?.cleanup(); return; }
+     navigate = rendered.select;
+     const appearanceCleanup = appearance ? wireAppearanceControls(content, appearance) : () => {};
+-    unsubscribe = () => { appearanceCleanup(); rendered.cleanup(); };
++    const updateUI = () => {
++      const preference = uiStyle.get();
++      for (const button of content.querySelectorAll("[data-ui-preference-mode]")) button.setAttribute("aria-pressed", String((preference[button.dataset.uiPreferenceMode] || "auto") === button.dataset.uiPreferenceStyle));
++      content.querySelector("[data-ui-preference-status]").textContent = uiStyle.status() === "failed"
++        ? "Changed for this session. Browser storage could not save your choice; reloading may restore the previous choice."
++        : uiStyle.status() === "session" ? "Applies to this session. Automatic uses the configured defaults."
++          : "Remembered in this browser. Automatic uses the configured defaults.";
++    };
++    const onUI = (event) => {
++      const button = event.target.closest("[data-ui-preference-mode]");
++      if (!button || !content.contains(button) || !uiStyle.owns(button)) return;
++      uiStyle.set({ [button.dataset.uiPreferenceMode]: button.dataset.uiPreferenceStyle === "auto" ? null : button.dataset.uiPreferenceStyle });
++      if (button.isConnected) button.focus({ preventScroll: true });
++    };
++    updateUI();
++    content.addEventListener("click", onUI);
++    const unsubscribeUI = uiStyle.subscribe(updateUI);
++    unsubscribe = () => { appearanceCleanup(); unsubscribeUI(); content.removeEventListener("click", onUI); rendered.cleanup(); };
+   }).catch((error) => {
+     if (disposed) return;
+     content.innerHTML = `
+@@ -4593,7 +4692,7 @@ function renderSettings(os, content, appearance = null, requestedSection) {
+   return () => { settingsCleanups.get(content)?.(); settingsCleanups.delete(content); };
+ }
+ 
+-async function renderSettingsContent(os, content, appearance, isDisposed = () => false, initialSection = "appearance") {
++async function renderSettingsContent(os, content, appearance, isDisposed = () => false, initialSection = "appearance", uiStyle) {
+   const snapshot = await settingsRuntimeSnapshot(os);
+   if (isDisposed()) return;
+   const sectionPrefix = content.dataset.settingsPrefix ||= `settings-${Math.random().toString(36).slice(2, 9)}`;
+@@ -4683,7 +4782,7 @@ async function renderSettingsContent(os, content, appearance, isDisposed = () =>
+           await os.resolveRemoteSyncConflict(button.dataset.conflictPath, { action: button.dataset.syncAction });
+         }
+       } finally {
+-        renderSettings(os, content, appearance);
++        renderSettings(os, content, appearance, undefined, uiStyle);
+       }
+     });
+   });
+@@ -4772,6 +4871,15 @@ export function settingsRuntimeMarkup(snapshot, appearance = {}, prefix = "setti
+           <div><h2 tabindex="-1">System Settings</h2><p>Personalize your desktop and manage your environment.</p></div>
+         </header>
+         <section class="settings-section is-active" id="${escapeAttr(prefix)}-section-appearance" data-settings-section="appearance" role="tabpanel" aria-labelledby="${escapeAttr(prefix)}-tab-appearance">
++          <section class="settings-panel ui-style-settings" aria-label="UI style">
++            <header><h3>UI style</h3></header>
++            <p>Choose each layout. Open apps stay in place.</p>
++            ${[["desktop", "Desktop UI", [["macos", "macOS"], ["windows", "Windows"]]], ["mobile", "Mobile UI", [["ios", "iOS"], ["android", "Samsung"]]]].map(([mode, label, styles]) => `
++              <div class="ui-style-setting-row"><strong>${label}</strong><div class="ui-style-buttons" role="group" aria-label="${label}">
++                ${[["auto", "Automatic"], ...styles].map(([style, title]) => `<button type="button" data-ui-preference-mode="${mode}" data-ui-preference-style="${style}" aria-pressed="${style === "auto"}">${title}</button>`).join("")}
++              </div></div>`).join("")}
++            <p data-ui-preference-status role="status">Automatic uses the configured defaults.</p>
++          </section>
+           ${appearanceMarkup(appearance, { wallpaper: false, dock: false })}
+         </section>
+         <section class="settings-section" id="${escapeAttr(prefix)}-section-wallpaper" data-settings-section="wallpaper" role="tabpanel" aria-labelledby="${escapeAttr(prefix)}-tab-wallpaper" hidden>
 diff --git a/src/dindbos/desktop-shell.js b/src/dindbos/desktop-shell.js
-index 189d1eb..5c66f17 100644
+index 189d1eb..b8d2426 100644
 --- a/src/dindbos/desktop-shell.js
 +++ b/src/dindbos/desktop-shell.js
 @@ -1,3 +1,8 @@
@@ -2233,7 +2340,12 @@ index 189d1eb..5c66f17 100644
      root.innerHTML = `
        <main class="dos-shell">
          <header class="dos-menubar"></header>
-@@ -64,9 +70,38 @@ export class DesktopShell {
+@@ -61,12 +67,48 @@ export class DesktopShell {
+       if (this.activePanel === "controls") this.panels.updateControls();
+     });
+     if (typeof unsubscribe === "function") this.cleanups.push(unsubscribe);
++    const unsubscribeUI = this.os.bus?.on?.("ui:preference-change", () => this.updateStyle());
++    if (typeof unsubscribeUI === "function") this.cleanups.push(unsubscribeUI);
      this.clockTimer = globalThis.setInterval(() => this.tickClock(), 1000);
      this.clockTimer.unref?.();
      this.tickClock();
@@ -2248,10 +2360,15 @@ index 189d1eb..5c66f17 100644
    }
  
 +  updateStyle() {
-+    const style = resolveUIStyle(this.styleOptions, this.root.clientWidth || 1024, this.root.clientHeight || 768, this.root.ownerDocument?.defaultView?.navigator);
++    const configured = resolveUIStyle(this.styleOptions, this.root.clientWidth || 1024, this.root.clientHeight || 768, this.root.ownerDocument?.defaultView?.navigator);
++    const mode = ["ios", "android"].includes(configured) ? "mobile" : "desktop";
++    const style = this.os.getUIStylePreference?.()[mode] || configured;
 +    if (this.currentStyle === style) return;
++    const mobilePanes = ["ios", "android"].includes(this.currentStyle) && ["ios", "android"].includes(style)
++      ? [...this.root.querySelectorAll(".dos-window[data-mobile-pane]")].filter(frame => frame.closest(".dindbos-host") === this.root).map(frame => [frame, frame.dataset.mobilePane]) : [];
 +    this.closePanel(false);
 +    this.styleCleanup?.();
++    for (const [frame, pane] of mobilePanes) frame.dataset.mobilePane = pane;
 +    this.styleCleanup = null;
 +    const initial = !this.currentStyle;
 +    this.currentStyle = style;
@@ -2272,7 +2389,7 @@ index 189d1eb..5c66f17 100644
    listen(target, name, handler, options) {
      target?.addEventListener?.(name, handler, options);
      this.cleanups.push(() => target?.removeEventListener?.(name, handler, options));
-@@ -156,10 +191,19 @@ export class DesktopShell {
+@@ -156,10 +198,19 @@ export class DesktopShell {
  
    renderDesktop() {
      const desktopPath = this.os.session.desktopPath || this.os.fs.join(this.os.session.home, "Desktop");
@@ -2294,7 +2411,7 @@ index 189d1eb..5c66f17 100644
      });
      this.renderSlot("desktop", { entries }, () => this.renderer.renderDesktop(entries));
    }
-@@ -327,6 +371,10 @@ export class DesktopShell {
+@@ -327,6 +378,10 @@ export class DesktopShell {
      if (this.clockTimer) globalThis.clearInterval(this.clockTimer);
      this.clockTimer = null;
      attempt(() => this.closePanel(false));
@@ -2305,14 +2422,77 @@ index 189d1eb..5c66f17 100644
      const cleanups = [...this.cleanups.splice(0), ...this.slotCleanups.values()];
      this.slotCleanups.clear();
      for (const cleanup of cleanups) attempt(cleanup);
+diff --git a/src/dindbos/index.js b/src/dindbos/index.js
+index 89fa083..b0e596c 100644
+--- a/src/dindbos/index.js
++++ b/src/dindbos/index.js
+@@ -4,6 +4,7 @@ import { compatibilitySnapshot, conformanceReport, isolationSnapshot } from "./c
+ import { DescriptorManager } from "./descriptors.js";
+ import { RuntimeCacheStore } from "./cache-store.js";
+ import { DesktopShell } from "./desktop-shell.js";
++import { normalizeUIStylePreference } from "./ui-style.js";
+ import { EventBus } from "./event-bus.js";
+ import { KeychainManager } from "./keychain.js";
+ import { KernelObjectRegistry } from "./kernel-objects.js";
+@@ -107,6 +108,12 @@ export class DindbOS {
+       runtimeHosts.set(this.root, this);
+     }
+     this.appearanceStorageKey = `${options.storageKey || options.storage?.key || "dindbos:vfs"}:appearance`;
++    this.uiStyleStorageKey = `${options.storageKey || options.storage?.key || "dindbos:vfs"}:ui-style`;
++    this.uiStylePreference = {};
++    this.uiStyleSaveFailed = false;
++    try {
++      if (!this.memoryOnly) this.uiStylePreference = normalizeUIStylePreference(JSON.parse(globalThis.localStorage?.getItem(this.uiStyleStorageKey) || "{}"));
++    } catch { /* Invalid or unavailable storage keeps automatic UI selection. */ }
+     let savedAppearance = {};
+     try { if (!this.memoryOnly) savedAppearance = JSON.parse(globalThis.localStorage?.getItem(this.appearanceStorageKey) || "{}"); } catch { /* Browser storage can be unavailable. */ }
+     try { this.appearance = normalizeAppearance(savedAppearance); } catch { this.appearance = { ...DEFAULT_APPEARANCE }; }
+@@ -4594,6 +4601,25 @@ export class DindbOS {
+     return { ...this.appearance };
+   }
+ 
++  getUIStylePreference() {
++    return { ...this.uiStylePreference };
++  }
++
++  setUIStylePreference(patch) {
++    if (this.destroyed) return this.getUIStylePreference();
++    this.uiStylePreference = normalizeUIStylePreference(patch, this.uiStylePreference);
++    this.uiStyleSaveFailed = false;
++    try { if (!this.memoryOnly) {
++      if (!globalThis.localStorage) throw new Error("Browser storage is unavailable");
++      globalThis.localStorage.setItem(this.uiStyleStorageKey, JSON.stringify(this.uiStylePreference));
++    } } catch {
++      this.uiStyleSaveFailed = true;
++      this.shell?.notify("UI style changed for this session. Browser storage could not save it.");
++    }
++    this.bus.emit("ui:preference-change", this.getUIStylePreference());
++    return this.getUIStylePreference();
++  }
++
+   destroy() {
+     if (this.destroyPromise) return this.destroyPromise;
+     this.destroyed = true;
 diff --git a/src/dindbos/ui-style.js b/src/dindbos/ui-style.js
 new file mode 100644
-index 0000000..9eb43c9
+index 0000000..48099d4
 --- /dev/null
 +++ b/src/dindbos/ui-style.js
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,60 @@
 +export const UI_STYLES = Object.freeze(["macos", "windows", "ios", "android"]);
 +export const MOBILE_UI_WIDTH = 760;
++export const UI_STYLE_PAIRS = Object.freeze({ desktop: ["macos", "windows"], mobile: ["ios", "android"] });
++
++export function normalizeUIStylePreference(patch, previous = {}) {
++  if (!patch || typeof patch !== "object" || Array.isArray(patch)) throw new TypeError("UI style preference must be an object");
++  const next = { ...previous };
++  for (const [mode, style] of Object.entries(patch)) {
++    if (!Object.hasOwn(UI_STYLE_PAIRS, mode) || (style !== null && !UI_STYLE_PAIRS[mode].includes(style))) throw new TypeError("Invalid UI style preference");
++    if (style === null) delete next[mode];
++    else next[mode] = style;
++  }
++  return next;
++}
 +const DEFAULT_AUTO_STYLES = Object.freeze({
 +  macos: Object.freeze({ desktop: 'windows', mobile: 'android' }),
 +  windows: Object.freeze({ desktop: 'macos', mobile: 'ios' }),
@@ -2435,7 +2615,7 @@ index 1a49844..02a11bd 100644
  
  function normalizeTheme(value) {
 diff --git a/src/sdk/index.d.ts b/src/sdk/index.d.ts
-index 2a4cdd9..6db2b59 100644
+index 2a4cdd9..6784fbc 100644
 --- a/src/sdk/index.d.ts
 +++ b/src/sdk/index.d.ts
 @@ -138,7 +138,17 @@ export interface DindbOSSlotContext {
@@ -2456,7 +2636,16 @@ index 2a4cdd9..6db2b59 100644
    slots?: Partial<Record<"desktop" | "menubar" | "dock" | "windowChrome", DindbOSSlotRenderer>>;
    liquidGlass?: boolean | { strength?: number; blur?: number; maxSurfaces?: number };
  }
-@@ -287,3 +297,21 @@ export function conformanceReport(runtime?: Record<string, unknown>): Record<str
+@@ -261,6 +271,8 @@ export class DindbOS {
+   registerApp(app: DindbOSHostApp): void;
+   unregisterApp(id: string): boolean;
+   setAppearance(theme: DindbOSThemeConfig): unknown;
++  getUIStylePreference(): { desktop?: "macos" | "windows"; mobile?: "ios" | "android" };
++  setUIStylePreference(patch: { desktop?: "macos" | "windows" | null; mobile?: "ios" | "android" | null }): { desktop?: "macos" | "windows"; mobile?: "ios" | "android" };
+   appearance: DindbOSThemeConfig;
+   boot(): void;
+   loadPersistentFileSystem(options?: Record<string, unknown>): Promise<void>;
+@@ -287,3 +299,21 @@ export function conformanceReport(runtime?: Record<string, unknown>): Record<str
  export function isolationSnapshot(browser?: Record<string, unknown>): Record<string, unknown>;
  
  export function applyDindbOSTheme(os: DindbOS, theme?: DindbOSThemeConfig): void;
@@ -2709,7 +2898,7 @@ index 0000000..54de6a3
 +}
 diff --git a/src/styles/platform-android-apps.css b/src/styles/platform-android-apps.css
 new file mode 100644
-index 0000000..9a97a81
+index 0000000..47635e2
 --- /dev/null
 +++ b/src/styles/platform-android-apps.css
 @@ -0,0 +1,288 @@
@@ -2763,7 +2952,7 @@ index 0000000..9a97a81
 +  :scope .settings-nav-icon { display: grid; width: 32px; height: 32px; border-radius: 10px; }
 +  :scope .settings-app .settings-nav-item.is-active { background: var(--oneui-soft); color: var(--oneui-blue); box-shadow: none; }
 +  :scope .settings-detail { flex: 1; min-height: 0; overflow: auto; padding: 8px 16px 24px; }
-+  :scope .settings-detail-header { min-height: 72px; height: auto; margin-bottom: 12px; padding: 12px 0; }
++  :scope .settings-detail-header { min-height: 72px; height: auto; margin-bottom: 12px; padding: 12px 0; flex-wrap: wrap; }
 +  :scope .settings-detail-header h2 { font-size: 28px; font-weight: 500; }
 +  :scope .settings-detail-header :is(button, p) { font-size: 14px; }
 +  :scope :is(.settings-section-panel, .settings-preference-group, .settings-panel, .appearance-detail-group) { border-radius: 24px; padding: 16px; background: var(--oneui-group); }
@@ -3804,6 +3993,23 @@ index 0000000..1d7d7c3
 +  .dos-searchable-select > input:focus-visible { outline: 2px solid var(--dos-select-accent, var(--accent)); outline-offset: 2px; }
 +  .dos-searchable-select-empty { padding: 12px; margin: 0; font-size: 13px; color: var(--dos-select-muted, var(--muted)); }
 +}
+diff --git a/src/styles/settings.css b/src/styles/settings.css
+index 203840a..3263ac7 100644
+--- a/src/styles/settings.css
++++ b/src/styles/settings.css
+@@ -43,6 +43,12 @@
+   .settings-history button:disabled { opacity: .28; cursor: default; }
+   .settings-history button:hover:not(:disabled) { background: var(--control-hover); }
+   .settings-section { min-width: 0; }
++  .ui-style-settings { margin-bottom: 20px; }
++  .ui-style-settings p { color: var(--muted); font-size: 12px; }
++  .ui-style-setting-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0; }
++  .ui-style-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
++  .ui-style-buttons button { min-height: 44px; padding: 8px 12px; }
++  .ui-style-buttons button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+   .settings-section > .appearance-settings > h3 { display: none; }
+   .settings-detail .appearance-modes { max-width: none; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+   .settings-detail .appearance-setting-row { padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--settings-group-bg); }
 diff --git a/src/ui/app-icon.js b/src/ui/app-icon.js
 index 44a2864..2e37a5d 100644
 --- a/src/ui/app-icon.js
@@ -4381,6 +4587,31 @@ index 0000000..a2914b1
 +    taskbar.remove();
 +  };
 +}
+diff --git a/src/ui/shell-panels.js b/src/ui/shell-panels.js
+index 1ca4dbb..299e041 100644
+--- a/src/ui/shell-panels.js
++++ b/src/ui/shell-panels.js
+@@ -69,6 +69,7 @@ export class ShellPanels {
+         null,
+         { label: "System Settings…", icon: "settings", action: "settings", disabled: !available("settings") },
+         { label: "Applications…", icon: "apps", action: "launch", app: "applications", disabled: !available("applications") },
++        { label: `Switch to ${{ macos: "Windows", windows: "macOS", ios: "Samsung", android: "iOS" }[this.shell.currentStyle] || "Windows"}`, action: "switch-ui-style" },
+         null,
+         { label: "Show Desktop", action: "show-desktop", disabled: !this.os.windows.windows.size },
+       ],
+@@ -331,6 +332,12 @@ export class ShellPanels {
+       return this.os.flushPersistentFileSystem?.();
+     }
+     else if (action === "desktop-reveal" && contextNode) this.shell.launchApp("files", { path: this.os.fs.dirname(contextNode.path) });
++    else if (action === "switch-ui-style") {
++      const current = this.shell.currentStyle;
++      const next = { macos: "windows", windows: "macos", ios: "android", android: "ios" }[current];
++      this.os.setUIStylePreference({ [["ios", "android"].includes(current) ? "mobile" : "desktop"]: next });
++      this.shell.root.querySelector(next === "windows" ? ".dos-windows-start" : next === "android" ? '[data-android-action="home"]' : ".dos-system-menu")?.focus({ preventScroll: true });
++    }
+     else if (action === "settings") this.shell.openSettings(data.section);
+     else if (action === "launch") this.shell.launchApp(data.app);
+     else if (action === "launch-new") this.shell.launchApp(data.app, {});
 diff --git a/vite.sdk.config.js b/vite.sdk.config.js
 index 9320927..afc37c9 100644
 --- a/vite.sdk.config.js
