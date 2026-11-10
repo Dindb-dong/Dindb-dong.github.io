@@ -16,7 +16,7 @@
     "test:preview": "playwright test --config playwright.preview.config.js"
   },
   "dependencies": {
-    "dindbos": "file:vendor/dindbos-0.2.3.tgz",
+    "dindbos": "file:vendor/dindbos-platform-preview.tgz",
     "vite": "^5.4.21"
   },
   "devDependencies": {

@@ -26,6 +26,8 @@ My personal portfolio, built as a working desktop with [DindbOS](https://github.
 
 Browse in Korean or English, with compact bottom navigation and a stacked project layout on narrow screens. DindbOS provides the windows, Dock, and built-in desktop apps.
 
+The UI automatically adapts to the visitor and host dimensions. Use `?device=ios`, `?device=android`, `?device=macos`, or `?device=windows` to preview another visitor's selection rules; resize or rotate the viewport to compare layouts. Named `?style=windows` presets can also be forced. See [platform preview options](docs/platform-preview.md).
+
 <details>
 <summary>Project browser</summary>
 
