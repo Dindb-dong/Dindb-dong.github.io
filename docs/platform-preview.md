@@ -29,3 +29,11 @@ For iOS and Android visitors, the host's portrait/landscape dimensions select th
 Device previews change only the SDK's visitor selection input. They do not spoof the browser user agent, viewport, touch support, or real operating system. Resize or rotate the browser to evaluate the corresponding layout. The portfolio's custom apps, content, project picker and storage continue through the existing runtime.
 
 Validate query parsing with `node --test scripts/ui-options.test.mjs`. Run the four device/orientation flows with `PLAYWRIGHT_CHANNEL=chrome npx playwright test tests/platform-previews.spec.js --workers=2`. To reuse a running local server, set `PORTFOLIO_QA_URL` to its URL. [Runtime screenshots and recording](assets/platform-previews/README.md) document the tested browser viewports.
+
+## Change the UI while browsing
+
+Open the system menu and choose **Switch to Windows/macOS/Samsung/iOS** to change the current UI family immediately. Windows exposes the system menu under **App menus**; on Samsung, open Settings from Home.
+
+**System Settings → Appearance → UI style** provides independent Desktop UI and Mobile UI groups. Choose macOS or Windows for desktop, and iOS or Samsung for mobile. **Automatic** resets that group's manual choice to the SDK configuration, including preview queries. Manual choices override that family's configured preset without restarting apps; resizing/rotation still selects the configured desktop or mobile family.
+
+Choices are stored in this browser under the portfolio runtime's storage key. If saving is denied, a status message explains that the change lasts for the current session and reloading may restore the old choice. Memory-backed SDK instances show session-only wording. Reset both groups to Automatic when comparing device-query defaults after manual changes.
