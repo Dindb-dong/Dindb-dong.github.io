@@ -135,12 +135,22 @@ for (const style of ["android", "ios"]) {
         expect(Math.abs(panel.width - panel.height)).toBeLessThan(1);
         expect(title.y + title.height).toBeLessThan(panel.y);
         await page.screenshot({ path: info.outputPath("ios-actual-career-folder.png") });
+        // Read the exit keyframes after React handles the click, while the panel is still mounted.
+        const exitMotion = await folder.evaluateHandle(element => ({
+          keyframes: new Promise(resolve => {
+            element.ownerDocument.addEventListener("click", () => {
+              const frames = element.getAnimations().map(animation => animation.effect.getKeyframes());
+              resolve(frames.find(keyframes => keyframes.at(-1).opacity === "0"));
+            }, { once: true });
+          }),
+        }));
         await folder.getByRole("button", { name: "Close folder", exact: true }).tap();
-        const closing = await folder.boundingBox();
-        await page.waitForTimeout(65);
-        const closingLater = await folder.boundingBox();
-        expect(closingLater.width).toBeLessThan(closing.width);
+        const frames = await exitMotion.evaluate(motion => motion.keyframes);
+        await exitMotion.dispose();
+        expect(frames?.[0].opacity).toBe("1");
+        expect(frames?.at(-1).transform).toContain("scale(");
         await expect(folder).toHaveCount(0);
+        await expect(trigger).toBeFocused();
       }
       for (const app of EXPERIENCE_APPS) {
         const content = await launchExperience(page, root, style, app);
