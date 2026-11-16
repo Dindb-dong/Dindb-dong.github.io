@@ -1,13 +1,9 @@
 # DindbOS snapshot
 
-`dindbos-platform-preview.tgz` is a self-contained build of [DindbOS](https://github.com/Dindb-dong/dindbos) source commit `29475f3d4308326fccb6bbd3fd7bbb07f112f5a7`, based on `1c659c5`. It includes configurable platform shells, app interiors/icons, automatic visitor/rotation rules the `ui.visitorOS` option used by portfolio query links, and persistent in-app UI style controls. The mobile update adds four-column homes, the iOS Experience folder, real-app carousel previews and touch-driven transitions. The distributed stylesheet includes the shared Recents layout and Home gesture styles; previews preserve host container queries and fit their complete aspect ratio so the portfolio navigation keeps its mobile layout without clipping.
+`dindbos-84abc14.tgz` is the SDK built from [DindbOS revision 84abc14](https://github.com/Dindb-dong/dindbos/tree/84abc14feb2f7f3738d5f4f09e23c19d985f9f2e). The portfolio installs the archive with `npm ci`. The upstream package metadata remains `0.2.0`.
 
-The searchable selector and mobile tab bar from this portfolio's previous `0.2.3` source patch are retained in the SDK source and build. Existing project-picker behavior does not depend on an unpublished npm registry package. The archive retains the upstream source package's `0.2.0` metadata; this snapshot is not an npm release or a removal of the previous portfolio controls.
+SHA-256: `51e8ef73242c2e2edc330d4088fca712c94f22c4aca6072584b8dc1f58063af1`.
 
-SHA-256: `d720126734ec1ece1b7f30594189787c24303dfa9828593cc05290bd55f5cf16`.
+To refresh the snapshot, check out the target upstream revision, run `npm ci`, `npm run build:sdk`, and `npm pack`. Rename the archive for the new revision, update the dependency and lockfile, and set `DINDBOS_REVISION` in the Pages workflow to the same commit. The workflow builds the standalone showcase at [`/dindbos/`](https://dindb-dong.github.io/dindbos/), and publishes its source revision in `/dindbos/revision.txt`.
 
-`dindbos-platform-preview-source.patch` records the complete source delta from `1c659c5`, including those retained controls. To rebuild, check out that upstream commit, apply the patch, run `npm ci`, `npm run build:sdk` and `npm pack`, then rename the generated archive to `dindbos-platform-preview.tgz`. Repacking can change archive integrity; update the portfolio lockfile when replacing the archive.
-
-The portfolio installs the checked-in archive with `npm ci`; it does not need a symlink, local SDK checkout or registry publication.
-
-The upstream MIT license and artwork provenance remain in the archive. Legacy selector/tab-bar code retains the implementation previously integrated from source `8f9d5d1e9abf18da67e13cad5572c76b74269356`.
+The archive retains the upstream MIT license and artwork provenance. The showcase includes the Doom engine's corresponding source and license. Players supply their own Doom game data.

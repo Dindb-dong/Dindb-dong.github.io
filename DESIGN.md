@@ -109,8 +109,8 @@
 
 ## Runtime revision
 
-- Source: `Dindb-dong/dindbos@a34c321a230e135aac1ae436919d1a812007c6fd` (0.2.1).
-- Installed from a checked-in source-built tarball because npm still publishes 0.1.1. See `vendor/README.md`.
+- Source: `Dindb-dong/dindbos@84abc14feb2f7f3738d5f4f09e23c19d985f9f2e` (0.2.0).
+- Installed from a checked-in tarball built from the pinned source. See `vendor/README.md`.
 - Keep the existing IndexedDB storage name so returning visitors retain their files.
 - Retain launcher placement beside the portfolio; use native SDK appearance for the shell.
 

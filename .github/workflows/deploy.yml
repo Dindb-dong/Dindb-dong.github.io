@@ -11,6 +11,9 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  DINDBOS_REVISION: 84abc14feb2f7f3738d5f4f09e23c19d985f9f2e
+
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -39,6 +42,24 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Check out DindbOS showcase source
+        uses: actions/checkout@v4
+        with:
+          repository: Dindb-dong/dindbos
+          ref: ${{ env.DINDBOS_REVISION }}
+          path: .dindbos-source
+          persist-credentials: false
+
+      - name: Build DindbOS showcase
+        working-directory: .dindbos-source
+        run: |
+          npm ci
+          npm run build
+          git rev-parse HEAD > dist-demo/revision.txt
+
+      - name: Include the showcase in the Pages artifact
+        run: mv .dindbos-source/dist-demo dist/dindbos
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
