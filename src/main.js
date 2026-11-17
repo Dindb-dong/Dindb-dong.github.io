@@ -2,6 +2,7 @@ import { createAndBootDindbOS } from "dindbos";
 import "dindbos/styles.css";
 import "./portfolio.css";
 import { createPortfolioApps } from "./portfolio-app.js";
+import { showcaseApps } from "./apps/showcase.js";
 import { EXPERIENCE_APPS } from "./experience-content.js";
 import { loadPortfolioRuntime, currentData, portfolioDataForBuiltin } from "./portfolio-data.js";
 import { buildPortfolioFileSystem } from "./portfolio-filesystem.js";
@@ -14,7 +15,7 @@ export async function bootPortfolioOS(report = () => {}) {
   const data = currentData(runtime);
   const fileSystem = buildPortfolioFileSystem(runtime);
   report("Virtual filesystem assembled");
-  const apps = createPortfolioApps(runtime);
+  const apps = [...createPortfolioApps(runtime), ...showcaseApps];
   report("Portfolio applications prepared");
 
   const os = await createAndBootDindbOS({

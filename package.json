@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "dindbos": "file:vendor/dindbos-84abc14.tgz",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "vite": "^5.4.21"
   },
   "devDependencies": {

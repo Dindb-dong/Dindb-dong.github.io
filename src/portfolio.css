@@ -32,7 +32,7 @@ input {
 }
 
 /* Keep launchers beside the portfolio while using the SDK shell appearance. */
-.dindbos-host .dos-desktop {
+:where(#app) > .dos-shell > .dos-desktop {
   inset: 48px auto 100px 14px;
   width: 200px;
   grid-template-columns: repeat(2, 96px);
@@ -764,14 +764,14 @@ input {
 
 
 @media (min-width: 761px) and (max-width: 1179px) {
-  .dindbos-host .dos-desktop {
+  :where(#app) > .dos-shell > .dos-desktop {
     width: 92px;
     grid-template-columns: 90px;
   }
 }
 
 @media (max-width: 760px) {
-  .dindbos-host .dos-desktop {
+  :where(#app) > .dos-shell > .dos-desktop {
     inset: 72px 10px 92px;
     width: auto;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1255,7 +1255,7 @@ input {
   .dos-icon[aria-label="Open YCC.app"] { --career-column: 0; --career-row: 0; }
 }
 @media (min-width: 761px) and (max-width: 1179px) {
-  .dindbos-host .dos-desktop { overflow-y: auto; }
+  :where(#app) > .dos-shell > .dos-desktop { overflow-y: auto; }
 }
 
 .portfolio-finder { container-type: inline-size; container-name: project-finder; }

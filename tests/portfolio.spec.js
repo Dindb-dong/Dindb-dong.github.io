@@ -34,8 +34,8 @@ test("desktop app shortcuts remain visible beside the default portfolio window",
 
   await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false");
   const shortcuts = page.locator(".dos-icon");
-  await expect(shortcuts).toHaveCount(16);
-  for (const name of ["Portfolio.app", "Projects.app", "Resume.app", "Files.app", "Terminal.app"]) {
+  await expect(shortcuts).toHaveCount(18);
+  for (const name of ["Portfolio.app", "Projects.app", "Resume.app", "Files.app", "Terminal.app", "Doom.app", "Nested DindbOS.app"]) {
     const shortcut = page.locator(`.dos-icon[aria-label="Open ${name}"]`);
     await shortcut.scrollIntoViewIfNeeded();
     await expect(shortcut).toBeVisible();
@@ -46,6 +46,22 @@ test("desktop app shortcuts remain visible beside the default portfolio window",
     })).toBe(true);
   }
   await page.screenshot({ path: testInfo.outputPath("desktop.png") });
+});
+
+test("desktop shortcuts open Doom and an independent Nested DindbOS", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/?style=macos");
+  await enterPortfolio(page);
+  const desktop = page.locator("#app > .dos-shell > .dos-desktop");
+  await desktop.getByRole("button", { name: "Open Doom.app", exact: true }).dblclick();
+  const doom = page.locator('.dos-window[data-app-id="doom"]');
+  await expect(doom.getByLabel("Local Doom IWAD")).toBeVisible();
+  await doom.getByRole("button", { name: "Close", exact: true }).click();
+  await desktop.getByRole("button", { name: "Open Nested DindbOS.app", exact: true }).press("Enter");
+  const nested = page.locator('.dos-window[data-app-id="nested-desktop"] .dindbos-host');
+  await expect(nested.getByRole("button", { name: "Open Doom.app", exact: true })).toBeVisible();
+  await expect(nested.getByRole("button", { name: "Open Portfolio.app", exact: true })).toHaveCount(0);
+  await expect(page.locator("#app > .dos-shell .portfolio-about")).toBeVisible();
 });
 
 test("career desktop shortcuts form a reachable lower-right group while other icons close the gaps", async ({ page }, testInfo) => {
@@ -74,8 +90,8 @@ test("career desktop shortcuts form a reachable lower-right group while other ic
     expect(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y).toBe(true);
   }
   const left = await page.locator(".dos-icon").evaluateAll((icons, names) => icons.filter(icon => !names.some(name => icon.getAttribute("aria-label") === `Open ${name}.app`)).map(icon => ({ x: icon.getBoundingClientRect().x, y: icon.getBoundingClientRect().y })), names);
-  expect(left).toHaveLength(10);
-  expect(new Set(left.map(box => box.y)).size).toBe(5);
+  expect(left).toHaveLength(12);
+  expect(new Set(left.map(box => box.y)).size).toBe(6);
   expect(new Set(left.map(box => box.x)).size).toBe(2);
   await page.screenshot({ path: testInfo.outputPath("desktop-career-group.png"), animations: "disabled" });
   await page.locator('.dos-icon[aria-label="Open Leviosa-AI.app"]').dblclick();
