@@ -47,3 +47,22 @@ Screenshots from the portfolio, with mobile views captured at 390×844. [Artwork
 ## Credits
 
 Built with [DindbOS](https://github.com/Dindb-dong/dindbos), an MIT-licensed desktop SDK. The logo and favicon use its [transparent brand artwork](https://github.com/Dindb-dong/dindbos/tree/main/docs/assets/brand). Linked projects and third-party materials retain their own licenses.
+
+### Portfolio analytics
+
+The Pages build enables analytics when the repository variable
+`VITE_PORTFOLIO_ANALYTICS_URL` points to the published Google Apps Script web app.
+Bound to the private analytics spreadsheet, [Code.gs](scripts/google-apps-script/Code.gs)
+initializes the four tabs when the owner runs `setupAnalytics` and accepts
+anonymous visitor submissions through `doPost`. Deploy it to run as the
+deploying account with public web-app access. The spreadsheet itself stays private.
+
+A visit uses a random browser ID and a separate session ID. Browser IDs can be
+reset by clearing site storage. The Pages build uses GeoJS for estimated country
+and region. The collector keeps only those location fields and omits IP addresses,
+full referrers, and arbitrary URL parameters. Global Privacy Control and Do Not
+Track disable analytics in the browser. PDF actions measure clicks on the
+portfolio download button.
+
+Use `?analytics_test=1` for verification traffic. It uses a separate browser
+and session ID and is excluded from the summary.

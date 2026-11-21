@@ -55,17 +55,17 @@ export function renderExperienceApp(content, runtime, id, state) {
     body = `<section class="experience-section experience-section--first"><h2>${copy.work}</h2>
       <div class="experience-project-grid">${app.projects.map(projectButton).join("")}</div>
     </section>
-    <article class="experience-case-study" data-experience-case="${selected.id}">
+    <article class="experience-case-study" data-experience-case="${selected.id}" data-analytics-type="project" data-analytics-id="${selected.id}" data-analytics-name="${html(selected.title)}" data-analytics-route="experience-${id}">
       <header><span>${renderEmphasis(selected.role, { bold: [selected.role] })}</span><h2>${html(selected.title)}</h2><p>${projectEmphasis(selected.description.join(" "))}</p></header>
       <div class="experience-tags" aria-label="${copy.stack}">${[...selected.languages, ...selected.techStacks].map((tag) => `<span>${html(tag)}</span>`).join("")}</div>
       ${gallery(images(selected.id))}
       <section class="experience-section"><h3>${copy.scope}</h3><ul class="experience-work-list">${selected.extraDescription.map((line) => `<li>${projectEmphasis(line)}</li>`).join("")}</ul></section>
-      ${selected.links.length || selected.deck ? `<nav class="experience-links" aria-label="${copy.links}">${selected.links.map((link) => `<a href="${html(link.url)}" target="_blank" rel="noreferrer">${html(link.name)} ↗</a>`).join("")}${selected.deck ? `<a href="/assets/presentations/${html(selected.deck.file)}" target="_blank" rel="noreferrer">${copy.deck} ↗</a>` : ""}</nav>` : ""}
+      ${selected.links.length || selected.deck ? `<nav class="experience-links" aria-label="${copy.links}">${selected.links.map((link) => `<a href="${html(link.url)}" target="_blank" rel="noreferrer" data-analytics-action="outbound">${html(link.name)} ↗</a>`).join("")}${selected.deck ? `<a href="/assets/presentations/${html(selected.deck.file)}" target="_blank" rel="noreferrer">${copy.deck} ↗</a>` : ""}</nav>` : ""}
     </article>`;
   } else if (state.tab === "gallery") {
     body = `<section class="experience-section experience-section--first"><div class="experience-section-heading"><h2>${copy.views}</h2><span>${app.media.length} ${ko ? "개 자료" : "items"}</span></div>${gallery(images())}</section>`;
   } else {
-    body = `<section class="experience-contributions" aria-label="${copy.role}">
+    body = `<section class="experience-contributions" data-analytics-type="experience" data-analytics-id="${id}" data-analytics-name="${html(app.name)}" data-analytics-route="experience-app" aria-label="${copy.role}">
       <div class="experience-responsibilities">${app.experience.description.map((line, index) => `<article>${app.experience.descriptionTitles?.[index] ? `<h2>${html(app.experience.descriptionTitles[index])}</h2><ul>${line.split("\n").map(item => `<li>${emphasize(item)}</li>`).join("")}</ul>` : `<p>${emphasize(line)}</p>`}</article>`).join("")}</div>
       <h2>${copy.work}</h2><ul class="experience-work-list">${app.experience.projects.map((name) => `<li>${emphasize(name)}</li>`).join("")}</ul>
     </section>`;
