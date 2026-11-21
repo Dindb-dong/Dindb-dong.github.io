@@ -8,7 +8,7 @@
 <h1 align="center">Kim Dong Wook · Portfolio</h1>
 <p align="center">Explore my work as a desktop. Open a project, an experience, or a file.</p>
 <p align="center">Full-Stack AI &amp; SW Engineer · JavaScript + Vite · Powered by DindbOS</p>
-<p align="center"><a href="https://dindb-dong.github.io/">Live portfolio</a> · <a href="https://dindb-dong.github.io/dindbos/">DindbOS showcase</a> · <a href="https://github.com/Dindb-dong/dindbos">DindbOS SDK</a> · <a href="https://dindb-dong.github.io/resume.pdf">Resume</a></p>
+<p align="center"><a href="https://dindb-dong.github.io/?utm_source=github&amp;utm_medium=readme&amp;utm_campaign=portfolio-discovery">Live portfolio</a> · <a href="https://dindb-dong.github.io/dindbos/">DindbOS showcase</a> · <a href="https://github.com/Dindb-dong/dindbos">DindbOS SDK</a> · <a href="https://dindb-dong.github.io/resume.pdf">Resume</a></p>
 
 <p align="center"><img src="docs/assets/portfolio.jpg" alt="Kim Dong Wook's portfolio overview running in a DindbOS desktop" width="1280"></p>
 
