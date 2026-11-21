@@ -41,6 +41,9 @@ jobs:
         run: npm run test:unit
 
       - name: Build
+        env:
+          VITE_PORTFOLIO_ANALYTICS_URL: ${{ vars.VITE_PORTFOLIO_ANALYTICS_URL }}
+          VITE_PORTFOLIO_GEO_URL: ${{ vars.VITE_PORTFOLIO_GEO_URL || 'https://get.geojs.io/v1/ip/geo.json' }}
         run: npm run build
 
       - name: Check out DindbOS showcase source

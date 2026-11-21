@@ -178,7 +178,7 @@ function renderProjectDetail(project, runtime) {
     moreMedia: `${Math.max(0, project.media.length - 3)} more media`,
   };
   return `
-    <div class="portfolio-detail-header">
+    <div class="portfolio-detail-header" data-analytics-type="project" data-analytics-id="${project.id}" data-analytics-name="${escapeAttr(project.title)}" data-analytics-route="project-list">
       <h2>${escapeHtml(project.title)}</h2>
       <p>${renderEmphasis(project.role, { bold: [project.role] })}</p>
     </div>
@@ -203,7 +203,7 @@ function renderProjectDetail(project, runtime) {
     <section class="portfolio-detail-section">
       <h3>${copy.links}</h3>
       <div class="portfolio-link-list">
-        ${project.links.map((link) => `<a href="${escapeAttr(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.name || "Open")}</a>`).join("")}
+        ${project.links.map((link) => `<a href="${escapeAttr(link.url)}" target="_blank" rel="noreferrer" data-analytics-action="outbound">${escapeHtml(link.name || "Open")}</a>`).join("")}
         ${project.deck ? `<a href="/assets/presentations/${escapeAttr(project.deck.file)}" target="_blank" rel="noreferrer">Open presentation</a>` : ""}
       </div>
     </section>

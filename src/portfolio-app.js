@@ -178,7 +178,7 @@ function renderAbout(content, runtime) {
 function renderExperience(content, runtime) {
   const data = currentData(runtime);
   content.innerHTML = `
-    <section class="portfolio-os-app portfolio-experience" data-locale="${escapeAttr(runtime.locale)}">
+    <section class="portfolio-os-app portfolio-experience" data-analytics-type="experience" data-analytics-id="overview" data-analytics-name="Experience overview" data-analytics-route="portfolio" data-locale="${escapeAttr(runtime.locale)}">
       ${renderAppSidebar("experience", runtime)}
       <main class="portfolio-main-pane">
         <div class="portfolio-timeline">
@@ -235,9 +235,9 @@ function renderResume(content, runtime) {
       ${renderAppSidebar("resume", runtime)}
       <main class="portfolio-main-pane">
         <div class="portfolio-link-list portfolio-resume-actions">
-            <a href="/resume.pdf" download="Kim-Dong-Wook-Resume.pdf">${copy.pdf}</a>
+            <a href="/resume.pdf" download="Kim-Dong-Wook-Resume.pdf" data-analytics-action="pdf">${copy.pdf}</a>
         </div>
-        <section class="portfolio-resume-frame-shell">
+        <section class="portfolio-resume-frame-shell" data-analytics-type="resume" data-analytics-id="resume" data-analytics-name="Resume" data-analytics-route="portfolio">
           <iframe
             class="portfolio-resume-frame"
             src="/resume.html?view=portfolio"

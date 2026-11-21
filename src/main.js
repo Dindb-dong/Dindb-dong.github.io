@@ -2,6 +2,7 @@ import { createAndBootDindbOS } from "dindbos";
 import "dindbos/styles.css";
 import "./portfolio.css";
 import { createPortfolioApps } from "./portfolio-app.js";
+import { startPortfolioAnalytics } from "./analytics.js";
 import { showcaseApps } from "./apps/showcase.js";
 import { EXPERIENCE_APPS } from "./experience-content.js";
 import { loadPortfolioRuntime, currentData, portfolioDataForBuiltin } from "./portfolio-data.js";
@@ -52,6 +53,7 @@ export async function bootPortfolioOS(report = () => {}) {
     },
   });
   report("DindbOS runtime mounted");
+  startPortfolioAnalytics(document.getElementById("app"), "portfolio");
   runtime.launchExperience = (id) => {
     const app = EXPERIENCE_APPS.find((entry) => entry.id === id);
     if (app) os.launch(app.appId);
